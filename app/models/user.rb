@@ -364,6 +364,7 @@ class User < ActiveRecord::Base
 
     # user is not yet registered, try to authenticate with available sources
     if (attrs = AuthSource.authenticate(login, password))
+      attrs.delete(:dn)
       user = new(attrs)
       user.login = login
       # The default user can't auto create users, we need to change to Admin for this to work
