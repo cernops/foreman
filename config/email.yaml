@@ -1,0 +1,9 @@
+production:
+  delivery_method: :smtp
+  smtp_settings:
+    address: cernmx.cern.ch
+    port: 25
+    domain: cern.ch
+    authentication: :none
+    openssl_verify_mode: none
+

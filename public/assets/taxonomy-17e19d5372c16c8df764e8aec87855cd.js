@@ -1,0 +1,1 @@
+function ignore_checked(e){var t=$(e).closest(".tab-pane"),i=t.find(".ms-container li");$(e).is(":checked")?i.addClass("disabled"):(i.removeClass("disabled"),t.find(".ms-container li.disabled_item").addClass("disabled"))}$(function(){$(":checkbox").each(function(e,t){ignore_checked(t)})});

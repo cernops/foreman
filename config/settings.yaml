@@ -1,0 +1,20 @@
+--- 
+#your default puppet server - can be overridden in the host level
+#if none specified, plain "puppet" will be used.
+:puppet_server: judy.cern.ch
+:unattended: true
+:puppetconfdir: /etc/puppet/puppet.conf
+:login: true
+:require_ssl: false 
+:manage_puppetca: false
+:puppetca: false
+:puppetdb:
+  :enabled: true
+  :address: https://lxfssm4304.cern.ch:8081/v2/commands
+:hostgroup_name_regex: \A[a-z][a-z0-9_]*\Z
+:locations_enabled: true
+:organizations_enabled: true
+:column_view:
+  :title: Owner 
+  :content: owner
+

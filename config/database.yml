@@ -1,0 +1,7 @@
+production:
+  adapter: mysql2
+  database: foreman
+  username: foreman
+  password: au76^23ty
+  port: 5500
+  host: dbod-puppet.cern.ch

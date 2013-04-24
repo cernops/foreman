@@ -1,0 +1,835 @@
+
+
+Started GET "/" for 128.141.237.90 at Wed Apr 24 10:17:01 +0200 2013
+  Processing by DashboardController#index as HTML
+Redirected to https://foreman-testbench.cern.ch:3000/
+aicache01.cern.ch:11211 failed (count: 4)
+DalliError: No server available
+DalliError: No server available
+Completed 302 Found in 10ms
+
+
+Started GET "/" for 128.141.237.90 at Wed Apr 24 10:20:07 +0200 2013
+  Processing by DashboardController#index as HTML
+aicache01.cern.ch:11211 failed (count: 4)
+DalliError: No server available
+DalliError: No server available
+Redirected to http://foreman-testbench.cern.ch:3000/users/login
+Completed 302 Found in 18ms
+
+
+Started GET "/users/login" for 128.141.237.90 at Wed Apr 24 10:20:07 +0200 2013
+  Processing by UsersController#login as HTML
+Rendered home/_topbar.rhtml (4.6ms)
+Rendered users/login.html.erb within layouts/application (13.9ms)
+DalliError: No server available
+DalliError: No server available
+Completed 200 OK in 24ms (Views: 20.3ms | ActiveRecord: 7.2ms)
+
+
+Started GET "/stylesheets/jquery-ui.css" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/jquery-ui.css"):
+  
+
+
+
+Started GET "/stylesheets/jquery.jnotify" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/jquery.jnotify"):
+  
+
+
+
+Started GET "/stylesheets/bootstrap.min" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/bootstrap.min"):
+  
+
+
+
+Started GET "/stylesheets/style.css" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/style.css"):
+  
+
+
+
+Started GET "/stylesheets/bootstrap-responsive.min" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/bootstrap-responsive.min"):
+  
+
+
+
+Started GET "/stylesheets/multi-select.css" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/multi-select.css"):
+  
+
+
+
+Started GET "/stylesheets/wizard.css" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/wizard.css"):
+  
+
+
+
+Started GET "/javascripts/jquery.js" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.js"):
+  
+
+
+
+Started GET "/javascripts/jquery_ujs.js" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery_ujs.js"):
+  
+
+
+
+Started GET "/javascripts/jquery-ui.js" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery-ui.js"):
+  
+
+
+
+Started GET "/javascripts/highcharts.js" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/highcharts.js"):
+  
+
+
+
+Started GET "/javascripts/charts.js" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/charts.js"):
+  
+
+
+
+Started GET "/javascripts/jquery.jnotify" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.jnotify"):
+  
+
+
+
+Started GET "/javascripts/jquery.jeditable" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.jeditable"):
+  
+
+
+
+Started GET "/javascripts/bootstrap.min" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/bootstrap.min"):
+  
+
+
+
+Started GET "/javascripts/jquery.multi-select" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.multi-select"):
+  
+
+
+
+Started GET "/javascripts/jquery.dataTables.min" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.dataTables.min"):
+  
+
+
+
+Started GET "/javascripts/jquery.dataTables.bootstrap-paging" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.dataTables.bootstrap-paging"):
+  
+
+
+
+Started GET "/images/foreman.png" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/images/foreman.png"):
+  
+
+
+
+Started GET "/images/foreman_large.png" for 128.141.237.90 at Wed Apr 24 10:20:08 +0200 2013
+
+ActionController::RoutingError (No route matches "/images/foreman_large.png"):
+  
+
+
+
+Started GET "/users/login" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+  Processing by UsersController#login as HTML
+Rendered home/_topbar.rhtml (4.1ms)
+Rendered users/login.html.erb within layouts/application (11.1ms)
+aicache01.cern.ch:11211 failed (count: 5)
+DalliError: No server available
+DalliError: No server available
+Completed 200 OK in 18ms (Views: 12.0ms | ActiveRecord: 5.3ms)
+
+
+Started GET "/stylesheets/jquery-ui.css" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/jquery-ui.css"):
+  
+
+
+
+Started GET "/stylesheets/jquery.jnotify" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/jquery.jnotify"):
+  
+
+
+
+Started GET "/stylesheets/bootstrap.min" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/bootstrap.min"):
+  
+
+
+
+Started GET "/stylesheets/bootstrap-responsive.min" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/bootstrap-responsive.min"):
+  
+
+
+
+Started GET "/stylesheets/multi-select.css" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/multi-select.css"):
+  
+
+
+
+Started GET "/stylesheets/style.css" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/style.css"):
+  
+
+
+
+Started GET "/stylesheets/wizard.css" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/wizard.css"):
+  
+
+
+
+Started GET "/javascripts/jquery.js" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.js"):
+  
+
+
+
+Started GET "/javascripts/jquery_ujs.js" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery_ujs.js"):
+  
+
+
+
+Started GET "/javascripts/jquery-ui.js" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery-ui.js"):
+  
+
+
+
+Started GET "/javascripts/highcharts.js" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/highcharts.js"):
+  
+
+
+
+Started GET "/javascripts/jquery.jnotify" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.jnotify"):
+  
+
+
+
+Started GET "/javascripts/bootstrap.min" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/bootstrap.min"):
+  
+
+
+
+Started GET "/javascripts/jquery.multi-select" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.multi-select"):
+  
+
+
+
+Started GET "/javascripts/jquery.dataTables.min" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.dataTables.min"):
+  
+
+
+
+Started GET "/javascripts/jquery.dataTables.bootstrap-paging" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.dataTables.bootstrap-paging"):
+  
+
+
+
+Started GET "/javascripts/charts.js" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/charts.js"):
+  
+
+
+
+Started GET "/javascripts/jquery.jeditable" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.jeditable"):
+  
+
+
+
+Started GET "/images/foreman.png" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/images/foreman.png"):
+  
+
+
+
+Started GET "/images/foreman_large.png" for 128.141.237.90 at Wed Apr 24 10:20:10 +0200 2013
+
+ActionController::RoutingError (No route matches "/images/foreman_large.png"):
+  
+
+
+
+Started GET "/users/login" for 128.141.237.90 at Wed Apr 24 10:21:43 +0200 2013
+  Processing by UsersController#login as HTML
+Rendered home/_topbar.rhtml (4.8ms)
+Rendered users/login.html.erb within layouts/application (14.4ms)
+aicache01.cern.ch:11211 failed (count: 4)
+DalliError: No server available
+DalliError: No server available
+Completed 200 OK in 33ms (Views: 20.9ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/stylesheets/jquery-ui.css" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/jquery-ui.css"):
+  
+
+
+
+Started GET "/stylesheets/jquery.jnotify" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/jquery.jnotify"):
+  
+
+
+
+Started GET "/stylesheets/bootstrap-responsive.min" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/bootstrap-responsive.min"):
+  
+
+
+
+Started GET "/stylesheets/style.css" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/style.css"):
+  
+
+
+
+Started GET "/stylesheets/bootstrap.min" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/bootstrap.min"):
+  
+
+
+
+Started GET "/stylesheets/multi-select.css" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/multi-select.css"):
+  
+
+
+
+Started GET "/stylesheets/wizard.css" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/wizard.css"):
+  
+
+
+
+Started GET "/javascripts/jquery.js" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.js"):
+  
+
+
+
+Started GET "/javascripts/jquery_ujs.js" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery_ujs.js"):
+  
+
+
+
+Started GET "/javascripts/jquery-ui.js" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery-ui.js"):
+  
+
+
+
+Started GET "/javascripts/highcharts.js" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/highcharts.js"):
+  
+
+
+
+Started GET "/javascripts/charts.js" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/charts.js"):
+  
+
+
+
+Started GET "/javascripts/jquery.jnotify" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.jnotify"):
+  
+
+
+
+Started GET "/javascripts/bootstrap.min" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/bootstrap.min"):
+  
+
+
+
+Started GET "/javascripts/jquery.multi-select" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.multi-select"):
+  
+
+
+
+Started GET "/javascripts/jquery.dataTables.min" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.dataTables.min"):
+  
+
+
+
+Started GET "/javascripts/jquery.dataTables.bootstrap-paging" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.dataTables.bootstrap-paging"):
+  
+
+
+
+Started GET "/javascripts/jquery.jeditable" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.jeditable"):
+  
+
+
+
+Started GET "/images/foreman_large.png" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/images/foreman_large.png"):
+  
+
+
+
+Started GET "/images/foreman.png" for 128.141.237.90 at Wed Apr 24 10:21:44 +0200 2013
+
+ActionController::RoutingError (No route matches "/images/foreman.png"):
+  
+
+
+
+Started GET "/users/login" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+  Processing by UsersController#login as HTML
+Rendered home/_topbar.rhtml (4.2ms)
+Rendered users/login.html.erb within layouts/application (11.6ms)
+aicache01.cern.ch:11211 failed (count: 5)
+DalliError: No server available
+DalliError: No server available
+Completed 200 OK in 18ms (Views: 12.6ms | ActiveRecord: 4.8ms)
+
+
+Started GET "/stylesheets/jquery-ui.css" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/jquery-ui.css"):
+  
+
+
+
+Started GET "/stylesheets/jquery.jnotify" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/jquery.jnotify"):
+  
+
+
+
+Started GET "/stylesheets/bootstrap.min" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/bootstrap.min"):
+  
+
+
+
+Started GET "/stylesheets/bootstrap-responsive.min" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/bootstrap-responsive.min"):
+  
+
+
+
+Started GET "/stylesheets/multi-select.css" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/multi-select.css"):
+  
+
+
+
+Started GET "/stylesheets/style.css" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/style.css"):
+  
+
+
+
+Started GET "/stylesheets/wizard.css" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/wizard.css"):
+  
+
+
+
+Started GET "/javascripts/jquery.js" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.js"):
+  
+
+
+
+Started GET "/javascripts/jquery_ujs.js" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery_ujs.js"):
+  
+
+
+
+Started GET "/javascripts/jquery-ui.js" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery-ui.js"):
+  
+
+
+
+Started GET "/javascripts/highcharts.js" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/highcharts.js"):
+  
+
+
+
+Started GET "/javascripts/charts.js" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/charts.js"):
+  
+
+
+
+Started GET "/javascripts/jquery.jnotify" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.jnotify"):
+  
+
+
+
+Started GET "/javascripts/bootstrap.min" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/bootstrap.min"):
+  
+
+
+
+Started GET "/javascripts/jquery.multi-select" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.multi-select"):
+  
+
+
+
+Started GET "/javascripts/jquery.dataTables.min" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.dataTables.min"):
+  
+
+
+
+Started GET "/javascripts/jquery.jeditable" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.jeditable"):
+  
+
+
+
+Started GET "/javascripts/jquery.dataTables.bootstrap-paging" for 128.141.237.90 at Wed Apr 24 10:21:45 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.dataTables.bootstrap-paging"):
+  
+
+
+
+Started GET "/images/foreman.png" for 128.141.237.90 at Wed Apr 24 10:21:46 +0200 2013
+
+ActionController::RoutingError (No route matches "/images/foreman.png"):
+  
+
+
+
+Started GET "/images/foreman_large.png" for 128.141.237.90 at Wed Apr 24 10:21:46 +0200 2013
+
+ActionController::RoutingError (No route matches "/images/foreman_large.png"):
+  
+
+
+
+Started GET "/users/login" for 128.141.237.90 at Wed Apr 24 10:22:27 +0200 2013
+  Processing by UsersController#login as HTML
+Rendered home/_topbar.rhtml (3.8ms)
+Rendered users/login.html.erb within layouts/application (12.2ms)
+Completed 200 OK in 23ms (Views: 17.6ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/stylesheets/jquery-ui.css" for 128.141.237.90 at Wed Apr 24 10:22:27 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/jquery-ui.css"):
+  
+
+
+
+Started GET "/stylesheets/jquery.jnotify" for 128.141.237.90 at Wed Apr 24 10:22:27 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/jquery.jnotify"):
+  
+
+
+
+Started GET "/stylesheets/bootstrap.min" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/bootstrap.min"):
+  
+
+
+
+Started GET "/stylesheets/bootstrap-responsive.min" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/bootstrap-responsive.min"):
+  
+
+
+
+Started GET "/stylesheets/style.css" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/style.css"):
+  
+
+
+
+Started GET "/stylesheets/multi-select.css" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/multi-select.css"):
+  
+
+
+
+Started GET "/stylesheets/wizard.css" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/stylesheets/wizard.css"):
+  
+
+
+
+Started GET "/javascripts/jquery.js" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.js"):
+  
+
+
+
+Started GET "/javascripts/jquery_ujs.js" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery_ujs.js"):
+  
+
+
+
+Started GET "/javascripts/jquery-ui.js" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery-ui.js"):
+  
+
+
+
+Started GET "/javascripts/highcharts.js" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/highcharts.js"):
+  
+
+
+
+Started GET "/javascripts/jquery.jnotify" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.jnotify"):
+  
+
+
+
+Started GET "/javascripts/jquery.multi-select" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.multi-select"):
+  
+
+
+
+Started GET "/javascripts/jquery.dataTables.min" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.dataTables.min"):
+  
+
+
+
+Started GET "/javascripts/jquery.dataTables.bootstrap-paging" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.dataTables.bootstrap-paging"):
+  
+
+
+
+Started GET "/javascripts/charts.js" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/charts.js"):
+  
+
+
+
+Started GET "/javascripts/jquery.jeditable" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/jquery.jeditable"):
+  
+
+
+
+Started GET "/javascripts/bootstrap.min" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/javascripts/bootstrap.min"):
+  
+
+
+
+Started GET "/images/foreman.png" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/images/foreman.png"):
+  
+
+
+
+Started GET "/images/foreman_large.png" for 128.141.237.90 at Wed Apr 24 10:22:28 +0200 2013
+
+ActionController::RoutingError (No route matches "/images/foreman_large.png"):
+  
+
+
+
+Started GET "/users/login" for 128.141.237.90 at Wed Apr 24 10:25:34 +0200 2013
+  Processing by UsersController#login as HTML
+Rendered home/_topbar.rhtml (3.8ms)
+Rendered users/login.html.erb within layouts/application (12.5ms)
+Completed 200 OK in 22ms (Views: 17.7ms | ActiveRecord: 0.9ms)
+
+
+Started POST "/users/login" for 128.141.237.90 at Wed Apr 24 10:25:43 +0200 2013
+  Processing by UsersController#login as HTML
+  Parameters: {"login"=>{"login"=>"dlobatog", "password"=>"[FILTERED]"}, "commit"=>"Login »", "authenticity_token"=>"CUjggkbm/1jZEcPCAEYIcejupb2/QVCkj4QZ1EkQ1bs=", "utf8"=>"✓"}
+Expire fragment views/tabs_and_title_records-1 (0.2ms)
+Redirected to http://foreman-testbench.cern.ch:3000/
+Completed 302 Found in 260ms
+
+
+Started GET "/" for 128.141.237.90 at Wed Apr 24 10:25:44 +0200 2013
+  Processing by DashboardController#index as HTML
+Read fragment views/tabs_and_title_records-95 (0.1ms)
+Rendered bookmarks/_list.html.erb (4.0ms)
+Rendered bookmarks/_list.html.erb (1.0ms)
+Rendered home/_settings.html.erb (180.2ms)
+Write fragment views/tabs_and_title_records-95 (3.3ms)
+Rendered home/_topbar.rhtml (207.4ms)
+Rendered home/_location_dropdown.rhtml (10.5ms)
+Rendered home/_organization_dropdown.rhtml (9.7ms)
+Rendered home/_user_dropdown.rhtml (24.8ms)
+Rendered common/_searchbar.erb (7.1ms)
+Rendered dashboard/index.html.erb within layouts/application (330.8ms)
+Completed 200 OK in 425ms (Views: 275.0ms | ActiveRecord: 92.0ms)
+
+
+Started GET "/hosts" for 128.141.237.90 at Wed Apr 24 10:29:25 +0200 2013
+  Processing by HostsController#index as HTML
+[1;32mDeface:[0m 2 overrides found for 'hosts/_list'
+[1;32mDeface:[0m 'add_column_content' matched 1 times with 'td:contains('report')'
+[1;32mDeface:[0m 'add_column_title' matched 1 times with 'th:contains('report')'
+Rendered hosts/_list.html.erb (513.3ms)
+Read fragment views/tabs_and_title_records-95 (0.3ms)
+Rendered home/_topbar.rhtml (1.8ms)
+Rendered home/_location_dropdown.rhtml (3.6ms)
+Rendered home/_organization_dropdown.rhtml (3.5ms)
+Rendered home/_user_dropdown.rhtml (8.8ms)
+Rendered common/_searchbar.erb (7.3ms)
+Rendered hosts/index.html.erb within layouts/application (691.3ms)
+Completed 200 OK in 812ms (Views: 676.1ms | ActiveRecord: 36.8ms)
+
+
+Started GET "/hosts/afssrvtest1.cern.ch/edit" for 128.141.237.90 at Wed Apr 24 10:29:30 +0200 2013
+  Processing by HostsController#edit as HTML
+  Parameters: {"id"=>"afssrvtest1.cern.ch"}
+Rendered hosts/_progress.erb (0.5ms)
+Rendered puppetclasses/_selectedClasses.html.erb (0.0ms)
+Rendered puppetclasses/_classes.html.erb (4530.5ms)
+Rendered puppetclasses/_class_selection.html.erb (4562.4ms)
+Rendered puppetclasses/_class_parameters.html.erb (0.0ms)
+Rendered puppetclasses/_classes_parameters.html.erb (21.0ms)
+Rendered common_parameters/_inherited_parameters.erb (9.9ms)
+Rendered common_parameters/_puppetclass_parameter.erb (3.6ms)
+Rendered common_parameters/_puppetclasses_parameters.erb (15.6ms)
+Rendered common_parameters/_parameter.erb (2.3ms)
+Rendered common_parameters/_parameters.erb (18.3ms)
+Rendered hosts/_form.html.erb (21559.8ms)
+Read fragment views/tabs_and_title_records-95 (0.3ms)
+Rendered home/_topbar.rhtml (1.7ms)
+Rendered home/_location_dropdown.rhtml (2.8ms)
+Rendered home/_organization_dropdown.rhtml (2.6ms)
+Rendered home/_user_dropdown.rhtml (7.0ms)
+Rendered hosts/edit.html.erb within layouts/application (21577.9ms)
+Completed 200 OK in 21611ms (Views: 21407.5ms | ActiveRecord: 179.9ms)
