@@ -19,10 +19,10 @@ Bundler.require(:jsonp) if SETTINGS[:support_jsonp]
 module Foreman
   class Application < Rails::Application
     # Setup additional routes by loading all routes file from routes directory
-    config.paths.config.routes.concat Dir[Rails.root.join("config/routes/*.rb")]
+    config.paths["config/routes"].concat Dir[Rails.root.join("config/routes/*.rb")]
 
     # Setup api routes by loading all routes file from routes/api directory
-    config.paths.config.routes.concat Dir[Rails.root.join("config/routes/api/*.rb")]
+    config.paths["config/routes"].concat Dir[Rails.root.join("config/routes/api/*.rb")]
 
 
     # Settings in config/environments/* take precedence over those specified here.
