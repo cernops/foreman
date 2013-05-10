@@ -1,0 +1,56 @@
+<%= javascript "compute_resource" %>
+<% title @compute_resource.name %>
+
+<% title_actions link_to(_('Edit'), edit_compute_resource_path(@compute_resource), :class => "btn")  %>
+
+<ul class="nav nav-tabs" data-tabs="tabs">
+  <li class="active"><a href="#primary" data-toggle="tab"><%= _("Compute Resource") %></a></li>
+  <li><a href="#vms" data-toggle="tab"><%= _("Virtual Machines") %></a></li>
+  <% if @compute_resource.capabilities.include?(:image) -%>
+    <li><a href="#images" data-toggle="tab"><%= _("Images") %></a></li>
+  <% end -%>
+</ul>
+
+<div class="tab-content">
+
+  <div class="tab-pane active" id="primary">
+    <table class="table table-bordered table-striped">
+      <th><%= _("Details") %></th>
+      <th></th>
+
+      <tr>
+        <td><%= _("Provider") %></td>
+        <td><%= @compute_resource.provider %></td>
+      </tr>
+
+      <tr>
+        <td><%= _("Description") %></td>
+        <td><%= @compute_resource.description %></td>
+      </tr>
+
+      <tr>
+        <td><%= _("URL") %></td>
+        <td><%= @compute_resource.url %></td>
+      </tr>
+    </table>
+  </div>
+  <div id="vms" class="tab-pane" data-url=<%= compute_resource_vms_path(@compute_resource) %>>
+    <p id="spinner">
+      <%= image_tag '/assets/spinner.gif' %>
+      Loading Virtual Machines information ...
+    </p>
+  </div>
+  <% if @compute_resource.capabilities.include?(:image) -%>
+    <div id="images" class="tab-pane">
+      <%= title_actions(display_link_if_authorized(_("New Image"), hash_for_new_compute_resource_image_path(:compute_resource_id => @compute_resource.id), :class => "btn btn-success")) %>
+      <div id="images_list" data-url=<%= compute_resource_images_path(@compute_resource) %>>
+        <p id="spinner">
+          <%= image_tag '/assets/spinner.gif' %>
+          <%= _('Loading Images information') %> ...
+        </p>
+      </div>
+    </div>
+  <% end -%>
+
+</div>
+

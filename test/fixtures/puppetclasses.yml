@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: base
+
+two:
+  name: apache
+
+three:
+  name: git
+
+four:
+  name: vim
