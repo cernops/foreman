@@ -16,6 +16,8 @@ gem "apipie-rails", '0.0.16'
 gem 'rabl', '>= 0.7.5'
 gem 'oauth'
 gem 'dalli'
+gem 'facter'
+gem 'puppet'
 
 if RUBY_VERSION =~ /^1\.8/
   # Older version of safemode for Ruby 1.8, as the latest causes regexp overflows (#2100)
