@@ -11,8 +11,8 @@ class ApplicationController < ActionController::Base
   # standard layout to all controllers
   helper 'layout'
 
-  before_filter :set_gettext_locale
   before_filter :require_ssl, :require_login
+  before_filter :set_gettext_locale_db, :set_gettext_locale
   before_filter :session_expiry, :update_activity_time, :unless => proc {|c| c.remote_user_provided? || c.api_request? } if SETTINGS[:login]
   before_filter :set_taxonomy, :require_mail, :check_empty_taxonomy
   before_filter :welcome, :only => :index, :unless => :api_request?
@@ -40,7 +40,6 @@ class ApplicationController < ActionController::Base
 
   # Authorize the user for the requested action
   def authorize(ctrl = params[:controller], action = params[:action])
-    return true if action == 'provision'
     allowed = User.current.allowed_to?({:controller => ctrl.gsub(/::/, "_").underscore, :action => action})
     allowed ? true : deny_access
   end
@@ -62,6 +61,12 @@ class ApplicationController < ActionController::Base
     @available_sso ||= SSO.get_available(self)
   end
 
+  # This filter is called before FastGettext set_gettext_locale and sets user-defined locale
+  # from db. It must be called after require_login.
+  def set_gettext_locale_db
+    params[:locale] ||= User.current.try(:locale)
+  end
+
   # Force a user to login if authentication is enabled
   # Sets User.current to the logged in user, or to admin if logins are not used
   def require_login
@@ -69,16 +74,24 @@ class ApplicationController < ActionController::Base
       # User is not found or first login
       if SETTINGS[:login]
         # authentication is enabled
-        if remote_user_provided?                                                                                                         
-          user = User.unscoped.find_by_login(@remote_user)                                                                              
-          logger.warn("Failed REMOTE_USER authentication from #{request.remote_ip}") unless user                                        
-        # Else, fall back to the standard authentication mechanism,                                                                     
+
+        if available_sso.present?
+          if available_sso.authenticated?
+            user = User.unscoped.find_by_login(available_sso.user)
+            session[:logout_path] = available_sso.logout_path if available_sso.support_logout?
+            update_activity_time
+          elsif available_sso.support_login?
+            available_sso.authenticate!
+            return
+          else
+            logger.warn("SSO failed, falling back to login form")
+          end
+        # Else, fall back to the standard authentication mechanism,
         # only if it's an API request.
         elsif api_request?
-          user = authenticate_or_request_with_http_basic { |u, p| User.try_to_login(u, p) }                                             
-          logger.warn("Failed Basic Auth authentication request from #{request.remote_ip}") unless user                                 
+          user = authenticate_or_request_with_http_basic { |u, p| User.try_to_login(u, p) }
+          logger.warn("Failed Basic Auth authentication request from #{request.remote_ip}") unless user
         end
- 
 
         if user.is_a?(User)
           logger.info("Authorized user #{user.login}(#{user.to_label})")
@@ -237,18 +250,29 @@ class ApplicationController < ActionController::Base
   def process_success hash = {}
     hash[:object]                 ||= eval("@#{controller_name.singularize}")
     hash[:object_name]            ||= hash[:object].to_s
-    hash[:success_msg]            ||= "Successfully #{action_name.pluralize.sub(/es$/,"ed").sub(/ys$/, "yed")} #{hash[:object_name]}."
+    unless hash[:success_msg]
+      hash[:success_msg] = case action_name
+                           when "create"
+                             _("Successfully created %s.") % hash[:object_name]
+                           when "update"
+                             _("Successfully updated %s.") % hash[:object_name]
+                           when "destroy"
+                             _("Successfully deleted %s.") % hash[:object_name]
+                           else
+                             raise Foreman::Exception.new(N_("Unknown action name for success message: %s"), action_name)
+                           end
+    end
     hash[:success_redirect]       ||= eval("#{controller_name}_url")
     hash[:json_code]                = :created if action_name == "create"
 
     return render :json => {:redirect => hash[:success_redirect]} if hash[:redirect_xhr]
 
     respond_to do |format|
-        format.html do
-          notice hash[:success_msg]
-          redirect_to hash[:success_redirect] and return
-        end
-        format.json { render :json => hash[:object], :status => hash[:json_code]}
+      format.html do
+        notice hash[:success_msg]
+        redirect_to hash[:success_redirect] and return
+      end
+      format.json { render :json => hash[:object], :status => hash[:json_code]}
     end
   end
 
@@ -264,7 +288,7 @@ class ApplicationController < ActionController::Base
 
     hash[:json_code] ||= :unprocessable_entity
     logger.info "Failed to save: #{hash[:object].errors.full_messages.join(", ")}" if hash[:object].respond_to?(:errors)
-    hash[:error_msg] ||= [hash[:object].errors[:base] + hash[:object].errors[:conflict].map{|e| "Conflict - #{e}"}].flatten
+    hash[:error_msg] ||= [hash[:object].errors[:base] + hash[:object].errors[:conflict].map{|e| _("Conflict - %s") % e}].flatten
     hash[:error_msg] = [hash[:error_msg]].flatten
     respond_to do |format|
       format.html do

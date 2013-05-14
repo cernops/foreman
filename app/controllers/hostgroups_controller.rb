@@ -61,6 +61,7 @@ class HostgroupsController < ApplicationController
       @hostgroup.users << User.current unless User.current.admin? or @hostgroup.users.include?(User.current)
       @hostgroup.users << User.find_by_subscribe_to_all_hostgroups(true)
       @hostgroup.users << users_in_ancestors
+
       process_success
     else
       load_vars_for_ajax
@@ -118,6 +119,5 @@ class HostgroupsController < ApplicationController
       ancestor.users.reject { |u| @hostgroup.users.include?(u) }
     end.flatten.uniq
   end
-
 
 end

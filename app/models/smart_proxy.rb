@@ -1,8 +1,9 @@
 class SmartProxy < ActiveRecord::Base
   include Authorization
   include Taxonomix
-  ProxyFeatures = %w[ TFTP BMC DNS DHCP Puppetca Puppet]
+
   attr_accessible :name, :url, :location_ids, :organization_ids
+  EnsureNotUsedBy.new(:hosts, :hostgroups, :subnets, :domains, :puppet_ca_hosts, :puppet_ca_hostgroups)
   #TODO check if there is a way to look into the tftp_id too
   # maybe with a predefined sql
   has_and_belongs_to_many :features
@@ -10,7 +11,8 @@ class SmartProxy < ActiveRecord::Base
   has_many :domains,    :foreign_key => "dns_id"
   has_many_hosts        :foreign_key => "puppet_proxy_id"
   has_many :hostgroups, :foreign_key => "puppet_proxy_id"
-
+  has_many :puppet_ca_hosts, :class_name => "Host::Managed", :foreign_key => "puppet_ca_proxy_id"
+  has_many :puppet_ca_hostgroups, :class_name => "Hostgroup", :foreign_key => "puppet_ca_proxy_id"
   URL_HOSTNAME_MATCH = %r{^(?:http|https):\/\/([^:\/]+)}
   validates_uniqueness_of :name
   validates_presence_of :name, :url
@@ -19,7 +21,6 @@ class SmartProxy < ActiveRecord::Base
 
   # There should be no problem with associating features before the proxy is saved as the whole operation is in a transaction
   before_save :sanitize_url, :associate_features
-  before_destroy EnsureNotUsedBy.new(:subnets, :domains, :hosts, :hostgroups)
 
   # with proc support, default_scope can no longer be chained
   # include all default scoping here
@@ -28,7 +29,19 @@ class SmartProxy < ActiveRecord::Base
       order("LOWER(smart_proxies.name)")
     end
   }
-  ProxyFeatures.each {|f| scope "#{f.downcase}_proxies".to_sym, where(:features => {:name => f}).joins(:features) }
+
+  def self.name_map
+    {
+      "tftp"     => Feature.find_by_name("TFTP"),
+      "bmc"      => Feature.find_by_name("BMC"),
+      "dns"      => Feature.find_by_name("DNS"),
+      "dhcp"     => Feature.find_by_name("DHCP"),
+      "puppetca" => Feature.find_by_name("Puppet CA"),
+      "puppet"   => Feature.find_by_name("Puppet")
+    }
+  end
+
+  name_map.each {|f,v| scope "#{f}_proxies".to_sym, where(:features => {:name => v.try(:name)}).joins(:features) }
 
   def hostname
     # This will always match as it is validated
@@ -41,17 +54,6 @@ class SmartProxy < ActiveRecord::Base
 
   def to_param
     "#{id}-#{name.parameterize}"
-  end
-
-  def self.name_map
-    {
-      "tftp"     => Feature.find_by_name("TFTP"),
-      "bmc"      => Feature.find_by_name("BMC"),
-      "dns"      => Feature.find_by_name("DNS"),
-      "dhcp"     => Feature.find_by_name("DHCP"),
-      "puppetca" => Feature.find_by_name("Puppet CA"),
-      "puppet"   => Feature.find_by_name("Puppet")
-    }
   end
 
   def self.smart_proxy_ids_for(hosts)

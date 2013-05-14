@@ -7,6 +7,7 @@ class ConfigTemplate < ActiveRecord::Base
   validates_presence_of :name, :template
   validates_presence_of :template_kind_id, :unless => Proc.new {|t| t.snippet }
   validates_uniqueness_of :name
+  before_destroy EnsureNotUsedBy.new(:hostgroups, :environments, :os_default_templates)
   has_many :hostgroups, :through => :template_combinations
   has_many :environments, :through => :template_combinations
   has_many :template_combinations, :dependent => :destroy
@@ -15,7 +16,6 @@ class ConfigTemplate < ActiveRecord::Base
   has_and_belongs_to_many :operatingsystems
   has_many :os_default_templates
   before_save :check_for_snippet_assoications, :remove_trailing_chars
-  before_destroy EnsureNotUsedBy.new(:hostgroups, :environments, :os_default_templates)
   # with proc support, default_scope can no longer be chained
   # include all default scoping here
   default_scope lambda {
@@ -49,8 +49,8 @@ class ConfigTemplate < ActiveRecord::Base
   end
 
   def self.find_template opts = {}
-    raise ::Foreman::Exception(N_("Must provide template kind")) unless opts[:kind]
-    raise ::Foreman::Exception(N_("Must provide an operating systems")) unless opts[:operatingsystem_id]
+    raise ::Foreman::Exception.new(N_("Must provide template kind")) unless opts[:kind]
+    raise ::Foreman::Exception.new(N_("Must provide an operating systems")) unless opts[:operatingsystem_id]
 
     # first filter valid templates to our OS and requested template kind.
     templates = ConfigTemplate.joins(:operatingsystems, :template_kind).where('operatingsystems.id' => opts[:operatingsystem_id], 'template_kinds.name' => opts[:kind])

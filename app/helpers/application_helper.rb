@@ -181,7 +181,7 @@ module ApplicationHelper
 
   def flot_pie_chart name, title, data, options = {}
     data = data.map { |k,v| {:label=>k.to_s.humanize, :data=>v} } if  data.is_a?(Hash)
-    header = content_tag(:h4,(options[:show_title]) ? title : '', :class=>'ca pie-title', :'data-original-title'=>"Expand the chart", :rel=>'twipsy')
+    header = content_tag(:h4,(options[:show_title]) ? title : '', :class=>'ca pie-title', :'data-original-title'=>_("Expand the chart"), :rel=>'twipsy')
     link_to_function(header, "expand_chart(this)")+
         content_tag(:div, nil,
                     { :id    => name,
@@ -294,7 +294,7 @@ module ApplicationHelper
   end
 
   def sign_out_url
-    User.logout_path + URI.escape(logout_users_url)
+    (session[:logout_path] || '') + URI.escape(logout_users_url)
   end
 
   private

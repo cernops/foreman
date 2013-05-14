@@ -1,4 +1,5 @@
 //= require jquery
+//= require i18n
 //= require jquery_ujs
 //= require jquery.ui.autocomplete
 //= require scoped_search
@@ -161,7 +162,7 @@ function template_info(div, url) {
   $(div).load(url + "?operatingsystem_id=" + os_id + "&hostgroup_id=" + hostgroup_id + "&environment_id=" + env_id+"&provisioning="+build,
               function(response, status, xhr) {
                 if (status == "error") {
-                  $(div).html("<div class='alert alert-warning'><a class='close' data-di  smiss='alert'>&times;</a><p>Sorry but no templates were configured.</p></div>");
+                  $(div).html("<div class='alert alert-warning'><a class='close' data-dismiss='alert'>&times;</a><p>_('Sorry but no templates were configured.')</p></div>");
                 }
               });
 }
@@ -170,8 +171,8 @@ $(document).ready(function() {
   var common_settings = {
     method      : 'PUT',
     indicator   : "<img src='/assets/spinner.gif' />",
-    tooltip     : 'Click to edit..',
-    placeholder : 'Click to edit..',
+    tooltip     : _('Click to edit..'),
+    placeholder : _('Click to edit..'),
     submitdata  : {authenticity_token: AUTH_TOKEN, format : "json"},
     onedit      : function(data) { $(this).removeClass("editable"); },
     callback    : function(value, settings) { $(this).addClass("editable"); },
@@ -227,7 +228,7 @@ $(function() {
     var query = encodeURI($("#search").val());
     var url = $("#bookmark").attr('data-url');
     $("#bookmarks-modal .modal-body").empty();
-    $("#bookmarks-modal .modal-body").append("<span id='loading'>Loading ...</span>");
+    $("#bookmarks-modal .modal-body").append("<span id='loading'>" + _('Loading ...') + "</span>");
     $("#bookmarks-modal .modal-body").load(url + '&query=' + query + ' form',
                                            function(response, status, xhr) {
                                              $("#loading").hide();
@@ -346,3 +347,14 @@ function update_puppetclasses(element) {
 function foreman_url(path) {
   return URL_PREFIX + path;
 }
+
+$(function() {
+  $('*[data-ajax-url]').each(function() {
+    var url = $(this).attr('data-ajax-url');
+    $(this).load(url, function(response, status, xhr) {
+      if (status == "error") {
+        $(this).closest(".tab-content").find("#spinner").html(_('Failed to fetch: ') + xhr.status + " " + xhr.statusText);
+      }
+    });
+  });
+});

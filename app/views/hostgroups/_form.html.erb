@@ -1,5 +1,5 @@
 <%= javascript 'host_edit' %>
-<%= form_for @hostgroup do |f| %>
+<%= form_for @hostgroup, :html => {:data => {:id => @hostgroup.try(:id)}} do |f| %>
   <%= base_errors_for @hostgroup %>
 
   <ul class="nav nav-tabs" data-tabs="tabs">
@@ -35,7 +35,7 @@
       <% if @environment or @hostgroup.environment -%>
         <%= render 'puppetclasses/class_selection', :obj => @hostgroup %>
       <% else -%>
-        <p class="alert alert-message">Please select an Environment first</p>
+        <p class="alert alert-message"><%= _('Please select an environment first') -%></p>
       <% end -%>
     </div>
 
@@ -49,6 +49,13 @@
     </div>
 
     <div class="tab-pane" id="params">
+      <h6><%= _('Puppet classes parameters') -%></h6>
+      <p/>
+      <%= render "puppetclasses/classes_parameters", { :obj => @hostgroup } %>
+      <h6><%= _('Host group parameters') -%></h6>
+      <p/>
+      <%= render "common_parameters/puppetclasses_parameters", :f => f %>
+      <p/>
       <%= render "common_parameters/parameters", { :f => f, :type => :group_parameters } %>
     </div>
 

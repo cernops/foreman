@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: version 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-23 15:23+0200\n"
-"PO-Revision-Date: 2013-03-01 15:45-0500\n"
+"POT-Creation-Date: 2013-05-09 21:04+0200\n"
+"PO-Revision-Date: 2013-05-09 09:31+0100\n"
 "Last-Translator: Lukas Zapletal <lzap+git@redhat.com>\n"
 "Language-Team: Foreman Team <foreman-dev@googlegroups.com>\n"
 "Language: ja\n"
@@ -21,6 +21,9 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "%s - Press Shift-F12 to release the cursor."
+msgstr ""
+
+msgid "%s - The following hosts are about to be changed"
 msgstr ""
 
 msgid "%s Distribution"
@@ -60,13 +63,17 @@ msgid "%s week ago"
 msgid_plural "%s weeks ago"
 msgstr[0] ""
 
-msgid "%{count} hosts with no %{taxonomy_single} assigned"
-msgstr ""
+msgid "%{count} host with no %{taxonomy_single} assigned"
+msgid_plural "%{count} hosts with no %{taxonomy_single} assigned"
+msgstr[0] ""
 
 msgid "%{default_value} is not one of %{validator_rule}"
 msgstr ""
 
-msgid "%{host} - %{time} ago"
+msgid "%{host} is now %{state}"
+msgstr ""
+
+msgid "%{host} now boots from %{device}"
 msgstr ""
 
 msgid "%{name} changed from %{label1} to %{label2}"
@@ -79,9 +86,6 @@ msgid "%{value} does not belong to %{os} operating system"
 msgstr ""
 
 msgid "%{value} is not one of %{rules}"
-msgstr ""
-
-msgid "%{vm} is now %{state}"
 msgstr ""
 
 msgid "%{vm} is now %{vm_state}"
@@ -99,16 +103,16 @@ msgstr ""
 msgid "(optional) IAM Role for Fog to use when creating this image."
 msgstr ""
 
-msgid "*Clear Hostgroup*"
-msgstr ""
-
 msgid "*Clear environment*"
 msgstr ""
 
-msgid "*Inherit from hostgroup*"
+msgid "*Clear host group*"
 msgstr ""
 
-msgid "<b>Description:</b> %{key}<br><b>Type:</b> %{type}<br> <b>Matcher:</b> %{matcher}"
+msgid "*Inherit from host group*"
+msgstr ""
+
+msgid "<b>Description:</b> %{desc}<br><b>Type:</b> %{type}<br> <b>Matcher:</b> %{matcher}"
 msgstr ""
 
 msgid "<b>Source:</b> %s"
@@ -120,11 +124,11 @@ msgstr ""
 msgid "<dl><dt>String</dt> <dd>Everything is taken as a string.</dd><dt>Boolean</dt> <dd>Common representation of boolean values are accepted.</dd><dt>Integer</dt> <dd>Integer numbers only, can be negative.</dd><dt>Real</dt> <dd>Accept any numerical input.</dd><dt>Array</dt> <dd>A valid JSON or YAML input, that must evaluate to an array.</dd><dt>Hash</dt> <dd>A valid JSON or YAML input, that must evaluate to an object/map/dict/hash.</dd><dt>YAML</dt> <dd>Any valid YAML input.</dd><dt>JSON</dt> <dd>Any valid JSON input.</dd></dl>"
 msgstr ""
 
-#. host's status: first character of "active"
+#. initial character of Applied host's status: first character of "active"
 msgid "A"
 msgstr ""
 
-msgid "A Host group is in some ways similar to an inherited node declaration, in that it is a high level grouping of classes that can be named and treated as a unit. This is then treated as a template and  is selectable during the creation of a new host and ensures that the host is configured in one of your pre-defined states."
+msgid "A host group is in some ways similar to an inherited node declaration, in that it is a high level grouping of classes that can be named and treated as a unit. This is then treated as a template and  is selectable during the creation of a new host and ensures that the host is configured in one of your pre-defined states."
 msgstr ""
 
 msgid "A medium represents the source of one or more operating system's installation files, accessible via the network.\\n  It will probably be a mirror from the internet or a copy of one or more CD or DVDs."
@@ -169,9 +173,6 @@ msgstr ""
 msgid "Add Bookmark"
 msgstr ""
 
-msgid "Add Combination"
-msgstr ""
-
 msgid "Add Filter"
 msgstr ""
 
@@ -194,6 +195,9 @@ msgid "Add Volume"
 msgstr ""
 
 msgid "Add a fact filter"
+msgstr ""
+
+msgid "Add combination"
 msgstr ""
 
 msgid "Add:"
@@ -232,8 +236,9 @@ msgstr ""
 msgid "All Environments"
 msgstr ""
 
-msgid "All Hostgroups"
-msgstr ""
+#, fuzzy
+msgid "All Host Groups"
+msgstr "ユーザー名"
 
 msgid "All Media"
 msgstr ""
@@ -280,6 +285,9 @@ msgstr ""
 msgid "An explicit layout for the partitions of your hard drive(s). E.G."
 msgstr ""
 
+msgid "Any Context"
+msgstr ""
+
 msgid "Any Location"
 msgstr ""
 
@@ -315,12 +323,6 @@ msgstr ""
 msgid "Assign All"
 msgstr ""
 
-msgid "Assign All %{count} Hosts with No %{taxonomy_type} to %{taxonomy_name}"
-msgstr ""
-
-msgid "Assign All %{count} Hosts with No %{taxonomy_upcase} to %{taxonomy_name}"
-msgstr ""
-
 msgid "Assign Hosts to %s"
 msgstr ""
 
@@ -333,10 +335,14 @@ msgstr ""
 msgid "Assign Selected Hosts"
 msgstr ""
 
+msgid "Assign the %{count} host with no %{taxonomy_single} to %{taxonomy_name}"
+msgid_plural "Assign all %{count} hosts with no %{taxonomy_single} to %{taxonomy_name}"
+msgstr[0] ""
+
 msgid "Assign to %s"
 msgstr ""
 
-msgid "Assigning hosts to %{taxonomy_name} will also update %{taxonomy_name} to include all the resources that the selected Hosts are currently using."
+msgid "Assigning hosts to %{taxonomy_name} will also update %{taxonomy_name} to include all the resources that the selected hosts are currently using."
 msgstr ""
 
 msgid "Association"
@@ -485,6 +491,9 @@ msgstr ""
 msgid "B"
 msgstr ""
 
+msgid "BIOS"
+msgstr ""
+
 msgid "BMC"
 msgstr ""
 
@@ -545,6 +554,9 @@ msgstr ""
 msgid "Bookmark|Query"
 msgstr ""
 
+msgid "Boot device"
+msgstr ""
+
 msgid "Bootable"
 msgstr ""
 
@@ -553,6 +565,10 @@ msgstr ""
 
 msgid "Browse host reports"
 msgstr ""
+
+#, fuzzy
+msgid "Browser locale"
+msgstr "ユーザー名"
 
 msgid "Build"
 msgstr ""
@@ -564,6 +580,9 @@ msgid "Build PXE Default"
 msgstr ""
 
 msgid "Build from OS image"
+msgstr ""
+
+msgid "CDROM"
 msgstr ""
 
 msgid "CPUs"
@@ -590,6 +609,9 @@ msgstr ""
 msgid "Canceled pending build for %s"
 msgstr ""
 
+msgid "Canvas not supported."
+msgstr ""
+
 msgid "Certificate Name"
 msgstr ""
 
@@ -602,7 +624,13 @@ msgstr ""
 msgid "Change Group"
 msgstr ""
 
+msgid "Change your avatar at gravatar.com"
+msgstr ""
+
 msgid "Changed environments and puppet classes"
+msgstr ""
+
+msgid "Chassis"
 msgstr ""
 
 msgid "Check all"
@@ -629,7 +657,13 @@ msgstr ""
 msgid "Click to edit"
 msgstr ""
 
+msgid "Click to edit.."
+msgstr ""
+
 msgid "Click to remove %s"
+msgstr ""
+
+msgid "Click to undo adding this class"
 msgstr ""
 
 msgid "Client SSL certificates are used to identify Smart Proxies accessing fact/report importers and ENC output over HTTPS (:require_ssl should also be enabled)"
@@ -694,14 +728,8 @@ msgstr ""
 msgid "Config Retrieval"
 msgstr ""
 
-msgid "Config Template"
-msgstr ""
-
 #. "Table name" or "Table name|Column name" for error messages
 msgid "Config template"
-msgstr ""
-
-msgid "Config templates"
 msgstr ""
 
 #. "Table name" or "Table name|Column name" for error messages
@@ -720,6 +748,12 @@ msgid "Configuration"
 msgstr ""
 
 msgid "Configuring instance %s via SSH"
+msgstr ""
+
+msgid "Conflict - %s"
+msgstr ""
+
+msgid "Connected (unencrypted) to: %s"
 msgstr ""
 
 msgid "Connecting (unencrypted) to: %s"
@@ -744,6 +778,9 @@ msgid "Create Reverse DNS record for %s"
 msgstr ""
 
 msgid "Create a Smart Proxy"
+msgstr ""
+
+msgid "Ctrl-Alt-Del"
 msgstr ""
 
 #. host's status: first character of "disabled"
@@ -798,10 +835,16 @@ msgstr ""
 msgid "Datacenter"
 msgstr ""
 
+msgid "Default"
+msgstr ""
+
 msgid "Default Puppet server hostname"
 msgstr ""
 
 msgid "Default encrypted root password on provisioned hosts (default is 123123)"
+msgstr ""
+
+msgid "Default value"
 msgstr ""
 
 msgid "Delete"
@@ -928,9 +971,6 @@ msgstr ""
 msgid "Edit Bookmark"
 msgstr ""
 
-msgid "Edit Config Template"
-msgstr ""
-
 msgid "Edit Domain"
 msgstr ""
 
@@ -938,9 +978,6 @@ msgid "Edit Environment"
 msgstr ""
 
 msgid "Edit Global Parameter"
-msgstr ""
-
-msgid "Edit Host"
 msgstr ""
 
 msgid "Edit LDAP Auth Source"
@@ -958,7 +995,7 @@ msgstr ""
 msgid "Edit Parameters"
 msgstr ""
 
-msgid "Edit Partition table"
+msgid "Edit Partition Table"
 msgstr ""
 
 msgid "Edit Properties"
@@ -977,6 +1014,9 @@ msgid "Edit Smart Variable"
 msgstr ""
 
 msgid "Edit Subnet"
+msgstr ""
+
+msgid "Edit Template"
 msgstr ""
 
 msgid "Edit Trend %s"
@@ -1065,19 +1105,33 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
+msgid "Error has occurred while communicating with %{cr}: %{e}"
+msgstr ""
+
 msgid "Errors only"
 msgstr ""
 
+msgid "Expand the chart"
+msgstr ""
+
 msgid "Expires"
+msgstr ""
+
+#. initial character of Failed
+msgid "F"
+msgstr ""
+
+#. initial characters of Failed Restarts
+msgid "FR"
+msgstr ""
+
+msgid "Fact Chart"
 msgstr ""
 
 msgid "Fact Name"
 msgstr ""
 
 msgid "Fact Values"
-msgstr ""
-
-msgid "Fact error"
 msgstr ""
 
 msgid "Fact filters"
@@ -1108,10 +1162,13 @@ msgstr ""
 msgid "Failed"
 msgstr ""
 
+msgid "Failed Restarts"
+msgstr ""
+
 msgid "Failed restarts"
 msgstr ""
 
-msgid "Failed to %{action} %{vm}: %{e}"
+msgid "Failed to %{action} %{host}: %{e}"
 msgstr ""
 
 msgid "Failed to add %{name} to autosign file: %{e}"
@@ -1121,6 +1178,9 @@ msgid "Failed to cancel pending build for %s"
 msgstr ""
 
 msgid "Failed to clean any old certificates or add the autosign entry. Terminating the build!"
+msgstr ""
+
+msgid "Failed to configure %{host} to boot from %{device}: %{e}"
 msgstr ""
 
 msgid "Failed to create a compute %{compute_resource} instance %{name}: %{message}\\n "
@@ -1139,6 +1199,9 @@ msgid "Failed to fetch boot files"
 msgstr ""
 
 msgid "Failed to fetch boot files: %s"
+msgstr ""
+
+msgid "Failed to fetch: "
 msgstr ""
 
 msgid "Failed to generate %{template_kind} template: %{e}"
@@ -1166,6 +1229,9 @@ msgid "Failed to launch script on %{name}: %{e}"
 msgstr ""
 
 msgid "Failed to login via SSH to %{name}: %{e}"
+msgstr ""
+
+msgid "Failed to modify the build cycle for %s"
 msgstr ""
 
 msgid "Failed to perform rollback on %{task} - %{e}"
@@ -1290,10 +1356,7 @@ msgstr ""
 msgid "Full trace"
 msgstr ""
 
-msgid "Future content goes here!"
-msgstr ""
-
-msgid "General"
+msgid "Gateway"
 msgstr ""
 
 msgid "General useful description, for example this kind of hardware needs a special BIOS setup"
@@ -1314,7 +1377,7 @@ msgstr ""
 msgid "Global variable or class Parameter, not both"
 msgstr ""
 
-msgid "Good Host Reports in the last %s"
+msgid "Good host reports in the last %s"
 msgstr ""
 
 msgid "Hardware"
@@ -1347,11 +1410,9 @@ msgstr ""
 msgid "Host Configuration Status"
 msgstr ""
 
-msgid "Host Group"
-msgstr ""
-
+#, fuzzy
 msgid "Host Groups"
-msgstr ""
+msgstr "ユーザー名"
 
 msgid "Host Parameters"
 msgstr ""
@@ -1362,6 +1423,35 @@ msgstr ""
 msgid "Host details"
 msgstr ""
 
+#, fuzzy
+msgid "Host group"
+msgstr "ユーザー名"
+
+msgid "Host group / Environment"
+msgstr ""
+
+msgid "Host group and Environment"
+msgstr ""
+
+msgid "Host group configuration"
+msgstr ""
+
+#, fuzzy
+msgid "Host group hosts"
+msgstr "ユーザー名"
+
+#, fuzzy
+msgid "Host group only"
+msgstr "ユーザー名"
+
+#, fuzzy
+msgid "Host group parameters"
+msgstr "ユーザー名"
+
+#, fuzzy
+msgid "Host groups"
+msgstr "ユーザー名"
+
 msgid "Host is pending for Build"
 msgstr ""
 
@@ -1369,12 +1459,6 @@ msgid "Host reported time is <em>%s</em>"
 msgstr ""
 
 msgid "Host times seems to be adrift!"
-msgstr ""
-
-msgid "Host-group and Environment"
-msgstr ""
-
-msgid "Host-group only"
 msgstr ""
 
 #. "Table name" or "Table name|Column name" for error messages
@@ -1465,18 +1549,6 @@ msgstr ""
 msgid "Hostgroup"
 msgstr ""
 
-msgid "Hostgroup / Environment"
-msgstr ""
-
-msgid "Hostgroup configuration"
-msgstr ""
-
-msgid "Hostgroup hosts"
-msgstr ""
-
-msgid "Hostgroups"
-msgstr ""
-
 #. "Table name" or "Table name|Column name" for error messages
 msgid "Hostgroup|Ancestry"
 msgstr ""
@@ -1512,13 +1584,7 @@ msgstr ""
 msgid "Hosts Inventory"
 msgstr ""
 
-msgid "Hosts With Alerts Disabled"
-msgstr ""
-
-msgid "Hosts With No Reports"
-msgstr ""
-
-msgid "Hosts in Error State"
+msgid "Hosts in error state"
 msgstr ""
 
 msgid "Hosts that had pending changes"
@@ -1533,19 +1599,28 @@ msgstr ""
 msgid "Hosts which didn't run puppet in the last %s"
 msgstr ""
 
+msgid "Hosts with alerts disabled"
+msgstr ""
+
 msgid "Hosts with errors"
+msgstr ""
+
+msgid "Hosts with no reports"
 msgstr ""
 
 msgid "Hosts with notifications disabled"
 msgstr ""
 
-msgid "How Templates are determined"
+msgid "How templates are determined"
 msgstr ""
 
 msgid "How values are validated"
 msgstr ""
 
 msgid "Howtos"
+msgstr ""
+
+msgid "IP"
 msgstr ""
 
 msgid "IP Address"
@@ -1611,6 +1686,9 @@ msgstr "ユーザー名"
 msgid "Image|Uuid"
 msgstr ""
 
+msgid "Import"
+msgstr ""
+
 msgid "Import Subnets"
 msgstr ""
 
@@ -1644,7 +1722,7 @@ msgstr ""
 msgid "In Progress"
 msgstr ""
 
-msgid "In addition to defining which puppet classes get included when building this host type you are also able to assign variables and provisioning information to a hostgroup to further refine the behavior of the puppet runtime."
+msgid "In addition to defining which puppet classes get included when building this host type you are also able to assign variables and provisioning information to a host group to further refine the behavior of the puppet runtime."
 msgstr ""
 
 msgid "Include this host within Foreman reporting"
@@ -1677,6 +1755,9 @@ msgstr ""
 msgid "Invalid Host"
 msgstr ""
 
+msgid "Invalid power state request: %{action}, supported actions are %{supported}"
+msgstr ""
+
 msgid "Invalid query"
 msgstr ""
 
@@ -1693,6 +1774,9 @@ msgid "Inventory browser"
 msgstr ""
 
 msgid "It is not possible to assign provisioning templates at this stage"
+msgstr ""
+
+msgid "Item"
 msgstr ""
 
 msgid "Key Binding"
@@ -1755,7 +1839,22 @@ msgstr ""
 msgid "Load Tenants"
 msgstr ""
 
+msgid "Loading"
+msgstr ""
+
+msgid "Loading ..."
+msgstr ""
+
+msgid "Loading BMC information ..."
+msgstr ""
+
 msgid "Loading Images information"
+msgstr ""
+
+msgid "Loading Virtual Machines information ..."
+msgstr ""
+
+msgid "Loading parameters..."
 msgstr ""
 
 msgid "Location"
@@ -1782,7 +1881,7 @@ msgstr ""
 msgid "Logged-in"
 msgstr ""
 
-msgid "Login &#187;"
+msgid "Login"
 msgstr ""
 
 #. "Table name" or "Table name|Column name" for error messages
@@ -1845,6 +1944,9 @@ msgstr ""
 msgid "LookupValue|Value"
 msgstr ""
 
+msgid "MAC"
+msgstr ""
+
 msgid "MAC Address"
 msgstr ""
 
@@ -1860,13 +1962,19 @@ msgstr ""
 msgid "Manage Bookmarks"
 msgstr ""
 
+msgid "Manage Locations"
+msgstr ""
+
+msgid "Manage Organizations"
+msgstr ""
+
 msgid "Manage host"
 msgstr ""
 
 msgid "Manually Assign"
 msgstr ""
 
-msgid "Manually select and assign Hosts with No %s"
+msgid "Manually select and assign hosts with no %s"
 msgstr ""
 
 msgid "Matcher"
@@ -1987,6 +2095,9 @@ msgstr ""
 msgid "N/A"
 msgstr ""
 
+msgid "NA"
+msgstr ""
+
 msgid "NIC"
 msgstr ""
 
@@ -1994,6 +2105,9 @@ msgid "Name"
 msgstr ""
 
 msgid "Nest"
+msgstr ""
+
+msgid "Netmask"
 msgstr ""
 
 msgid "Netmask for this subnet"
@@ -2009,6 +2123,9 @@ msgid "Network interfaces"
 msgstr ""
 
 msgid "Networks"
+msgstr ""
+
+msgid "New"
 msgstr ""
 
 msgid "New %s"
@@ -2038,8 +2155,9 @@ msgstr ""
 msgid "New Host"
 msgstr ""
 
-msgid "New Hostgroup"
-msgstr ""
+#, fuzzy
+msgid "New Host Group"
+msgstr "ユーザー名"
 
 msgid "New Image"
 msgstr ""
@@ -2071,10 +2189,7 @@ msgstr ""
 msgid "New Parameter"
 msgstr ""
 
-msgid "New Partition Table layout"
-msgstr ""
-
-msgid "New Partition table layout"
+msgid "New Partition Table"
 msgstr ""
 
 msgid "New Proxy"
@@ -2113,16 +2228,13 @@ msgstr ""
 msgid "New compute resource"
 msgstr ""
 
-msgid "New hostgroup"
-msgstr ""
-
 msgid "New installation medium"
 msgstr ""
 
-msgid "New partition table"
+msgid "New role"
 msgstr ""
 
-msgid "New role"
+msgid "New window"
 msgstr ""
 
 #. "Table name" or "Table name|Column name" for error messages
@@ -2144,34 +2256,7 @@ msgstr ""
 msgid "No %{template_kind} templates were found for this host, make sure you define at least one in your %{os} settings"
 msgstr ""
 
-msgid "No Environment selected!"
-msgstr ""
-
-msgid "No History Found"
-msgstr ""
-
-msgid "No Hostgroup selected!"
-msgstr ""
-
-msgid "No Hosts selected"
-msgstr ""
-
-msgid "No Preference"
-msgstr ""
-
-msgid "No Subnets selected"
-msgstr ""
-
 msgid "No TFTP proxies defined, can't continue"
-msgstr ""
-
-msgid "No Template found"
-msgstr ""
-
-msgid "No Trend Counter Defined."
-msgstr ""
-
-msgid "No Trend Counter Found."
 msgstr ""
 
 msgid "No changes"
@@ -2180,22 +2265,40 @@ msgstr ""
 msgid "No domains"
 msgstr ""
 
+msgid "No environment selected!"
+msgstr ""
+
 msgid "No features found on this proxy, please make sure you enable at least one feature"
 msgstr ""
 
 msgid "No finish templates were found for this host, make sure you define at least one in your %s settings"
 msgstr ""
 
+msgid "No history found"
+msgstr ""
+
+msgid "No host group selected!"
+msgstr ""
+
 msgid "No hosts are mismatched!"
 msgstr ""
 
+msgid "No hosts selected"
+msgstr ""
+
 msgid "No hosts were found with that id or name"
+msgstr ""
+
+msgid "No interesting reports received in the last week"
 msgstr ""
 
 msgid "No new subnets found"
 msgstr ""
 
 msgid "No parameters were allocated to the selected hosts, can't mass assign."
+msgstr ""
+
+msgid "No preference"
 msgstr ""
 
 msgid "No puppet activity for this host in the last %s days"
@@ -2210,7 +2313,19 @@ msgstr ""
 msgid "No subnets"
 msgstr ""
 
+msgid "No subnets selected"
+msgstr ""
+
+msgid "No template found"
+msgstr ""
+
 msgid "No templates found!"
+msgstr ""
+
+msgid "No trend counter defined."
+msgstr ""
+
+msgid "No trend counter found."
 msgstr ""
 
 msgid "No value error"
@@ -2280,7 +2395,7 @@ msgstr ""
 msgid "Number of Hosts"
 msgstr ""
 
-msgid "Number of Values"
+msgid "Number of values"
 msgstr ""
 
 #. host's status: first character of "OK"
@@ -2308,13 +2423,13 @@ msgstr ""
 msgid "Off"
 msgstr ""
 
+msgid "Old"
+msgstr ""
+
 msgid "On"
 msgstr ""
 
 msgid "Once installed you should head over to"
-msgstr ""
-
-msgid "One or more unknown facts were encountered during evaluation:"
 msgstr ""
 
 msgid "Only URLs with schema http://, https://, ftp:// or nfs:// are allowed (e.g. nfs://server/vol/dir)"
@@ -2338,6 +2453,9 @@ msgstr ""
 msgid "Oops, we're sorry but something went wrong"
 msgstr ""
 
+msgid "Open Spice in a new window"
+msgstr ""
+
 msgid "Operating Mode"
 msgstr ""
 
@@ -2353,16 +2471,13 @@ msgstr ""
 msgid "Operating Systems"
 msgstr ""
 
+msgid "Operating system"
+msgstr ""
+
 msgid "Operating system default"
 msgstr ""
 
 msgid "Operating systems"
-msgstr ""
-
-msgid "Operating<br>System"
-msgstr ""
-
-msgid "Operating<br>system"
 msgstr ""
 
 #. "Table name" or "Table name|Column name" for error messages
@@ -2434,10 +2549,10 @@ msgstr ""
 msgid "Other reports for this host"
 msgstr ""
 
-msgid "Out Of Sync Hosts"
+msgid "Out of sync"
 msgstr ""
 
-msgid "Out of sync"
+msgid "Out of sync Hosts"
 msgstr ""
 
 msgid "Override Value"
@@ -2467,8 +2582,11 @@ msgstr ""
 msgid "Owner changed to %s"
 msgstr ""
 
-#. host's status: first character of "pending"
+#. initial character of Pending host's status: first character of "pending"
 msgid "P"
+msgstr ""
+
+msgid "PXE"
 msgstr ""
 
 msgid "PXE Default file has been deployed to all Smart Proxies"
@@ -2505,10 +2623,10 @@ msgstr ""
 msgid "Parent"
 msgstr ""
 
-msgid "Partition Table"
+msgid "Partition Tables"
 msgstr ""
 
-msgid "Partition Tables"
+msgid "Partition table"
 msgstr ""
 
 msgid "Partition table configuration"
@@ -2562,7 +2680,13 @@ msgstr ""
 msgid "Please save the Operating System first and try again."
 msgstr ""
 
-msgid "Please select an Environment first"
+msgid "Please select"
+msgstr ""
+
+msgid "Please select an environment first"
+msgstr ""
+
+msgid "Please select an image"
 msgstr ""
 
 msgid "Please try to update your request"
@@ -2622,10 +2746,19 @@ msgstr ""
 msgid "Provisioning Support is disabled or this host is not managed"
 msgstr ""
 
+msgid "Provisioning Template"
+msgstr ""
+
 msgid "Provisioning Template content changed %s"
 msgstr ""
 
 msgid "Provisioning Templates"
+msgstr ""
+
+msgid "Provisioning template"
+msgstr ""
+
+msgid "Provisioning templates"
 msgstr ""
 
 msgid "Proxies"
@@ -2645,9 +2778,6 @@ msgstr ""
 
 #. "Table name" or "Table name|Column name" for error messages
 msgid "Ptable|Os family"
-msgstr ""
-
-msgid "Puppet"
 msgstr ""
 
 msgid "Puppet CA"
@@ -2692,6 +2822,12 @@ msgstr ""
 msgid "Puppet classes and environment importer"
 msgstr ""
 
+msgid "Puppet classes parameters"
+msgstr ""
+
+msgid "Puppet environments"
+msgstr ""
+
 msgid "Puppet error on %s"
 msgstr ""
 
@@ -2713,6 +2849,10 @@ msgid "Puppetclass|Name"
 msgstr ""
 
 msgid "Querying instance details for %s"
+msgstr ""
+
+#. initial character of Restarted
+msgid "R"
 msgstr ""
 
 msgid "Rebuild %s on next reboot?\\nThis would also delete all of its current facts and reports"
@@ -2776,7 +2916,7 @@ msgstr ""
 msgid "Reports"
 msgstr ""
 
-msgid "Reports from the last"
+msgid "Reports from the last %{days} days - %{count} reports found"
 msgstr ""
 
 #. "Table name" or "Table name|Column name" for error messages
@@ -2797,6 +2937,9 @@ msgstr ""
 msgid "Required parameter without value.<br/><b>Please override!</b> <br><br><b>Description:</b>: %s"
 msgstr ""
 
+msgid "Reset zoom"
+msgstr ""
+
 msgid "Resolve"
 msgstr ""
 
@@ -2810,6 +2953,12 @@ msgid "Restart<br>Failures"
 msgstr ""
 
 msgid "Restarted"
+msgstr ""
+
+msgid "Revert"
+msgstr ""
+
+msgid "Revert to revision from: %s"
 msgstr ""
 
 msgid "Review"
@@ -2856,7 +3005,7 @@ msgstr ""
 msgid "Runtime"
 msgstr ""
 
-#. host's status: first character of "sync" (out of sync)
+#. initial character of Skipped host's status: first character of "sync" (out of sync)
 msgid "S"
 msgstr ""
 
@@ -2893,19 +3042,13 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
+msgid "Select Action"
+msgstr ""
+
 msgid "Select All"
 msgstr ""
 
-msgid "Select Environment"
-msgstr ""
-
-msgid "Select Host Group"
-msgstr ""
-
 msgid "Select Hosts"
-msgstr ""
-
-msgid "Select Hosts to Assign to %s"
 msgstr ""
 
 msgid "Select Location"
@@ -2918,6 +3061,19 @@ msgid "Select a period"
 msgstr ""
 
 msgid "Select all"
+msgstr ""
+
+msgid "Select all items in this page"
+msgstr ""
+
+msgid "Select environment"
+msgstr ""
+
+#, fuzzy
+msgid "Select host group"
+msgstr "ユーザー名"
+
+msgid "Select hosts to assign to %s"
 msgstr ""
 
 msgid "Select template"
@@ -2984,6 +3140,9 @@ msgstr ""
 msgid "Should Foreman use gravatar to display user icons"
 msgstr ""
 
+msgid "Should Foreman use host group ancestors matchers to set puppet classes parameters values"
+msgstr ""
+
 msgid "Should Foreman use random UUID's for certificate signing instead of hostnames"
 msgstr ""
 
@@ -2997,6 +3156,9 @@ msgid "Should foreman use OAuth for authorization in API"
 msgstr ""
 
 msgid "Should the smart variables be exposed via the ENC yaml output?"
+msgstr ""
+
+msgid "Show Diff"
 msgstr ""
 
 msgid "Show Host"
@@ -3032,7 +3194,7 @@ msgstr ""
 msgid "Size (GB)"
 msgstr ""
 
-msgid "Skip Assign Hosts and Proceed to Edit %s Settings"
+msgid "Skip assign hosts and proceed to edit %s settings"
 msgstr ""
 
 msgid "Skipped"
@@ -3077,6 +3239,9 @@ msgstr ""
 msgid "Something went wrong while selecting hosts - %s"
 msgstr ""
 
+msgid "Sorry but no templates were configured."
+msgstr ""
+
 msgid "Sorry, these hosts do not have parameters assigned to them, you must add them first."
 msgstr ""
 
@@ -3096,6 +3261,9 @@ msgid "State"
 msgstr ""
 
 msgid "Statistics"
+msgstr ""
+
+msgid "Status"
 msgstr ""
 
 msgid "Storage"
@@ -3160,7 +3328,13 @@ msgstr ""
 msgid "Success"
 msgstr ""
 
+msgid "Successfully created %s."
+msgstr ""
+
 msgid "Successfully created puppetclass."
+msgstr ""
+
+msgid "Successfully deleted %s."
 msgstr ""
 
 msgid "Successfully destroyed puppetclass."
@@ -3173,6 +3347,9 @@ msgid "Successfully executed, check log files for more details"
 msgstr ""
 
 msgid "Successfully executed, check reports and/or log files for more details"
+msgstr ""
+
+msgid "Successfully updated %s."
 msgstr ""
 
 msgid "Successfully updated puppetclass."
@@ -3214,6 +3391,9 @@ msgid "Taxonomy|Name"
 msgstr ""
 
 msgid "Template / Hardware Profile to use"
+msgstr ""
+
+msgid "Template Diff"
 msgstr ""
 
 msgid "Template Type"
@@ -3323,7 +3503,7 @@ msgstr ""
 msgid "The full DNS Domain name"
 msgstr ""
 
-msgid "The hostgroup's classes and the hostgroup's variables are included in the external node information when the puppetmaster compiles the host's configuration."
+msgid "The host group's classes and the host group's variables are included in the external node information when the puppetmaster compiles the host's configuration."
 msgstr ""
 
 msgid "The hostname where your Foreman instance is reachable"
@@ -3338,7 +3518,7 @@ msgstr ""
 msgid "The marked fields will need reviewing"
 msgstr ""
 
-msgid "The order in which matchers keys are processed, first match wins.<br> You may use multiple attributes as a matcher key, for example, an order of <code>hostgroup, environment</code> would expect a matcher such as <code>hostgroup = \"web servers\", environment = production</code>"
+msgid "The order in which matchers keys are processed, first match wins.<br> You may use multiple attributes as a matcher key, for example, an order of <code>host group, environment</code> would expect a matcher such as <code>hostgroup = \"web servers\", environment = production</code>"
 msgstr ""
 
 msgid "The order in which values are resolved"
@@ -3353,19 +3533,17 @@ msgstr ""
 msgid "The user that is used to ssh into the instance, normally ec2-user, ubuntu, root etc"
 msgstr ""
 
-msgid "There are"
+msgid "There are two strategies when using host groups."
 msgstr ""
 
-msgid "There are two strategies when using hostgroups."
-msgstr ""
-
-msgid "There aren't any locations yet."
-msgstr ""
-
-msgid "There aren't any organizations yet."
-msgstr ""
+msgid "There is"
+msgid_plural "There are"
+msgstr[0] ""
 
 msgid "There was an error creating the PXE Default file: %s"
+msgstr ""
+
+msgid "There was an error listing VMs: %(status) %(statusText)"
 msgstr ""
 
 msgid "There was an error rendering the %s template: "
@@ -3396,6 +3574,9 @@ msgid "Time in Seconds"
 msgstr ""
 
 msgid "Time in minutes installation tokens should be valid for, 0 to disable"
+msgstr ""
+
+msgid "Timeout has occurred while communicating with %s"
 msgstr ""
 
 msgid "To define trend counters, use the Add Trend Counter button."
@@ -3442,7 +3623,7 @@ msgstr ""
 msgid "Trend counter"
 msgstr ""
 
-msgid "Trend of the last"
+msgid "Trend of the last %s days."
 msgstr ""
 
 #. "Table name" or "Table name|Column name" for error messages
@@ -3495,10 +3676,13 @@ msgstr ""
 msgid "Unable to determine the host's boot server. The DHCP smart proxy failed to provide this information and this subnet is not provided with TFTP services."
 msgstr ""
 
+msgid "Unable to find a proxy with BMC feature"
+msgstr ""
+
 msgid "Unable to find proper authentication method"
 msgstr ""
 
-msgid "Unable to find templates As this Host has no Operating System"
+msgid "Unable to find templates as this host has no operating system"
 msgstr ""
 
 msgid "Unable to generate output, Check log files\\n"
@@ -3513,10 +3697,19 @@ msgstr ""
 msgid "Undo remove"
 msgstr ""
 
+msgid "Unknown"
+msgstr ""
+
 msgid "Unknown Power State"
 msgstr ""
 
+msgid "Unknown action name for success message: %s"
+msgstr ""
+
 msgid "Unknown fact"
+msgstr ""
+
+msgid "Unknown power management support - can't continue"
 msgstr ""
 
 msgid "Unknown user"
@@ -3534,10 +3727,10 @@ msgstr ""
 msgid "Updated all hosts!"
 msgstr ""
 
-msgid "Updated hosts: Changed Environment"
+msgid "Updated hosts: changed environment"
 msgstr ""
 
-msgid "Updated hosts: Changed Hostgroup"
+msgid "Updated hosts: changed host group"
 msgstr ""
 
 msgid "Use Signo SSO for login"
@@ -3657,6 +3850,11 @@ msgid "User|Lastname"
 msgstr "ユーザー名"
 
 #. "Table name" or "Table name|Column name" for error messages
+#, fuzzy
+msgid "User|Locale"
+msgstr "ユーザー名"
+
+#. "Table name" or "Table name|Column name" for error messages
 msgid "User|Locations andor"
 msgstr ""
 
@@ -3692,10 +3890,13 @@ msgstr ""
 msgid "VCenter/Server"
 msgstr ""
 
-msgid "Valid Host group and Environment Combinations"
+msgid "VM"
 msgstr ""
 
 msgid "Valid from"
+msgstr ""
+
+msgid "Valid host group and environment combinations"
 msgstr ""
 
 msgid "Validation types"
@@ -3716,10 +3917,10 @@ msgstr ""
 msgid "Version"
 msgstr ""
 
-msgid "View last report details"
+msgid "View Diff"
 msgstr ""
 
-msgid "Virtual Machine"
+msgid "View last report details"
 msgstr ""
 
 msgid "Virtual Machines"
@@ -3729,6 +3930,9 @@ msgid "Virtual Machines on %s"
 msgstr ""
 
 msgid "Volumes"
+msgstr ""
+
+msgid "Wait"
 msgstr ""
 
 msgid "Waiting for %s to come online"
@@ -3752,13 +3956,13 @@ msgstr ""
 msgid "What is a <a href=\"%s\" rel=\"external\">Smart variable</a>?"
 msgstr ""
 
-msgid "When Host and Hostgroup have different environments should all classes be included (regardless if they exists or not in the other environment)"
-msgstr ""
-
 msgid "When a Host requests a template (e.g. during provisioning), Foreman will select the best match from the available templates of that type, in the following order:"
 msgstr ""
 
 msgid "When editing a Template, you must assign a list of Operating Systems which this Template can be used with. Optionally, you can restrict a template to a list of Hostgroups and/or Environments"
+msgstr ""
+
+msgid "When host and host group have different environments should all classes be included (regardless if they exists or not in the other environment)"
 msgstr ""
 
 msgid "When operating in unattended mode Foreman will require more information, so expect more questions, but it will be able to automate host installations for redhat, debian, suse and solaris operating systems (and their clones), see"
@@ -3777,6 +3981,12 @@ msgid "YAML"
 msgstr ""
 
 msgid "You Are about to change the default PXE menu on all configured TFTP servers - continue ?"
+msgstr ""
+
+msgid "You are about to override the editor content with a previous version, are you sure?"
+msgstr ""
+
+msgid "You are about to override the editor content, are you sure?"
 msgstr ""
 
 msgid "You are currently logged in, suicidal?"
@@ -3836,7 +4046,7 @@ msgstr ""
 msgid "You may also find the"
 msgstr ""
 
-msgid "You may create puppet classes that represent high-level host configurations, for example, a <b>host-type-ldap-server</b> class, which includes all the required functionality from other modules or you may decide to create a hostgroup called <b>host-type-ldap-server</b> and add the required classes into the hostgroup configuration."
+msgid "You may create puppet classes that represent high-level host configurations, for example, a <b>host-type-ldap-server</b> class, which includes all the required functionality from other modules or you may decide to create a host group called <b>host-type-ldap-server</b> and add the required classes into the host group configuration."
 msgstr ""
 
 msgid "You may operate Foreman in basic mode, in which it acts as a reporting and external node classifier or you may also turn on unattended mode operation in which Foreman creates and manages the configuration files necessary to completely configure a new host."
@@ -3909,12 +4119,6 @@ msgid "can't contain white spaces"
 msgstr ""
 
 msgid "cant be blank unless a custom partition has been defined"
-msgstr ""
-
-msgid "days - %s reports found"
-msgstr ""
-
-msgid "days."
 msgstr ""
 
 msgid "does not appear to be a valid nfs mount path"
@@ -4061,9 +4265,19 @@ msgstr ""
 msgid "is not allowed to change"
 msgstr ""
 
+msgid "items selected. Uncheck to Clear"
+msgstr ""
+
 msgid "last %s day"
 msgid_plural "last %s days"
 msgstr[0] ""
+
+#. Provide locale name in native language (e.g. English, Deutsch or Português)
+msgid "locale_name"
+msgstr ""
+
+msgid "location"
+msgstr ""
 
 msgid "locations"
 msgstr ""
@@ -4077,7 +4291,7 @@ msgstr ""
 msgid "must be an array"
 msgstr ""
 
-msgid "must be downcase"
+msgid "must be lowercase"
 msgstr ""
 
 msgid "must be specified if from is defined"
@@ -4092,10 +4306,16 @@ msgstr ""
 msgid "must provide a provider"
 msgstr ""
 
+msgid "must set host and port"
+msgstr ""
+
+msgid "new"
+msgstr ""
+
 msgid "no puppet proxy defined - cant continue"
 msgstr ""
 
-msgid "not has %s"
+msgid "organization"
 msgstr ""
 
 msgid "organizations"
@@ -4107,13 +4327,22 @@ msgstr ""
 msgid "page"
 msgstr ""
 
-msgid "parameters require an associated domain, host or hostgroup"
+msgid "parameters require an associated domain, host or host group"
+msgstr ""
+
+msgid "pending"
 msgstr ""
 
 msgid "plus all"
 msgstr ""
 
+msgid "poweroff"
+msgstr ""
+
 msgid "puppet class browser"
+msgstr ""
+
+msgid "reboot"
 msgstr ""
 
 msgid "remove"
@@ -4128,7 +4357,10 @@ msgstr ""
 msgid "remove volume"
 msgstr ""
 
-msgid "run_distribution"
+msgid "reset"
+msgstr ""
+
+msgid "revoked"
 msgstr ""
 
 msgid "select an owner"
@@ -4144,6 +4376,15 @@ msgid "should be 8 characters or more"
 msgstr ""
 
 msgid "should follow this format: 0,9600n8"
+msgstr ""
+
+msgid "start"
+msgstr ""
+
+msgid "state"
+msgstr ""
+
+msgid "stop"
 msgstr ""
 
 msgid "these hosts for a build operation on next boot"
@@ -4192,6 +4433,9 @@ msgid "using %s"
 msgstr ""
 
 msgid "using %{allocation} GB out of %{capacity} GB (%{pool_name} storage pool - %{path})"
+msgstr ""
+
+msgid "valid"
 msgstr ""
 
 msgid "value to use when there is no match"

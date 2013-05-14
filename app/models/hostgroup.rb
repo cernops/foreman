@@ -3,6 +3,7 @@ class Hostgroup < ActiveRecord::Base
   include Authorization
   include Taxonomix
   include HostCommon
+  before_destroy EnsureNotUsedBy.new(:hosts)
   has_many :hostgroup_classes, :dependent => :destroy
   has_many :puppetclasses, :through => :hostgroup_classes
   has_many :user_hostgroups, :dependent => :destroy
@@ -12,9 +13,8 @@ class Hostgroup < ActiveRecord::Base
   has_many :group_parameters, :dependent => :destroy, :foreign_key => :reference_id
   accepts_nested_attributes_for :group_parameters, :reject_if => lambda { |a| a[:value].blank? }, :allow_destroy => true
   has_many_hosts
-  before_destroy EnsureNotUsedBy.new(:hosts)
+  has_many :template_combinations, :dependent => :destroy
   has_many :config_templates, :through => :template_combinations
-  has_many :template_combinations
   before_save :remove_duplicated_nested_class
   before_save :set_label, :on => [:create, :update, :destroy]
   after_save :set_other_labels, :on => [:update, :destroy]
@@ -94,6 +94,15 @@ class Hostgroup < ActiveRecord::Base
     classes.reorder('').pluck(:id)
   end
 
+  def inherited_lookup_value key
+    ancestors.reverse.each do |hg|
+      if(v = LookupValue.where(:lookup_key_id => key.id, :id => hg.lookup_values).first)
+        return v.value, hg.to_label
+      end
+    end if key.path_elements.flatten.include?("hostgroup") && Setting["host_group_matchers_inheritance"]
+    return key.default_value, _("Default value")
+  end
+
   # returns self and parent parameters as a hash
   def parameters include_source = false
     hash = {}
@@ -130,6 +139,10 @@ class Hostgroup < ActiveRecord::Base
   end
 
   private
+
+  def lookup_value_match
+    "hostgroup=#{to_label}"
+  end
 
   def set_label
     self.label = get_label if (name_changed? || ancestry_changed? || label.blank?)

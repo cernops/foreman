@@ -2,6 +2,7 @@ module HostsHelper
   include OperatingsystemsHelper
   include HostsAndHostgroupsHelper
   include ComputeResourcesVmsHelper
+  include BmcHelper
 
   def last_report_column(record)
     time = record.last_report? ? _("%s ago") % time_ago_in_words(record.last_report.getlocal): ""
@@ -136,16 +137,16 @@ module HostsHelper
       config  << [r.reported_at.to_i*1000, r.config_retrieval]
       runtime << [r.reported_at.to_i*1000, r.runtime]
     end
-    [{:label=>_("Config Retrieval"), :data=> config, :color=>'#AA4643'},{:label=>"Runtime", :data=> runtime,:color=>'#4572A7'}]
+    [{:label=>_("Config Retrieval"), :data=> config, :color=>'#AA4643'},{:label=>_("Runtime"), :data=> runtime,:color=>'#4572A7'}]
   end
 
   def reports_show
     return unless @host.reports.size > 0
     form_tag @host, :id => 'days_filter', :method => :get, :class=>"form form-inline" do
-      content_tag(:span, _("Reports from the last") + ' ') +
-      select(nil, 'range', 1..days_ago(@host.reports.first.reported_at),
-            {:selected => @range}, {:class=>"span1", :onchange =>"$('#days_filter').submit();$(this).disabled();"}).html_safe +
-            ' ' + _("days - %s reports found") % @host.reports.recent(@range.days.ago).count
+      content_tag(:span, (_("Reports from the last %{days} days - %{count} reports found") %
+        { :days  => select(nil, 'range', 1..days_ago(@host.reports.first.reported_at),
+                    {:selected => @range}, {:class=>"span1", :onchange =>"$('#days_filter').submit();$(this).disabled();"}),
+          :count => @host.reports.recent(@range.days.ago).count }).html_safe)
     end
   end
 
@@ -165,13 +166,13 @@ module HostsHelper
     rescue => e
       return case e.to_s
       when "Must provide an operating systems"
-        _("Unable to find templates As this Host has no Operating System")
+        _("Unable to find templates as this host has no operating system")
       else
         e.to_s
       end
     end
 
-    return _("No Template found") if templates.empty?
+    return _("No template found") if templates.empty?
     content_tag :table, :class=>"table table-bordered table-striped" do
       content_tag(:th, _("Template Type")) + content_tag(:th) +
       templates.sort{|t,x| t.template_kind <=> x.template_kind}.map do |tmplt|
@@ -193,7 +194,7 @@ module HostsHelper
       [_("Puppet Environment"), (link_to(host.environment, hosts_path(:search => "environment = #{host.environment}")) if host.environment)],
       [_("Host Architecture"), (link_to(host.arch, hosts_path(:search => "architecture = #{host.arch}")) if host.arch)],
       [_("Operating System"), (link_to(host.os, hosts_path(:search => "os = #{host.os.name}")) if host.os)],
-      [_("Host Group"), (link_to(host.hostgroup, hosts_path(:search => "hostgroup = #{host.hostgroup}")) if host.hostgroup)],
+      [_("Host group"), (link_to(host.hostgroup, hosts_path(:search => "hostgroup = #{host.hostgroup}")) if host.hostgroup)],
     ]
     fields += [[_("Location"), (link_to(host.location.name, hosts_path(:search => "location = #{host.location}")) if host.location)]] if SETTINGS[:locations_enabled]
     fields += [[_("Organization"), (link_to(host.organization.name, hosts_path(:search => "organization = #{host.organization}")) if host.organization)]] if SETTINGS[:organizations_enabled]
@@ -243,9 +244,11 @@ module HostsHelper
           )
         end,
         button_group(
+          if host.try(:puppet_proxy)
             link_to_if_authorized(_("Run puppet"), hash_for_puppetrun_host_path(:id => host).merge(:auth_action => :edit),
                                   :disabled => !Setting[:puppetrun],
                                   :title => _("Trigger a puppetrun on a node; requires that puppet run is enabled"))
+          end
         ),
         button_group(
             link_to_if_authorized(_("Delete"), hash_for_host_path(:id => host, :auth_action => :destroy),

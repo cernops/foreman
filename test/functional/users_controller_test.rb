@@ -18,6 +18,29 @@ class UsersControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "should create regular user" do
+    post :create, {
+      :commit => "Submit",
+      :user => {
+        :login => "foo",
+        :mail => "foo@bar.com",
+      }
+    }, set_session_user
+    assert_equal @response.status, 200
+  end
+
+  test "should create admin user" do
+    post :create, {
+      :commit => "Submit",
+      :user => {
+        :login => "foo",
+        :admin => true,
+        :mail => "foo@bar.com",
+      }
+    }, set_session_user
+    assert_equal @response.status, 200
+  end
+
   test "should update user" do
     user = User.create :login => "foo", :mail => "foo@bar.com", :auth_source => auth_sources(:one)
 
@@ -90,6 +113,16 @@ class UsersControllerTest < ActionController::TestCase
     assert !User.exists?(user.id)
   end
 
+  test "should modify session when locale is updated" do
+    User.current = User.admin
+    put :update, {:commit => "Submit", :id => User.admin.id, :user => { :locale => "cs" } }, set_session_user
+    assert_redirected_to users_url
+    assert User.admin.locale == "cs"
+    put :update, {:commit => "Submit", :id => User.admin.id, :user => { :locale => "" } }, set_session_user
+    assert User.admin.locale.nil?
+    assert session[:locale].nil?
+  end
+
   test "should not delete same user" do
     return unless SETTINGS[:login]
     @request.env['HTTP_REFERER'] = users_path
@@ -142,6 +175,23 @@ class UsersControllerTest < ActionController::TestCase
 
     assert_equal Hostgroup.find_by_name("first").users.first , sample_user
     assert_equal Hostgroup.find_by_name("second").users.first, sample_user
+  end
+
+  test "should not be able to remove the admin flag from the admin account" do
+    user = User.create :login => "foo", :mail => "foo@bar.com", :auth_source => auth_sources(:one)
+    user.admin = true
+    user.save!
+
+    target = users(:admin)
+    update_hash = {"user"=>{
+      "login"  => target.login,
+      "admin"  => false},
+      "commit" => "Submit",
+      "id"     => target.id}
+    put :update, update_hash, set_session_user.merge(:user => user.id)
+
+    assert User.find_by_login(:admin).admin
+    assert_template :edit
   end
 
 end

@@ -3,7 +3,7 @@ class UsersController < ApplicationController
 
   before_filter :find_user, :only => [:edit, :update, :destroy]
   skip_before_filter :require_mail, :only => [:edit, :update, :logout]
-  skip_before_filter :require_login, :authorize, :session_expiry, :update_activity_time, :set_taxonomy, :only => [:login, :logout]
+  skip_before_filter :require_login, :authorize, :session_expiry, :update_activity_time, :set_taxonomy, :set_gettext_locale_db, :only => [:login, :logout]
   after_filter       :update_activity_time, :only => :login
 
   attr_accessor :editing_self
@@ -31,7 +31,8 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(params[:user]){|u| u.admin = params[:user][:admin] }
+    admin = params[:user].delete :admin
+    @user = User.new(params[:user]){|u| u.admin = admin }
     if @user.save
       @user.roles << Role.find_by_name("Anonymous") unless @user.roles.map(&:name).include? "Anonymous"
       process_success
@@ -52,14 +53,19 @@ class UsersController < ApplicationController
     # Remove keys for restricted variables when the user is editing their own account
     if editing_self
       for key in params[:user].keys
-        params[:user].delete key unless %w{password_confirmation password mail firstname lastname}.include? key
+        params[:user].delete key unless %w{password_confirmation password mail firstname lastname locale}.include? key
       end
       User.current.editing_self = true
     end
+
+    # Only an admin can update admin attribute of another use
+    # this is required, as the admin field is blacklisted above
+    if User.current.admin
+      @user.admin = admin
+      return process_error unless @user.valid?
+    end
+
     if @user.update_attributes(params[:user])
-      # Only an admin can update admin attribute of another use
-      # this is required, as the admin field is blacklisted above
-      @user.update_attribute(:admin, admin) if User.current.admin
       @user.roles << Role.find_by_name("Anonymous") unless @user.roles.map(&:name).include? "Anonymous"
       hostgroup_ids = params[:user]["hostgroup_ids"].reject(&:empty?).map(&:to_i) unless params[:user]["hostgroup_ids"].empty?
       update_hostgroups_owners(hostgroup_ids) unless hostgroup_ids.empty?
@@ -70,6 +76,9 @@ class UsersController < ApplicationController
     # make sure users cache are expired (assuming some permissions changed etc)
     expire_fragment("tabs_and_title_records-#{@user.id}")
     User.current.editing_self = false if editing_self
+
+    # Remove locale from the session when set to "Browser Locale" and editing self
+    session.delete(:locale) if params[:user][:locale].try(:empty?) and params[:id].to_i == User.current.id
   end
 
   def destroy
@@ -88,6 +97,7 @@ class UsersController < ApplicationController
   # Stores the user id in the session and redirects required URL or default homepage
   def login
     session[:user] = User.current = nil
+    session[:locale] = nil
     if request.post?
       user = User.try_to_login(params[:login]['login'].downcase, params[:login]['password'])
       if user.nil?
@@ -104,16 +114,16 @@ class UsersController < ApplicationController
   # Clears the rails session and redirects to the login action
   def logout
     expire_fragment("tabs_and_title_records-#{User.current.id}") if User.current
-    user_id = session[:user]
     session[:user] = @user = User.current = nil
     (flash[:notice] || flash[:error]) ? flash.keep : session.clear
 
     if User.find(user_id).auth_source.type != "AuthSourceInternal"
       redirect_to(Setting['single_sign_out_url'])
     else
-      notice "Logged out - See you soon"
-      redirect_to(login_users_path)
-    end 
+      session.clear
+      notice _("Logged out - See you soon")
+    end
+    redirect_to login_users_path
   end
 
   private

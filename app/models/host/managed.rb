@@ -21,10 +21,6 @@ class Host::Managed < Host::Base
 
   has_one :token, :foreign_key => :host_id, :dependent => :destroy, :conditions => Proc.new {"expires >= '#{Time.now.utc.to_s(:db)}'"}
 
-  has_many :lookup_values, :finder_sql => Proc.new { normalize_hostname; %Q{ SELECT lookup_values.* FROM lookup_values WHERE (lookup_values.match = 'fqdn=#{fqdn}') } }, :dependent => :destroy
-  # See "def lookup_values_attributes=" under, for the implementation of accepts_nested_attributes_for :lookup_values
-  accepts_nested_attributes_for :lookup_values
-
   # Define custom hook that can be called in model by magic methods (before, after, around)
   define_model_callbacks :build, :only => :after
   define_model_callbacks :provision, :only => :before
@@ -186,31 +182,11 @@ class Host::Managed < Host::Base
     validates_presence_of    :ptable_id, :message => N_("cant be blank unless a custom partition has been defined"),
       :if => Proc.new { |host| host.managed and host.disk.empty? and not defined?(Rake) and capabilities.include?(:build) }
     validates_format_of      :serial,    :with => /[01],\d{3,}n\d/, :message => N_("should follow this format: 0,9600n8"), :allow_blank => true, :allow_nil => true
-
-    validates_presence_of :puppet_proxy_id, :if => Proc.new {|h| h.managed? } if SETTINGS[:unattended]
   end
 
   before_validation :set_hostgroup_defaults, :set_ip_address, :set_default_user, :normalize_addresses, :normalize_hostname, :force_lookup_value_matcher
   after_validation :ensure_associations
   before_validation :set_certname, :if => Proc.new {|h| h.managed? and Setting[:use_uuid_for_certificates] } if SETTINGS[:unattended]
-
-  # Replacement of accepts_nested_attributes_for :lookup_values,
-  # to work around the lack of `host_id` column in lookup_values.
-  def lookup_values_attributes= lookup_values_attributes
-    lookup_values_attributes.each_value do |attribute|
-      attr = attribute.dup
-      if attr.has_key? :id
-        lookup_value = lookup_values.find attr.delete(:id)
-        if lookup_value
-          mark_for_destruction = ActiveRecord::ConnectionAdapters::Column.value_to_boolean attr.delete(:_destroy)
-          lookup_value.attributes = attr
-          mark_for_destruction ? lookup_values.delete(lookup_value) : lookup_value.save!
-        end
-      elsif !ActiveRecord::ConnectionAdapters::Column.value_to_boolean attr.delete(:_destroy)
-        lookup_values.build(attr)
-      end
-    end
-  end
 
   def <=>(other)
     self.name <=> other.name
@@ -376,6 +352,7 @@ class Host::Managed < Host::Base
   def params
     host_params.update(lookup_keys_params)
   end
+
   def clear_host_parameters_cache!
     @cached_host_params = nil
   end
@@ -656,6 +633,10 @@ class Host::Managed < Host::Base
     new
   end
 
+  def bmc_nic
+    interfaces.bmc.first
+  end
+
   def sp_ip
     bmc_nic.try(:ip)
   end
@@ -731,25 +712,46 @@ class Host::Managed < Host::Base
     tax_organization.import_missing_ids if organization
   end
 
+  def bmc_proxy
+    @bmc_proxy ||= bmc_nic.proxy
+  end
+
+  def bmc_available?
+    ipmi = bmc_nic
+    return false if ipmi.nil?
+    ipmi.password.present? && ipmi.username.present? && ipmi.provider == 'IPMI'
+  end
+
+  def power
+    opts = {:host => self}
+    if compute_resource_id && uuid
+      VirtPowerManager.new(opts)
+    elsif bmc_available?
+      BMCPowerManager.new(opts)
+    else
+      raise ::Foreman::Exception.new(N_("Unknown power management support - can't continue"))
+    end
+  end
+
+
+  def ipmi_boot(booting_device)
+    bmc_proxy.boot({:function => 'bootdevice', :device => booting_device})
+  end
+
   private
+
+  def lookup_value_match
+    normalize_hostname
+    "fqdn=#{fqdn}"
+  end
 
   def lookup_keys_params
     return {} unless Setting["Enable_Smart_Variables_in_ENC"]
-
-    p = {}
-    klasses = all_puppetclasses.map(&:id).flatten
-    LookupKey.where(:puppetclass_id => klasses ).each do |k|
-      p[k.to_s] = k.value_for(self)
-    end unless klasses.empty?
-    p
+    Classification::GlobalParam.new(:host => self).enc
   end
 
   def lookup_keys_class_params
-    Classification.new(:host => self).enc
-  end
-
-  def bmc_nic
-    interfaces.bmc.first
+    Classification::ClassParam.new(:host => self).enc
   end
 
   # ensure that host name is fqdn

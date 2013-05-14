@@ -328,7 +328,7 @@ class HostsControllerTest < ActionController::TestCase
   test 'multiple without hosts' do
     post :update_multiple_hostgroup, {}, set_session_user
     assert_redirected_to hosts_url
-    assert_equal "No Hosts selected", flash[:error]
+    assert_equal "No hosts selected", flash[:error]
 
     # now try to pass an invalid id
     post :update_multiple_hostgroup, {:host_ids => [-1], :host_names => ["no.such.host"]}, set_session_user
@@ -585,7 +585,6 @@ class HostsControllerTest < ActionController::TestCase
   end
 
   test 'hosts in trusted hosts list and SSL cert should get externalNodes successfully' do
-    SmartProxy.delete_all
     User.current = nil
     Setting[:restrict_registered_puppetmasters] = true
     Setting[:require_ssl_puppetmasters] = true

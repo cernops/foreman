@@ -70,6 +70,13 @@ class HostTest < ActiveSupport::TestCase
     assert Host.find_by_name('a.server.b.domain')
   end
 
+  test "should import facts idempotently" do
+    assert Host.importHostAndFacts(File.read(File.expand_path(File.dirname(__FILE__) + "/facts.yml")))
+    value_ids = Host.find_by_name('a.server.b.domain').fact_values.map(&:id)
+    assert Host.importHostAndFacts(File.read(File.expand_path(File.dirname(__FILE__) + "/facts.yml")))
+    assert_equal value_ids, Host.find_by_name('a.server.b.domain').fact_values.map(&:id)
+  end
+
   test "should not save if neither ptable or disk are defined when the host is managed" do
     if unattended?
       host = Host.create :name => "myfullhost", :mac => "aabbecddeeff", :ip => "2.4.4.03",
@@ -260,8 +267,9 @@ class HostTest < ActiveSupport::TestCase
     setup_user_and_host
     as_admin do
       @one.roles = [Role.find_by_name("Destroy hosts")]
+      @host.host_classes.delete_all
+      assert @host.destroy
     end
-    assert @host.destroy
     assert_no_match /do not have permission/, @host.errors.full_messages.join("\n")
   end
 
@@ -270,8 +278,9 @@ class HostTest < ActiveSupport::TestCase
     as_admin do
       @one.roles = [Role.find_by_name("Destroy hosts")]
       @host.update_attribute :owner,  users(:one)
+      @host.host_classes.delete_all
+      assert @host.destroy
     end
-    assert @host.destroy
     assert_no_match /do not have permission/, @host.errors.full_messages.join("\n")
   end
 
@@ -344,8 +353,9 @@ class HostTest < ActiveSupport::TestCase
 
   test "models are updated when host.model has no value" do
     h = hosts(:one)
+    f = fact_names(:kernelversion)
     as_admin do
-      FactValue.create!(:value => "superbox", :host_id => h.id, :fact_name_id => 1)
+      FactValue.create!(:value => "superbox", :host_id => h.id, :fact_name_id => f.id)
     end
     assert_difference('Model.count') do
     facts = YAML::load(File.read(File.expand_path(File.dirname(__FILE__) + "/facts.yml")))
