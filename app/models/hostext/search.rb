@@ -43,6 +43,8 @@ module Hostext
           scoped_search :on => :build,         :complete_value => {:true => true, :false => false}
           scoped_search :on => :installed_at,  :complete_value => true
           scoped_search :in => :operatingsystem, :on => :name, :complete_value => true, :rename => :os
+          scoped_search :in => :operatingsystem, :on => :major,:complete_value => true, :rename => :os_major
+          scoped_search :in => :operatingsystem, :on => :minor,:complete_value => true, :rename => :os_minor
         end
 
         if SETTINGS[:login]
