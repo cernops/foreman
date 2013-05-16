@@ -333,6 +333,21 @@ class Host::Managed < Host::Base
       param["ip"]  = ip
       param["mac"] = mac
     end
+
+    changed_hg_audit = Audit.find_all_by_auditable_name(name).
+                           select  { |host| host.audited_changes["hostgroup_id"].is_a?(Array) }.
+                           sort_by(&:created_at)
+
+    if changed_hg_audit.empty?
+      hostgroup_time =  Audit.find_all_by_auditable_name(name).
+                           select { |host| host.audited_changes["hostgroup_id"] != nil }.
+                           sort_by(&:created_at).last.created_at.to_i
+    else
+      hostgroup_time = changed_hg_audit.last.created_at.to_i
+    end
+
+    param['hostgroup_time'] = hostgroup_time
+
     param.update self.params
 
     classes = if Setting[:Parametrized_Classes_in_ENC] && Setting[:Enable_Smart_Variables_in_ENC]
