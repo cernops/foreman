@@ -81,7 +81,7 @@ module Host
       FactValue.delete(deletions) unless deletions.empty?
 
       # Get FactNames in one call
-      fact_names = FactName.where(:name => facts.keys)
+      fact_names = FactName.maximum(:id, :group => 'name')
 
       # Create any needed new FactNames
       facts['_timestamp'] = facts.delete(:_timestamp) if facts.include?(:_timestamp)
