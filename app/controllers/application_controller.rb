@@ -73,27 +73,11 @@ class ApplicationController < ActionController::Base
       # User is not found or first login
       if SETTINGS[:login]
         # authentication is enabled
-<<<<<<< HEAD
-        if available_sso.present?
-          if available_sso.authenticated?
-            user = User.unscoped.find_by_login(available_sso.user)
-            update_activity_time
-          elsif available_sso.support_login?
-            available_sso.authenticate!
-            return
-          else
-            logger.warn("SSO failed, falling back to login form")
-          end
-        # Else, fall back to the standard authentication mechanism,
-        # only if it's an API request.
-=======
-
         if remote_user_provided?
           user = User.unscoped.find_by_login(@remote_user)
           logger.warn("Failed REMOTE_USER authentication from #{request.remote_ip}") unless user
           # Else, fall back to the standard authentication mechanism,
           # only if it's an API request.
->>>>>>> origin/production
         elsif api_request?
           user = authenticate_or_request_with_http_basic { |u, p| User.try_to_login(u, p) }
           logger.warn("Failed Basic Auth authentication request from #{request.remote_ip}") unless user
