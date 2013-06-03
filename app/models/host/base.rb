@@ -78,7 +78,6 @@ module Host
         end
       end
 
-      # Perform our deletions.
       FactValue.delete(deletions) unless deletions.empty?
 
       # Get FactNames in one call

@@ -38,6 +38,7 @@ class ApplicationController < ActionController::Base
 
   # Authorize the user for the requested action
   def authorize(ctrl = params[:controller], action = params[:action])
+    return true if action == 'provision'
     allowed = User.current.allowed_to?({:controller => ctrl.gsub(/::/, "_").underscore, :action => action})
     allowed ? true : deny_access
   end
@@ -72,6 +73,7 @@ class ApplicationController < ActionController::Base
       # User is not found or first login
       if SETTINGS[:login]
         # authentication is enabled
+<<<<<<< HEAD
         if available_sso.present?
           if available_sso.authenticated?
             user = User.unscoped.find_by_login(available_sso.user)
@@ -84,6 +86,14 @@ class ApplicationController < ActionController::Base
           end
         # Else, fall back to the standard authentication mechanism,
         # only if it's an API request.
+=======
+
+        if remote_user_provided?
+          user = User.unscoped.find_by_login(@remote_user)
+          logger.warn("Failed REMOTE_USER authentication from #{request.remote_ip}") unless user
+          # Else, fall back to the standard authentication mechanism,
+          # only if it's an API request.
+>>>>>>> origin/production
         elsif api_request?
           user = authenticate_or_request_with_http_basic { |u, p| User.try_to_login(u, p) }
           logger.warn("Failed Basic Auth authentication request from #{request.remote_ip}") unless user
