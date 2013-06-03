@@ -39,6 +39,14 @@ class HostTest < ActiveSupport::TestCase
     assert_equal "myhost.company.com", host.name
   end
 
+  test "should not append domainname to fqdn" do
+    host = Host.create :name => "myhost.sub.comp.net", :mac => "aabbccddeeff", :ip => "123.01.02.03",
+      :domain => Domain.find_or_create_by_name("company.com"),
+      :certname => "myhost.sub.comp.net",
+      :managed => false
+    assert_equal "myhost.sub.comp.net", host.name
+  end
+
   test "should save hosts with full stop in their name" do
     host = Host.create :name => "my.host.company.com", :mac => "aabbccddeeff", :ip => "123.01.02.03",
       :domain => Domain.find_or_create_by_name("company.com")
@@ -157,6 +165,17 @@ class HostTest < ActiveSupport::TestCase
     @host           = hosts(:one)
     @host.owner     = users(:two)
     @host.save!
+    User.current    = @one
+  end
+
+  def setup_filtered_user
+    # Can't use `setup_user_and_host` as it deletes the UserFacts
+    @one             = users(:one)
+    @one.hostgroups  = []
+    @one.domains     = []
+    @one.user_facts  = [user_facts(:one)]
+    @one.facts_andor = "and"
+    @one.save!
     User.current    = @one
   end
 
@@ -293,6 +312,36 @@ class HostTest < ActiveSupport::TestCase
       @host.save!
     end
     assert !@host.destroy
+    assert_match /do not have permission/, @host.errors.full_messages.join("\n")
+  end
+
+  test "fact filters restrict the my_hosts scope" do
+    setup_filtered_user
+    assert_equal 1, Host.my_hosts.count
+    assert_equal 'my5name.mydomain.net', Host.my_hosts.first.name
+  end
+
+  test "host can be edited when user fact filter permits" do
+    setup_filtered_user
+    as_admin do
+      @one.roles  = [Role.find_by_name("Edit hosts")]
+      @host       = hosts(:one)
+      @host.owner = users(:two)
+      @host.save!
+    end
+    assert @host.update_attributes(:name => "blahblahblah")
+    assert_no_match /do not have permission/, @host.errors.full_messages.join("\n")
+  end
+
+  test "host cannot be edited when user fact filter denies" do
+    setup_filtered_user
+    as_admin do
+      @one.roles  = [Role.find_by_name("Edit hosts")]
+      @host       = hosts(:two)
+      @host.owner = users(:two)
+      @host.save!
+    end
+    assert !@host.update_attributes(:name => "blahblahblah")
     assert_match /do not have permission/, @host.errors.full_messages.join("\n")
   end
 

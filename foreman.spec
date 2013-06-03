@@ -1,6 +1,5 @@
 %global homedir %{_datadir}/%{name}
 %global confdir extras/packaging/rpm/sources
-%global scl ruby193
 
 %if "%{?scl}" == "ruby193"
     %global scl_prefix %{scl}-
@@ -14,8 +13,8 @@
 %endif
 
 Name:   foreman
-Version: 1.1.9999
-Release:1
+Version: 1.2.9999
+Release: 2%{?dist}
 Summary:Systems Management web application
 
 Group:  Applications/System
@@ -63,15 +62,15 @@ Requires: %{?scl_prefix}rubygem(oauth)
 Requires: %{?scl_prefix}rubygem(rabl) >= 0.7.5
 Requires: %{?scl_prefix}rubygem(rake) >= 0.8.3
 Requires: %{?scl_prefix}rubygem(ruby_parser) >= 3.0.0
-Requires: %{?scl_prefix}rubygem(ruby_parser) < 3.1.0
 Requires: %{?scl_prefix}rubygem(audited-activerecord) >= 3.0.0
-Requires: %{?scl_prefix}rubygem(apipie-rails) = 0.0.16
+Requires: %{?scl_prefix}rubygem(apipie-rails) >= 0.0.16
 Requires: %{?scl_prefix}rubygem(bundler_ext)
 Requires: %{?scl_prefix}rubygem(thin)
 Requires: %{?scl_prefix}rubygem(fast_gettext) >= 0.4.8
 Requires: %{?scl_prefix}rubygem(gettext_i18n_rails)
+Requires: %{?scl_prefix}rubygem(gettext_i18n_rails_js) >= 0.0.8
 Requires: %{?scl_prefix}rubygem(i18n_data) >= 0.2.6
-Requires: %{?scl_prefix}rubygem(therubyracer) =  0.11.3
+Requires: %{?scl_prefix}rubygem(therubyracer)
 Requires: %{?scl_prefix}rubygem(jquery-ui-rails)
 Requires: %{?scl_prefix}rubygem(twitter-bootstrap-rails)
 BuildRequires: %{?scl_prefix}rubygem(ancestry) < 1.4.0
@@ -80,8 +79,11 @@ BuildRequires: %{?scl_prefix}rubygem(apipie-rails) >= 0.0.16
 BuildRequires: %{?scl_prefix}rubygem(audited-activerecord) >= 3.0.0
 BuildRequires: %{?scl_prefix}rubygem(bundler_ext)
 BuildRequires: %{?scl_prefix}rubygem(coffee-rails) => 3.2.1
+BuildRequires: %{?scl_prefix}rubygem(gettext) >= 1.9.3
 BuildRequires: %{?scl_prefix}rubygem(fast_gettext)
 BuildRequires: %{?scl_prefix}rubygem(gettext_i18n_rails)
+BuildRequires: %{?scl_prefix}rubygem(gettext_i18n_rails_js) >= 0.0.8
+BuildRequires: %{?scl_prefix}rubygem(i18n_data) >= 0.2.6
 BuildRequires: %{?scl_prefix}rubygem(jquery-rails)
 BuildRequires: %{?scl_prefix}rubygem(jquery-ui-rails)
 BuildRequires: %{?scl_prefix}rubygem(less-rails)
@@ -103,10 +105,11 @@ BuildRequires: %{?scl_prefix}rubygem(will_paginate) >= 3.0.2
 BuildRequires: %{?scl_prefix}rubygem(rails)
 BuildRequires: %{?scl_prefix}rubygem(quiet_assets)
 BuildRequires: %{?scl_prefix}rubygem(spice-html5-rails)
-BuildRequires: %{?scl_prefix}rubygem(flot-rails)
+BuildRequires: %{?scl_prefix}rubygem(flot-rails) = 0.0.3
 BuildRequires: %{?scl_prefix}facter
 BuildRequires: %{?scl_prefix}puppet >= 0.24.4
 BuildRequires: puppet
+BuildRequires: gettext
 
 %package cli
 Summary: Foreman CLI
@@ -130,13 +133,14 @@ Fedora. This package contains the repository configuration for Yum.
 
 %files release
 %config(noreplace) %{_sysconfdir}/yum.repos.d/*
+/etc/pki/rpm-gpg/*
 
 %package libvirt
 Summary: Foreman libvirt support
 Group:  Applications/System
 Requires: %{?scl_prefix}rubygem(virt) >= 0.2.1
 Requires: %{name} = %{version}-%{release}
-Requires: foreman-ec2 = %{version}-%{release}
+Requires: foreman-compute = %{version}-%{release}
 Obsoletes: foreman-virt < 1.0.0
 Provides: foreman-virt = 1.0.0
 
@@ -150,7 +154,7 @@ Meta Package to install requirements for virt support
 Summary: Foreman ovirt support
 Group:  Applications/System
 Requires: %{?scl_prefix}rubygem(rbovirt) >= 0.0.15
-Requires: foreman-ec2 = %{version}-%{release}
+Requires: foreman-compute = %{version}-%{release}
 Requires: %{name} = %{version}-%{release}
 
 %description ovirt
@@ -159,18 +163,21 @@ Meta Package to install requirements for ovirt support
 %files ovirt
 %{_datadir}/%{name}/bundler.d/ovirt.rb
 
-%package ec2
-Summary: Foreman ec2 support
+%package compute
+Summary: Foreman Compute Resource support via fog
 Group:  Applications/System
 Requires: %{?scl_prefix}rubygem-fog >= 1.8.0
 Requires: %{name} = %{version}-%{release}
 Obsoletes: foreman-fog < 1.0.0
 Provides: foreman-fog = 1.0.0
+Obsoletes: foreman-ec2
+Provides: foreman-ec2
 
-%description ec2
-Meta Package to install requirements for ec2 support
+%description compute
+Meta Package to install requirements for compute resource support, in
+particular, Amazon EC2, OpenStack and Rackspace.
 
-%files ec2
+%files compute
 %{_datadir}/%{name}/bundler.d/fog.rb
 
 %package vmware
@@ -178,7 +185,7 @@ Summary: Foreman vmware support
 Group:  Applications/System
 Requires: %{?scl_prefix}rubygem(rbvmomi)
 Requires: %{name} = %{version}-%{release}
-Requires: foreman-ec2 = %{version}-%{release}
+Requires: foreman-compute = %{version}-%{release}
 
 %description vmware
 Meta Package to install requirements for vmware support
@@ -202,6 +209,8 @@ Requires: %{?scl_prefix}rubygem(therubyracer)
 Requires: %{?scl_prefix}rubygem(twitter-bootstrap-rails)
 Requires: %{?scl_prefix}rubygem(uglifier)
 Requires: %{?scl_prefix}rubygem(flot-rails) = 0.0.3
+Requires: %{?scl_prefix}rubygem(gettext_i18n_rails_js) >= 0.0.8
+Requires: %{?scl_prefix}rubygem(gettext) >= 1.9.3
 
 %description assets
 Meta package to install asset pipeline support.
@@ -282,7 +291,7 @@ Requires: %{name} = %{version}-%{release}
 Requires: %{name}-cli = %{version}-%{release}
 Requires: %{name}-libvirt = %{version}-%{release}
 Requires: %{name}-ovirt = %{version}-%{release}
-Requires: %{name}-ec2 = %{version}-%{release}
+Requires: %{name}-compute = %{version}-%{release}
 Requires: %{name}-vmware = %{version}-%{release}
 Requires: %{name}-console = %{version}-%{release}
 Requires: %{name}-mysql = %{version}-%{release}
@@ -333,25 +342,34 @@ plugins required for Foreman to work.
 %setup -q
 
 %build
-#replace shebangs for SCL
+#replace shebangs and binaries in scripts for SCL
 %if %{?scl:1}%{!?scl:0}
-    for f in extras/query/ssh_using_foreman extras/rdoc/rdoc_prepare_script.rb extras/cli/foremancli \
-		script/rails script/performance/profiler script/performance/benchmarker script/foreman-config ; do
-	    sed -ri '1sX(/usr/bin/ruby|/usr/bin/env ruby)X%{scl_ruby}X' $f
-    done
-    sed -ri '1,$sX/usr/bin/rubyX%{scl_ruby}X' foreman.init
-    sed -ri '1,$s|THIN=/usr/bin/thin|THIN="run_in_scl"|' foreman.init
+  # shebangs
+  for f in extras/query/ssh_using_foreman extras/rdoc/rdoc_prepare_script.rb extras/cli/foremancli \
+  script/rails script/performance/profiler script/performance/benchmarker script/foreman-config ; do
+    sed -ri '1sX(/usr/bin/ruby|/usr/bin/env ruby)X%{scl_ruby}X' $f
+  done
+  sed -ri '1,$sX/usr/bin/rubyX%{scl_ruby}X' %{confdir}/foreman.init
+  sed -ri '1,$s|THIN=/usr/bin/thin|THIN="run_in_scl"|' %{confdir}/foreman.init
+  # script content
+  sed -ri 'sX/usr/bin/rakeX%{scl_rake}X' extras/dbmigrate
 %endif
 
+#build locale files
+make -C locale all-mo
+
+#use Bundler_ext instead of Bundler
 mv Gemfile Gemfile.in
+
 # fix the issue with loading scoped_search
 # upstream bug https://github.com/wvanbergen/scoped_search/issues/53
 sed -i "s/gem 'scoped_search'/gem 'sprockets'\n&/" Gemfile.in
 cp config/database.yml.example config/database.yml
+cp config/settings.yaml.example config/settings.yaml
 export BUNDLER_EXT_NOSTRICT=1
 export BUNDLER_EXT_GROUPS="default assets"
 %{scl_rake} assets:precompile:all RAILS_ENV=production --trace
-rm config/database.yml
+rm config/database.yml config/settings.yaml
 
 %install
 rm -rf %{buildroot}
@@ -368,7 +386,10 @@ install -Dp -m0644 %{confdir}/%{name}.logrotate %{buildroot}%{_sysconfdir}/logro
 install -Dp -m0644 %{confdir}/%{name}.cron.d %{buildroot}%{_sysconfdir}/cron.d/%{name}
 
 install -dm 755 $RPM_BUILD_ROOT%{_sysconfdir}/yum.repos.d
-install -pm 644 %{confdir}/%{name}.repo $RPM_BUILD_ROOT%{_sysconfdir}/yum.repos.d
+sed "s/\$DIST/$(echo %{?dist} | sed 's/^\.//')/g" %{confdir}/%{name}.repo > $RPM_BUILD_ROOT%{_sysconfdir}/yum.repos.d/%{name}.repo
+chmod 644 $RPM_BUILD_ROOT%{_sysconfdir}/yum.repos.d/%{name}.repo
+install -dm 755 $RPM_BUILD_ROOT%{_sysconfdir}/pki/rpm-gpg
+install -pm 644 %{confdir}/%{name}.gpg $RPM_BUILD_ROOT%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-foreman
 
 cp -p Gemfile.in %{buildroot}%{_datadir}/%{name}/Gemfile.in
 cp -p -r app bundler.d config config.ru extras lib locale Rakefile script %{buildroot}%{_datadir}/%{name}
@@ -424,7 +445,7 @@ rm -rf %{buildroot}
 %attr(-,%{name},%{name}) %{_localstatedir}/run/%{name}
 %attr(-,%{name},root) %{_datadir}/%{name}/config.ru
 %attr(-,%{name},root) %{_datadir}/%{name}/config/environment.rb
-%ghost %{_datadir}/%{name}/config/initializers/local_secret_token.rb
+%ghost %attr(0640,root,%{name}) %{_datadir}/%{name}/config/initializers/local_secret_token.rb
 
 %pre
 # Add the "foreman" user and group
@@ -496,6 +517,14 @@ if [ $1 -ge 1 ] ; then
 fi
 
 %changelog
+* Tue May 28 2013 Dominic Cleal <dcleal@redhat.com> 1.2.9999-2
+- Don't force SCL
+- Distribute GPG key
+- Replace dist in foreman.repo
+- Rename foreman-ec2 to foreman-compute
+- Update dbmigrate for SCL (Lukas Zapletal)
+* Mon May 20 2013 Dominic Cleal <dcleal@redhat.com> 1.2.9999-1
+- Updated to 1.2.9999 (1.3-pre)
 * Tue Apr 30 2013 Sam Kottler <shk@redhat.com> 1.1.9999-1
 - Updated to 1.1.9999 (1.2-pre)
 * Fri Feb 15 2013 shk@redhat.com 1.1-3

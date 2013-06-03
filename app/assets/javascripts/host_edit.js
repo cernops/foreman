@@ -1,6 +1,5 @@
 function computeResourceSelected(item){
   var compute = $(item).val();
-  var attrs = attribute_hash(['architecture_id', 'compute_resource_id', 'operatingsystem_id']);
   if(compute=='') { //Bare Metal
     $('#mac_address').show();
     $("#model_name").show();
@@ -15,11 +14,12 @@ function computeResourceSelected(item){
     $("#model_name").hide();
     $("#compute_resource_tab").show();
     $('#vm_details').empty();
+    var data = $('form').serialize().replace('method=put', 'method=post');
     var url = $(item).attr('data-url');
     $.ajax({
       type:'post',
       url: url,
-      data: attrs,
+      data: data,
       success: function(result){
         $('#compute_resource').html(result);
         update_capabilities($('#capabilities').val());
@@ -27,7 +27,6 @@ function computeResourceSelected(item){
     })
   }
 }
-
 
 function update_capabilities(capabilities){
   var build = (/build/i.test(capabilities));
@@ -222,19 +221,20 @@ function location_changed(element) {
 function update_form(element) {
   var url = $(element).data('url');
   var data = $('form').serialize().replace('method=put', 'method=post');
-  var indicator = $(element).parent().find('img');
-  indicator.show();
+  $(element).indicator_show();
   $.ajax({
     type: 'post',
     url: url,
     data: data,
+    complete: function(){  $(element).indicator_hide();},
     success: function(response) {
       $('form').html(response);
       $("[id$='subnet_id']").first().change();
+      // to handle case if def process_taxonomy changed compute_resource_id to nil
+      if( !$('#host_compute_resource_id').val() ) {
+        $('#host_compute_resource_id').change();
+      }
       onContentLoad();
-    },
-    complete: function(){
-      indicator.hide();
     }
   })
 }
@@ -251,13 +251,13 @@ function subnet_selected(element){
       return;
   }
   var attrs = attribute_hash(["subnet_id", "host_mac", 'organization_id', 'location_id']);
-  $('#subnet_indicator').show();
+  $(element).indicator_show();
   var url = $(element).data('url');
   $.ajax({
     data: attrs,
     type:'post',
     url: url,
-    complete: function(){$('#subnet_indicator').hide()},
+    complete: function(){  $(element).indicator_hide();},
     success: function(data){
       $('#host_ip').val(data.ip);
     }
@@ -283,12 +283,12 @@ function _to_int(str){
 function domain_selected(element){
   var attrs   = attribute_hash(['domain_id', 'organization_id', 'location_id']);
   var url = $(element).data('url');
-  $('#domain_indicator').show();
+  $(element).indicator_show();
   $.ajax({
     data: attrs,
     type:'post',
     url: url,
-    complete: function(){$('#domain_indicator').hide()},
+    complete: function(){  $(element).indicator_hide();},
     success: function(request) {
       $('#subnet_select').html(request);
       reload_host_params();
@@ -299,10 +299,12 @@ function domain_selected(element){
 function architecture_selected(element){
   var attrs   = attribute_hash(['architecture_id', 'organization_id', 'location_id']);
   var url = $(element).attr('data-url');
+  $(element).indicator_show();
   $.ajax({
     data: attrs,
     type:'post',
     url: url,
+    complete: function(){  $(element).indicator_hide();},
     success: function(request) {
       $('#os_select').html(request);
     }
@@ -312,10 +314,12 @@ function architecture_selected(element){
 function os_selected(element){
   var attrs = attribute_hash(['operatingsystem_id', 'organization_id', 'location_id']);
   var url = $(element).attr('data-url');
+  $(element).indicator_show();
   $.ajax({
     data: attrs,
     type:'post',
     url: url,
+    complete: function(){  $(element).indicator_hide();},
     success: function(request) {
       $('#media_select').html(request);
       reload_host_params();
@@ -329,7 +333,7 @@ function update_provisioning_image(){
   var os_id = $('[id$="_operatingsystem_id"]').val();
   if((compute_id == undefined) || (compute_id == "") || (arch_id == "") || (os_id == "")) return;
   var term = 'operatingsystem=' + os_id + ' architecture=' + arch_id;
-  var image_options = $("[id$=compute_attributes_image_id]").empty();
+  var image_options = $('#image_selection select').empty();
   $.ajax({
       data:'search=' + encodeURIComponent(term),
       type:'get',
@@ -462,19 +466,19 @@ function onHostEditLoad(){
     submit_host($form);
     return false;
   });
-
-  $('#host_provision_method_build').on('click', function(){
-    $('#network_provisioning').show();
-    $('#image_provisioning').hide();
-  });
-  $('#host_provision_method_image').on('click', function(){
-    $('#network_provisioning').hide();
-    $('#image_provisioning').show();
-  });
-
   $('#image_selection').appendTo($('#image_provisioning'));
   $('#params-tab').on('shown', function(){mark_params_override()});
 }
+
+$(document).on('change', '#host_provision_method_build', function () {
+  $('#network_provisioning').show();
+  $('#image_provisioning').hide();
+});
+
+$(document).on('change', '#host_provision_method_image', function () {
+  $('#network_provisioning').hide();
+  $('#image_provisioning').show();
+});
 
 $(document).on('change', '.interface_domain', function () {
   interface_domain_selected(this);
@@ -491,7 +495,6 @@ $(document).on('change', '.interface_type', function () {
 function interface_domain_selected(element) {
   var domain_id = element.value;
   var subnet_options = $(element).parentsUntil('.fields').parent().find('[id$=_subnet_id]').empty();
-  var indicator = $(element).parent().find('.indicator')
 
   subnet_options.attr('disabled', true);
   if (domain_id == '') {
@@ -499,7 +502,7 @@ function interface_domain_selected(element) {
     return false;
   }
 
-  indicator.removeClass('hide');
+  $(element).indicator_show();
 
   var url = $(element).attr('data-url');
 
@@ -526,7 +529,7 @@ function interface_domain_selected(element) {
         subnet_options.append($("<option />").text(_('No subnets')));
         subnet_options.attr('disabled', true);
       }
-      indicator.addClass('hide');
+      $(element).indicator_hide();
     }
   });
 }
@@ -534,11 +537,10 @@ function interface_domain_selected(element) {
 function interface_subnet_selected(element) {
   var subnet_id = $(element).val();
   if (subnet_id == '') return;
-  var indicator = $(element).parent().find('.indicator')
   var interface_ip = $(element).parentsUntil('.fields').parent().find('input[id$=_ip]')
 
   interface_ip.attr('disabled', true);
-  indicator.removeClass('hide');
+  $(element).indicator_show();
 
   // We do not query the proxy if the ip field is filled in and contains an
   // IP that is in the selected subnet
@@ -551,7 +553,7 @@ function interface_subnet_selected(element) {
 
     if (subnet_contains(network, cidr, interface_ip.val())) {
       interface_ip.attr('disabled', false);
-      indicator.addClass('hide');
+      $(element).indicator_hide();
       return;
     }
   }
@@ -570,7 +572,7 @@ function interface_subnet_selected(element) {
       interface_ip.val(result['ip']);
     },
     complete:function () {
-      indicator.addClass('hide');
+      $(element).indicator_hide();
       interface_ip.attr('disabled', false);
     }
   });

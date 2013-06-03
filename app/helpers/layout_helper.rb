@@ -116,18 +116,35 @@ module LayoutHelper
   def field(f, attr, options = {})
     fluid = options[:fluid]
     error = f.object.errors[attr] if f && f.object.respond_to?(:errors)
-    inline = options.delete(:help_inline)
-    inline = error.to_sentence.html_safe unless error.empty?
-    help_inline = inline.blank? ? '' : content_tag(:span, inline, :class => "help-inline")
+    help_inline = help_inline(options.delete(:help_inline), error)
+
     help_block  = content_tag(:span, options.delete(:help_block), :class => "help-block")
     content_tag :div, :class => "control-group #{fluid ? "row-fluid" : ""} #{error.empty? ? "" : 'error'}" do
       label   = options.delete(:label)
-      label ||= (f.object.class.respond_to?(:gettext_translation_for_attribute_name) &&
-                  s_(f.object.class.gettext_translation_for_attribute_name attr)) if f
+
+      label ||= ((clazz = gettext_key(f.object.class)).respond_to?(:gettext_translation_for_attribute_name) &&
+                  s_(clazz.gettext_translation_for_attribute_name attr)) if f
+
       label_tag(attr, label, :class=>"control-label").html_safe +
         content_tag(:div, :class => "controls") do
           yield.html_safe + help_inline.html_safe + help_block.html_safe
         end.html_safe
+    end
+  end
+
+  def gettext_key(aclass)
+    aclass.respond_to?(:base_class) ? aclass.base_class : aclass
+  end
+
+  def help_inline(inline, error)
+    help_inline = error.empty? ? inline : error.to_sentence.html_safe
+    case help_inline
+      when blank?
+        ""
+      when :indicator
+        content_tag(:span, image_tag('/assets/spinner.gif', :class => 'hide'), :class => "help-inline")
+      else
+        content_tag(:span, help_inline, :class => "help-inline")
     end
   end
 

@@ -10,14 +10,15 @@
     <packagelist>
       <packagereq type="default">foreman</packagereq>
       <packagereq type="default">foreman-cli</packagereq>
+      <packagereq type="default">foreman-compute</packagereq>
       <packagereq type="default">foreman-console</packagereq>
       <packagereq type="default">foreman-devel</packagereq>
-      <packagereq type="default">foreman-ec2</packagereq>
       <packagereq type="default">foreman-libvirt</packagereq>
       <packagereq type="default">foreman-ovirt</packagereq>
       <packagereq type="default">foreman-postgresql</packagereq>
       <packagereq type="default">foreman-mysql</packagereq>
       <packagereq type="default">foreman-mysql2</packagereq>
+      <packagereq type="default">foreman-release</packagereq>
       <packagereq type="default">foreman-sqlite</packagereq>
       <packagereq type="default">foreman-vmware</packagereq>
       <packagereq type="default">foreman-proxy</packagereq>
@@ -68,10 +69,13 @@
       <packagereq type="default">ruby193-rubygem-execjs</packagereq>
       <packagereq type="default">ruby193-rubygem-fast_gettext</packagereq>
       <packagereq type="default">ruby193-rubygem-ffi</packagereq>
+      <packagereq type="default">ruby193-rubygem-flot-rails</packagereq>
       <packagereq type="default">ruby193-rubygem-fog</packagereq>
       <packagereq type="default">ruby193-rubygem-foremancli</packagereq>
       <packagereq type="default">ruby193-rubygem-formatador</packagereq>
+      <packagereq type="default">ruby193-rubygem-gettext</packagereq>
       <packagereq type="default">ruby193-rubygem-gettext_i18n_rails</packagereq>
+      <packagereq type="default">ruby193-rubygem-gettext_i18n_rails_js</packagereq>
       <packagereq type="default">ruby193-rubygem-hike</packagereq>
       <packagereq type="default">ruby193-rubygem-hirb-unicode</packagereq>
       <packagereq type="default">ruby193-rubygem-hirb</packagereq>
@@ -82,9 +86,12 @@
       <packagereq type="default">ruby193-rubygem-jquery-rails</packagereq>
       <packagereq type="default">ruby193-rubygem-jquery-ui-rails</packagereq>
       <packagereq type="default">ruby193-rubygem-json</packagereq>
+      <packagereq type="default">ruby193-rubygem-levenshtein</packagereq>
       <packagereq type="default">ruby193-rubygem-mail</packagereq>
       <packagereq type="default">ruby193-rubygem-mime-types</packagereq>
       <packagereq type="default">ruby193-rubygem-multi_json</packagereq>
+      <packagereq type="default">ruby193-rubygem-mysql</packagereq>
+      <packagereq type="default">ruby193-rubygem-mysql2</packagereq>
       <packagereq type="default">ruby193-rubygem-net-http-persistent</packagereq>
       <packagereq type="default">ruby193-rubygem-net-ldap</packagereq>
       <packagereq type="default">ruby193-rubygem-net-ping</packagereq>
@@ -94,6 +101,7 @@
       <packagereq type="default">ruby193-rubygem-oauth</packagereq>
       <packagereq type="default">ruby193-rubygem-pg</packagereq>
       <packagereq type="default">ruby193-rubygem-polyglot</packagereq>
+      <packagereq type="default">ruby193-rubygem-po_to_json</packagereq>
       <packagereq type="default">ruby193-rubygem-quiet_assets</packagereq>
       <packagereq type="default">ruby193-rubygem-rabl</packagereq>
       <packagereq type="default">ruby193-rubygem-rack-cache</packagereq>
@@ -135,11 +143,13 @@
       <packagereq type="default">ruby193-rubygem-uglifier</packagereq>
       <packagereq type="default">ruby193-rubygem-unicode-display_width</packagereq>
       <packagereq type="default">ruby193-rubygem-uuidtools</packagereq>
-      <packagereq type="default">ruby193-rubygem-virt</packagereq>
       <packagereq type="default">ruby193-rubygem-will_paginate</packagereq>
       <packagereq type="default">ruby193-rubygem-wirb</packagereq>
       <packagereq type="default">ruby193-rubygems</packagereq>
       <packagereq type="default">ruby193-v8</packagereq>
+
+      <packagereq type="default">rubygem-highline</packagereq>
+      <packagereq type="default">rubygem-rkerberos</packagereq>
     </packagelist>
   </group>
 </comps>

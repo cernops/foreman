@@ -282,7 +282,7 @@ module ApplicationHelper
   end
 
   def gravatar_image_tag(email, html_options = {})
-    default_image = "user.jpg"
+    default_image = path_to_image("user.jpg")
     html_options.merge!(:onerror=>"this.src='#{default_image}'")
     image_url = Setting["use_gravatar"] ? gravatar_url(email, default_image) : default_image
     return image_tag(image_url, html_options)
@@ -291,10 +291,6 @@ module ApplicationHelper
   def gravatar_url(email, default_image)
     return default_image if email.blank?
     "#{request.protocol}//secure.gravatar.com/avatar/#{Digest::MD5.hexdigest(email)}?d=mm&s=30"
-  end
-
-  def sign_out_url
-    (session[:logout_path] || '') + URI.escape(logout_users_url)
   end
 
   private

@@ -73,8 +73,6 @@ class UsersController < ApplicationController
     else
       process_error
     end
-    # make sure users cache are expired (assuming some permissions changed etc)
-    expire_fragment("tabs_and_title_records-#{@user.id}")
     User.current.editing_self = false if editing_self
 
     # Remove locale from the session when set to "Browser Locale" and editing self
@@ -113,7 +111,8 @@ class UsersController < ApplicationController
   # Called from the logout link
   # Clears the rails session and redirects to the login action
   def logout
-    expire_fragment("tabs_and_title_records-#{User.current.id}") if User.current
+    TopbarSweeper.expire_cache(self)
+    sso_logout_path = get_sso_method.try(:logout_url)
     session[:user] = @user = User.current = nil
     (flash[:notice] || flash[:error]) ? flash.keep : session.clear
 
@@ -123,7 +122,7 @@ class UsersController < ApplicationController
       session.clear
       notice _("Logged out - See you soon")
     end
-    redirect_to login_users_path
+    redirect_to sso_logout_path || login_users_path
   end
 
   private

@@ -10,6 +10,7 @@
     <%= javascript_tag "var I18N_MARK = true;" if SETTINGS[:mark_translated] and not Rails.env.test? %>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <%= favicon_link_tag "favicon.ico"%>
     <%= yield(:head) %>
   </head>
 
@@ -57,14 +58,6 @@
           <%= yield -%>
         </div>
       </div>
-    </div>
-    <div id="footer">
-      <%= _('Version') %> <%= SETTINGS[:version] %> &copy; 2009-<script>document.write( (new Date()).getFullYear() );</script> Paul Kelly <%= _('and') %> <%= mail_to "ohadlevy@gmail.com", "Ohad Levy" %>
-      <span>
-        <%= link_to _("Help"),    :controller => "dashboard", :action => "welcome" %> |
-        <%= link_to _('Wiki'),    "http://theforeman.org/wiki/foreman", :rel => "external", :rel => "external" %> |
-        <%= link_to _('Support'), "http://theforeman.org/projects/foreman/wiki/Support", :rel => "external" %>
-      </span>
     </div>
   </body>
 </html>

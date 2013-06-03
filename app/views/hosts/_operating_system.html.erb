@@ -1,11 +1,12 @@
 
 <%= select_f f, :architecture_id, Architecture.all, :id, :to_label, {:include_blank => true},
-    {:onchange => 'architecture_selected(this);', :'data-url' => method_path('architecture_selected')} %>
+    {:onchange => 'architecture_selected(this);', :'data-url' => method_path('architecture_selected'),
+    :help_inline => :indicator} %>
 
 <span id="os_select">
   <%= render 'common/os_selection/architecture', :item => @host %>
 </span>
-<% image_provisioning = f.object.provision_method && f.object.provision_method == 'image' %>
+<% image_provisioning = f.object.capabilities && f.object.capabilities.include?(:image) %>
 <div id='provisioning_method' <%= display? (@host.capabilities.size < 2)  %> >
   <%= field(f, :provision_method, :label => _('Provisioning Method')) do
       radio_button_f(f, :provision_method, :value=>'build', :checked=> !image_provisioning, :text=> _("Network Based"))+

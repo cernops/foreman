@@ -45,7 +45,7 @@ Foreman::AccessControl.map do |map|
 
   map.security_block :compute_resources do |map|
     ajax_actions = [:test_connection]
-    map.permission :view_compute_resources,    {:compute_resources => [:index, :show, :auto_complete_search],
+    map.permission :view_compute_resources,    {:compute_resources => [:index, :show, :auto_complete_search, :ping],
                                                 :"api/v1/compute_resources" => [:index, :show],
                                                 :"api/v2/compute_resources" => [:index, :show]
     }
@@ -245,7 +245,9 @@ Foreman::AccessControl.map do |map|
     map.permission :power_hosts,   {:hosts => [:power]}
     map.permission :console_hosts, {:hosts => [:console]}
     map.permission :ipmi_boot, {:hosts => [:ipmi_boot]}
-    map.permission :puppetrun_hosts, {:hosts => [:puppetrun, :multiple_puppetrun, :update_multiple_puppetrun]}
+    map.permission :puppetrun_hosts, {:hosts => [:puppetrun, :multiple_puppetrun, :update_multiple_puppetrun],
+                                      :"api/v2/hosts" => [:puppetrun]
+                                      }
   end
 
   map.security_block :host_editing do |map|
@@ -407,7 +409,7 @@ Foreman::AccessControl.map do |map|
   end
 
   map.security_block :smart_proxies do |map|
-    map.permission :view_smart_proxies,    {:smart_proxies => [:index, :show],
+    map.permission :view_smart_proxies,    {:smart_proxies => [:index, :ping],
                                           :"api/v1/smart_proxies" => [:index, :show],
                                           :"api/v2/smart_proxies" => [:index, :show]
     }

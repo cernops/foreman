@@ -1,5 +1,3 @@
-require 'foreman/controller/auto_complete_search'
-
 class ApplicationController < ActionController::Base
   include Foreman::ThreadSession::Cleaner
 
@@ -19,7 +17,7 @@ class ApplicationController < ActionController::Base
   before_filter :authorize
 
 
-  cache_sweeper :topbar_sweeper, :unless => :api_request?
+  cache_sweeper :topbar_sweeper
 
   def welcome
     @searchbar = true
@@ -74,11 +72,9 @@ class ApplicationController < ActionController::Base
       # User is not found or first login
       if SETTINGS[:login]
         # authentication is enabled
-
         if available_sso.present?
           if available_sso.authenticated?
             user = User.unscoped.find_by_login(available_sso.user)
-            session[:logout_path] = available_sso.logout_path if available_sso.support_logout?
             update_activity_time
           elsif available_sso.support_login?
             available_sso.authenticate!
@@ -203,9 +199,25 @@ class ApplicationController < ActionController::Base
 
   def expire_session
     logger.info "Session for #{current_user} is expired."
+    sso = get_sso_method
     reset_session
-    flash[:warning] = _("Your session has expired, please login again")
-    redirect_to login_users_path
+    if sso.nil? || !sso.support_expiration?
+      flash[:warning] = _("Your session has expired, please login again")
+      redirect_to login_users_path
+    else
+      redirect_to sso.expiration_url
+    end
+  end
+
+  # returns current SSO method object according to session
+  # nil is returned if nothing was found or invalid method is stored
+  def get_sso_method
+    if (sso_method_class = session[:sso_method])
+      sso_method_class.constantize.new(self)
+    end
+  rescue NameError
+    logger.error "Unknown SSO method #{sso_method_class}"
+    nil
   end
 
   def ajax?
@@ -362,6 +374,10 @@ class ApplicationController < ActionController::Base
     include += [:hostgroup, :compute_resource, :operatingsystem, :environment, :model ]
     include += [:fact_values] if User.current.user_facts.any?
     include
+  end
+
+  def errors_hash errors
+    errors.any? ? {:status => N_("Error"), :message => errors.full_messages.join('<br>')} : {:status => N_("OK"), :message =>""}
   end
 
 end

@@ -33,8 +33,8 @@ module DashboardHelper
   end
 
   def latest_events
-    # 7 reports + header fits the events box nicely...
-    summary = Report.my_reports.interesting.search_for('reported > "7 days ago"').limit(7)
+    # 6 reports + header fits the events box nicely...
+    summary = Report.my_reports.interesting.search_for('reported > "7 days ago"').limit(6)
   end
 
   def translated_header(shortname, longname)
@@ -44,17 +44,17 @@ module DashboardHelper
   def latest_headers
     string =  "<th>#{_("Host")}</th>"
     # TRANSLATORS: initial character of Applied
-    string += translated_header(_('A'),_('Applied'))
+    string += translated_header(s_('Applied|A'), _('Applied'))
     # TRANSLATORS: initial character of Restarted
-    string += translated_header(_('R'),_('Restarted'))
+    string += translated_header(s_('Restarted|R'), _('Restarted'))
     # TRANSLATORS: initial character of Failed
-    string += translated_header(_('F'),_('Failed'))
+    string += translated_header(s_('Failed|F'), _('Failed'))
     # TRANSLATORS: initial characters of Failed Restarts
-    string += translated_header(_('FR'),_('Failed Restarts'))
+    string += translated_header(s_('Failed Restarts|FR'), _('Failed Restarts'))
     # TRANSLATORS: initial character of Skipped
-    string += translated_header(_('S'),_('Skipped'))
+    string += translated_header(s_('Skipped|S'), _('Skipped'))
     # TRANSLATORS: initial character of Pending
-    string += translated_header(_('P'),_('Pending'))
+    string += translated_header(s_('Pending|P'), _('Pending'))
 
     string.html_safe
   end

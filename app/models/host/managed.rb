@@ -131,7 +131,9 @@ class Host::Managed < Host::Base
       conditions.sub!(/^(?:\(\))?\s?(?:and|or)\s*/, "")
       conditions.sub!(/\(\s*(?:or|and)\s*\(/, "((")
     end
-    {:conditions => conditions}
+
+    { :joins => ufs.empty? ? nil : :fact_values,
+      :conditions => conditions }
   }
 
   scope :completer_scope, lambda { my_hosts }
@@ -603,7 +605,7 @@ class Host::Managed < Host::Base
   end
 
   def capabilities
-    compute_resource_id ? compute_resource.capabilities : [:build]
+    compute_resource ? compute_resource.capabilities : [:build]
   end
 
   def provider
@@ -774,7 +776,7 @@ class Host::Managed < Host::Base
         old_domain = Domain.find(changed_attributes["domain_id"])
         self.name.gsub(old_domain.to_s,"")
       end
-      self.name += ".#{domain}" unless name =~ /.#{domain}$/i
+      self.name += ".#{domain}" unless name =~ /\./i
     end
   end
 
