@@ -32,7 +32,7 @@ Thoroughly test it. If it works properly, then
 
 * git checkout production
 * git merge origin/preproduction
-* Fix conflicts, hopefully there will be none if you did the preproduction/develop merge correctly and you found no issues
+* Fix conflicts, there could be conflicts because someone could have pushed hotfixes to origin/production
 * git push origin production
 
 
