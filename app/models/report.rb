@@ -12,7 +12,7 @@ class Report < ActiveRecord::Base
 
   scoped_search :in => :host,     :on => :name, :complete_value => true, :rename => :host
   scoped_search :in => :environment, :on => :name, :complete_value => true, :rename => :environment
-  scoped_search :in => :messages, :on => :value,                         :rename => :log
+  scoped_search :in => :messages, :on => :value,                         :rename => :log, :only_explicit => true
   scoped_search :in => :sources,  :on => :value,                         :rename => :resource
 
   scoped_search :on => :reported_at, :complete_value => true, :default_order => :desc,    :rename => :reported
