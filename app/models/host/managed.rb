@@ -336,6 +336,7 @@ class Host::Managed < Host::Base
       param["mac"] = mac
     end
 
+    begin
     changed_hg_audit = Audit.find_all_by_auditable_name(name).
                            select  { |host| host.audited_changes["hostgroup_id"].is_a?(Array) }.
                            sort_by(&:created_at)
@@ -347,6 +348,13 @@ class Host::Managed < Host::Base
     else
       hostgroup_time = changed_hg_audit.last.created_at.to_i
     end
+# this is a terrible patch, but urgently needed. find_all_by_auditable_name could fail
+# because of the gem 'audited' failing to convert old dates to utc, and this should be
+# caught here, but the correct way to do this is to fix the old records or the gem 'audited'
+    rescue
+      hostgroup_time = Audit.find_by_auditable_name(name).created_at.to_i
+    end
+
 
     param['hostgroup_time'] = hostgroup_time
 
