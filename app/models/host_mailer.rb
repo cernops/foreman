@@ -11,11 +11,8 @@ class HostMailer < ActionMailer::Base
 
     # options our host list if required
     filter = []
-    set_url
 
-    if (@url = Setting[:foreman_url]).empty?
-      raise ::Foreman::Exception.new N_("':foreman_url:' entry in Foreman configuration file, see http://theforeman.org/projects/foreman/wiki/Mail_Notifications")
-    end
+    set_url
 
     if options[:env]
       hosts = envhosts = options[:env].hosts
@@ -56,20 +53,20 @@ class HostMailer < ActionMailer::Base
     @out_of_sync = hosts.out_of_sync
     @disabled = hosts.alerts_disabled
     @filter = filter
+    mail(:to   => email,
+         :from => Setting["email_reply_address"],
+         :subject => subject,
+         :date => Time.now )
   end
 
   def error_state(report)
     host = report.host
     email = host.owner.recipients if SETTINGS[:login] && host.owner.present?
     email = Setting[:administrator]   if email.empty?
-    raise "unable to find recipients" if email.empty?
-    recipients email
-    from Setting["email_reply_address"]
-    subject "Puppet error on #{host.to_label}"
-    sent_on Time.now
-    content_type "text/html"
+    raise ::Foreman::Exception.new(N_("unable to find recipients")) if email.empty?
     @report = report
     @host = host
+    mail(:to => email, :subject => (_("Puppet error on %s") % host.to_label))
   end
 
   def failed_runs(user, options = {})
@@ -78,22 +75,22 @@ class HostMailer < ActionMailer::Base
     host_data = Report.summarise(time, user.hosts).sort
     total_metrics = load_metrics(host_data)
     total = 0 ; total_metrics.values.each { |v| total += v }
-    subject "Summary Puppet report from Foreman - F:#{total_metrics["failed"]} R:#{total_metrics["restarted"]} S:#{total_metrics["skipped"]} A:#{total_metrics["applied"]} FR:#{total_metrics["failed_restarts"]} T:#{total}"
-    sent_on Time.now
-    from Setting["email_reply_address"]
-    recipients user.mail
-    content_type "text/html"
     @hosts = host_data.sort_by { |h| h[1][:metrics]['failed'] }.reverse
     @timerange = time
     @out_of_sync = Host.out_of_sync.select { |h| h.owner == user }
     @disabled = Host.alerts_disabled.select { |h| h.owner == user }
-  end 
+    mail(:to   => user.mail,
+         :from => Setting["email_reply_address"],
+         :subject => _("Summary Puppet report from Foreman - F:#{total_metrics["failed"]} R:#{total_metrics["restarted"]} S:#{total_metrics["skipped"]} A:#{total_metrics["applied"]} FR:#{total_metrics["failed_restarts"]} T:#{total}"),
+         :date => Time.now )
+  end
 
   def set_url
     if (@url = Setting[:foreman_url]).empty?
-      raise ":foreman_url: entry in Foreman configuration file, see http://theforeman.org/projects/foreman/wiki/Mail_Notifications"
+      raise ":foreman_url is not set, please configure in the Foreman Web UI (More -> Settings -> General)"
     end
   end
+
 
   def load_metrics(host_data)
     total_metrics = {"failed"=>0, "restarted"=>0, "skipped"=>0, "applied"=>0, "failed_restarts"=>0}
