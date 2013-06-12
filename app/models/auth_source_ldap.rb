@@ -77,21 +77,27 @@ class AuthSourceLdap < AuthSource
     "LDAP"
   end
 
-  def includes_cn?(cn) 
-    filter = Net::LDAP::Filter.eq("cn", cn)                 
-    ldap_con = initialize_ldap_con(account, account_password) 
+  def includes_cn?(cn)
+    filter = Net::LDAP::Filter.eq("cn", cn)
+    ldap_con = initialize_ldap_con(account, account_password)
     ldap_con.search(:base => treebase, :filter => filter).present?
   end
 
-  def userlist(cn)
-    filter = Net::LDAP::Filter.eq("cn", cn)                 
-    ldap_con = initialize_ldap_con(account, account_password) 
+  def userlist(cn, recursive = true)
+    filter = Net::LDAP::Filter.eq("cn", cn)
+    ldap_con = initialize_ldap_con(account, account_password)
     search   = ldap_con.search(:base => treebase, :filter => filter)
-    if search.present?  
-      members  = search[0].member 
-      # Extracts the CN portion (common name) of an LDAP member. Net/LDAP does not provide this functionality 
-      members.map { |m| m.split(',')[0][3..m.length] }
-    else 
+    if search.present?
+      members  = search[0].member
+      # Extracts the CN portion (common name) of an LDAP member. Net/LDAP does not provide this functionality
+      members.map do |m|
+        if m =~ /CN=(\S+),OU=Users/
+          $1
+        elsif m =~ /CN=(\S+),OU=e-groups/ && recursive
+          userlist($1, recursive).flatten
+        end
+      end.flatten.compact
+    else
       []
     end
   end
