@@ -18,7 +18,7 @@ gem 'oauth'
 gem 'dalli'
 gem 'facter', '1.7.0'
 gem 'puppet', '2.7.18'
-gem 'savon'
+gem 'savon', '1.2.0'
 gem 'landb'
 
 if RUBY_VERSION =~ /^1\.8/
