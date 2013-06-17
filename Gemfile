@@ -18,6 +18,8 @@ gem 'oauth'
 gem 'dalli'
 gem 'facter', '1.7.0'
 gem 'puppet', '2.7.18'
+gem 'savon'
+gem 'landb'
 
 if RUBY_VERSION =~ /^1\.8/
   # Older version of safemode for Ruby 1.8, as the latest causes regexp overflows (#2100)
