@@ -37,7 +37,7 @@ namespace :landb do
 
     Host.all.each do |host|
       begin
-        landb_owner = client.get_device_info(host.name.split('.')[0]).device_info.responsible_person
+        landb_owner = client.get_device_info([host.name.split('.')[0]]).device_info.responsible_person
         name = landb_owner.name
         first_name = landb_owner.first_name
         if landb_owner.first_name.downcase == 'e-group'
