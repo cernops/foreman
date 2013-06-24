@@ -46,7 +46,7 @@ namespace :landb do
           landb_owner = User.find_by_login(employee_id_to_login(landb_owner.ccid))
         end
 
-        if landb_owner.nil
+        if landb_owner.nil?
           puts "Host - #{host.name} -- current owner: #{host.owner} - landb owner not found in foreman- #{name} - #{first_name}"
           puts '----------------------------------'
         end
