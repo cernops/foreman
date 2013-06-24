@@ -14,7 +14,7 @@
 
 Name:   foreman
 Version: 1.2.9999
-Release: 2%{?dist}
+Release: 5%{?dist}
 Summary:Systems Management web application
 
 Group:  Applications/System
@@ -63,11 +63,11 @@ Requires: %{?scl_prefix}rubygem(rabl) >= 0.7.5
 Requires: %{?scl_prefix}rubygem(rake) >= 0.8.3
 Requires: %{?scl_prefix}rubygem(ruby_parser) >= 3.0.0
 Requires: %{?scl_prefix}rubygem(audited-activerecord) >= 3.0.0
-Requires: %{?scl_prefix}rubygem(apipie-rails) >= 0.0.16
+Requires: %{?scl_prefix}rubygem(apipie-rails) >= 0.0.22
 Requires: %{?scl_prefix}rubygem(bundler_ext)
 Requires: %{?scl_prefix}rubygem(thin)
 Requires: %{?scl_prefix}rubygem(fast_gettext) >= 0.4.8
-Requires: %{?scl_prefix}rubygem(gettext_i18n_rails)
+Requires: %{?scl_prefix}rubygem(gettext_i18n_rails) >= 0.10.0
 Requires: %{?scl_prefix}rubygem(gettext_i18n_rails_js) >= 0.0.8
 Requires: %{?scl_prefix}rubygem(i18n_data) >= 0.2.6
 Requires: %{?scl_prefix}rubygem(therubyracer)
@@ -75,13 +75,13 @@ Requires: %{?scl_prefix}rubygem(jquery-ui-rails)
 Requires: %{?scl_prefix}rubygem(twitter-bootstrap-rails)
 BuildRequires: %{?scl_prefix}rubygem(ancestry) < 1.4.0
 BuildRequires: %{?scl_prefix}rubygem(ancestry) >= 1.3.0
-BuildRequires: %{?scl_prefix}rubygem(apipie-rails) >= 0.0.16
+BuildRequires: %{?scl_prefix}rubygem(apipie-rails) >= 0.0.22
 BuildRequires: %{?scl_prefix}rubygem(audited-activerecord) >= 3.0.0
 BuildRequires: %{?scl_prefix}rubygem(bundler_ext)
 BuildRequires: %{?scl_prefix}rubygem(coffee-rails) => 3.2.1
 BuildRequires: %{?scl_prefix}rubygem(gettext) >= 1.9.3
 BuildRequires: %{?scl_prefix}rubygem(fast_gettext)
-BuildRequires: %{?scl_prefix}rubygem(gettext_i18n_rails)
+BuildRequires: %{?scl_prefix}rubygem(gettext_i18n_rails) >= 0.10.0
 BuildRequires: %{?scl_prefix}rubygem(gettext_i18n_rails_js) >= 0.0.8
 BuildRequires: %{?scl_prefix}rubygem(i18n_data) >= 0.2.6
 BuildRequires: %{?scl_prefix}rubygem(jquery-rails)
@@ -138,7 +138,7 @@ Fedora. This package contains the repository configuration for Yum.
 %package libvirt
 Summary: Foreman libvirt support
 Group:  Applications/System
-Requires: %{?scl_prefix}rubygem(virt) >= 0.2.1
+Requires: %{?scl_prefix}rubygem(ruby-libvirt)
 Requires: %{name} = %{version}-%{release}
 Requires: foreman-compute = %{version}-%{release}
 Obsoletes: foreman-virt < 1.0.0
@@ -198,12 +198,13 @@ Summary: Foreman asset pipeline support
 Group: Applications/system
 Requires: %{name} = %{version}-%{release}
 Requires: %{?scl_prefix}rubygem(coffee-rails) >= 3.2.1
-Requires: %{?scl_prefix}rubygem(coffee-rails) < 3.2.2
-Requires: %{?scl_prefix}rubygem(jquery-rails) = 2.0.3
+Requires: %{?scl_prefix}rubygem(coffee-rails) < 3.3
+Requires: %{?scl_prefix}rubygem(jquery-rails) >= 2.0.2
+Requires: %{?scl_prefix}rubygem(jquery-rails) < 2.1
 Requires: %{?scl_prefix}rubygem(jquery-ui-rails)
 Requires: %{?scl_prefix}rubygem(quiet_assets)
 Requires: %{?scl_prefix}rubygem(sass-rails) >= 3.2.3
-Requires: %{?scl_prefix}rubygem(sass-rails) < 3.2.4
+Requires: %{?scl_prefix}rubygem(sass-rails) < 3.3
 Requires: %{?scl_prefix}rubygem(spice-html5-rails)
 Requires: %{?scl_prefix}rubygem(therubyracer)
 Requires: %{?scl_prefix}rubygem(twitter-bootstrap-rails)
@@ -224,6 +225,8 @@ Group:  Applications/System
 Requires: %{?scl_prefix}rubygem(awesome_print)
 Requires: %{?scl_prefix}rubygem(hirb-unicode)
 Requires: %{?scl_prefix}rubygem(wirb)
+# minitest - workaround until Rails 4.0 (#2650)
+Requires: %{?scl_prefix}rubygem(minitest)
 Requires: %{name} = %{version}-%{release}
 
 %description console
@@ -318,7 +321,6 @@ Meta Package to install requirements for devel support
 Summary: Foreman test support
 Group:  Applications/System
 Requires: %{?scl_prefix}rubygem(mocha)
-Requires: %{?scl_prefix}rubygem(shoulda)
 Requires: %{?scl_prefix}rubygem(rr)
 Requires: %{?scl_prefix}rubygem(rake)
 Requires: %{?scl_prefix}rubygem(maruku)
@@ -380,10 +382,14 @@ install -d -m0755 %{buildroot}%{_localstatedir}/lib/%{name}/tmp
 install -d -m0755 %{buildroot}%{_localstatedir}/lib/%{name}/tmp/pids
 install -d -m0755 %{buildroot}%{_localstatedir}/run/%{name}
 install -d -m0750 %{buildroot}%{_localstatedir}/log/%{name}
+install -Dp -m0755 script/%{name}-debug %{buildroot}%{_sbindir}/%{name}-debug
 install -Dp -m0644 %{confdir}/%{name}.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/%{name}
 install -Dp -m0755 %{confdir}/%{name}.init %{buildroot}%{_initrddir}/%{name}
 install -Dp -m0644 %{confdir}/%{name}.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
 install -Dp -m0644 %{confdir}/%{name}.cron.d %{buildroot}%{_sysconfdir}/cron.d/%{name}
+%if 0%{?rhel} > 6 || 0%{?fedora} > 16
+install -Dp -m0644 %{confdir}/%{name}.tmpfiles %{buildroot}%{_prefix}/lib/tmpfiles.d/%{name}.conf
+%endif
 
 install -dm 755 $RPM_BUILD_ROOT%{_sysconfdir}/yum.repos.d
 sed "s/\$DIST/$(echo %{?dist} | sed 's/^\.//')/g" %{confdir}/%{name}.repo > $RPM_BUILD_ROOT%{_sysconfdir}/yum.repos.d/%{name}.repo
@@ -436,6 +442,7 @@ rm -rf %{buildroot}
 %{_datadir}/%{name}
 %exclude %{_datadir}/%{name}/app/assets
 %{_initrddir}/%{name}
+%{_sbindir}/%{name}-debug
 %config(noreplace) %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
@@ -446,6 +453,10 @@ rm -rf %{buildroot}
 %attr(-,%{name},root) %{_datadir}/%{name}/config.ru
 %attr(-,%{name},root) %{_datadir}/%{name}/config/environment.rb
 %ghost %attr(0640,root,%{name}) %{_datadir}/%{name}/config/initializers/local_secret_token.rb
+# Only need tmpfiles on systemd (F17 and up)
+%if 0%{?rhel} > 6 || 0%{?fedora} > 16
+%{_prefix}/lib/tmpfiles.d/%{name}.conf
+%endif
 
 %pre
 # Add the "foreman" user and group
@@ -517,6 +528,13 @@ if [ $1 -ge 1 ] ; then
 fi
 
 %changelog
+* Mon Jun 17 2013 Dominic Cleal <dcleal@redhat.com> 1.2.9999-5
+- fix asset dependency versions
+- add minitest dependency for console (Lukas Zapletal)
+* Thu Jun 06 2013 Dominic Cleal <dcleal@redhat.com> 1.2.9999-4
+- fix libvirt package dependency on ruby-libvirt
+* Wed Jun 05 2013 Lukas Zapletal <lzap+rpm[@]redhat.com> - 1.2.9999-3
+- foreman-debug tool now installed into /usr/sbin
 * Tue May 28 2013 Dominic Cleal <dcleal@redhat.com> 1.2.9999-2
 - Don't force SCL
 - Distribute GPG key

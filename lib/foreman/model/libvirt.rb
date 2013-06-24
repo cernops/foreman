@@ -40,7 +40,7 @@ module Foreman::Model
       16*1024*1024*1024
     end
 
-    def test_connection
+    def test_connection options = {}
       super
       errors[:url].empty? and hypervisor
     rescue => e
@@ -69,6 +69,8 @@ module Foreman::Model
     end
 
     def new_vm attr={ }
+      test_connection
+      return unless errors.empty?
       opts = vm_instance_defaults.merge(attr.to_hash).symbolize_keys
 
       # convert rails nested_attributes into a plain hash

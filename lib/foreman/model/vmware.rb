@@ -1,4 +1,5 @@
 require 'fog_extensions/vsphere/mini_servers'
+require 'foreman/exception'
 
 module Foreman::Model
   class Vmware < ComputeResource
@@ -59,14 +60,19 @@ module Foreman::Model
       dc.datastores.all(:accessible => true)
     end
 
-    def test_connection
+    def test_connection options = {}
       super
-      errors[:server] and errors[:user].empty? and errors[:password] and update_public_key and datacenters
+      if errors[:server].empty? and errors[:user].empty? and errors[:password].empty?
+        update_public_key options
+        datacenters
+      end
     rescue => e
       errors[:base] << e.message
     end
 
     def new_vm attr={ }
+      test_connection
+      return unless errors.empty?
       opts = vm_instance_defaults.merge(attr.to_hash).symbolize_keys
 
       # convert rails nested_attributes into a plain hash
@@ -124,29 +130,25 @@ module Foreman::Model
       client.volumes.new attr.merge(:size_gb => 10)
     end
 
-    private
-
-    def dc
-      client.datacenters.get(datacenter)
-    end
-
-    def update_public_key
-      return unless pubkey_hash.blank?
-      client
-    rescue => e
-      if e.message =~ /The remote system presented a public key with hash (\w+) but we're expecting a hash of/
-        self.pubkey_hash = $1
-      else
-        raise e
-      end
-    end
-
     def pubkey_hash
       attrs[:pubkey_hash]
     end
 
     def pubkey_hash= key
       attrs[:pubkey_hash] = key
+    end
+
+    private
+
+    def dc
+      client.datacenters.get(datacenter)
+    end
+
+    def update_public_key options ={}
+      return unless pubkey_hash.blank? || options[:force]
+      client
+    rescue Foreman::FingerprintException => e
+      self.pubkey_hash = e.fingerprint
     end
 
     def client
@@ -157,6 +159,13 @@ module Foreman::Model
         :vsphere_server               => server,
         :vsphere_expected_pubkey_hash => pubkey_hash
       )
+    rescue => e
+      if e.message =~ /The remote system presented a public key with hash (\w+) but we're expecting a hash of/
+        raise Foreman::FingerprintException.new(
+          N_("The remote system presented a public key with hash %s but we're expecting a different hash. If you are sure the remote system is authentic, go to the compute resource edit page, press the 'Test Connection' or 'Load Datacenters' button and submit"), $1)
+      else
+        raise e
+      end
     end
 
     def unused_vnc_port ip
@@ -179,3 +188,4 @@ module Foreman::Model
 
   end
 end
+

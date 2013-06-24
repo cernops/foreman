@@ -26,7 +26,7 @@ class ComputeResource < ActiveRecord::Base
   # include all default scoping here
   default_scope lambda {
     with_taxonomy_scope do
-      order("LOWER(compute_resources.name)")
+      order("compute_resources.name")
     end
   }
 
@@ -61,7 +61,7 @@ class ComputeResource < ActiveRecord::Base
     {:uuid => :identity}
   end
 
-  def test_connection
+  def test_connection options = {}
     valid?
   end
 
@@ -92,7 +92,8 @@ class ComputeResource < ActiveRecord::Base
 
   # returns a new fog server instance
   def new_vm attr={}
-    client.servers.new vm_instance_defaults.merge(attr.to_hash.symbolize_keys)
+    test_connection
+    client.servers.new vm_instance_defaults.merge(attr.to_hash.symbolize_keys) if errors.empty?
   end
 
   # return fog new interface ( network adapter )

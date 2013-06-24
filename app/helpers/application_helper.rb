@@ -11,8 +11,9 @@ module ApplicationHelper
     render :partial => 'common/show_habtm', :collection => associations, :as => :association
   end
 
-  def edit_habtm klass, association, prefix=nil
-    render :partial => 'common/edit_habtm', :locals =>{:prefix => prefix, :klass => klass, :associations => association.all.sort.delete_if{|e| e == klass}}
+  def edit_habtm klass, association, prefix = nil, options = {}
+    render :partial => 'common/edit_habtm', :locals =>{:prefix => prefix, :klass => klass, :options => options,
+                                                       :associations => association.all.sort.delete_if{|e| e == klass}}
   end
 
   def link_to_remove_fields(name, f)
@@ -121,8 +122,8 @@ module ApplicationHelper
     end
   end
 
-  def authorized_edit_habtm klass, association, prefix=nil
-    return edit_habtm(klass, association, prefix) if authorized_for params[:controller], params[:action]
+  def authorized_edit_habtm klass, association, prefix = nil, options = {}
+    return edit_habtm(klass, association, prefix, options) if authorized_for params[:controller], params[:action]
     show_habtm klass.send(association.name.pluralize.downcase)
   end
 
@@ -154,7 +155,7 @@ module ApplicationHelper
   end
 
   def auto_complete_search(name, val, options = {})
-    path = eval("#{controller_name}_path")
+    path = send("#{controller_name}_path")
     options.merge!(:class => "autocomplete-input", :'data-url' => "#{path}/auto_complete_#{name}" )
     text_field_tag(name, val, options)
   end
@@ -164,7 +165,7 @@ module ApplicationHelper
   end
 
   def method_path method
-    eval("#{method}_#{controller_name}_path")
+    send("#{method}_#{controller_name}_path")
   end
 
   def edit_textfield(object, property, options={})
@@ -181,6 +182,7 @@ module ApplicationHelper
 
   def flot_pie_chart name, title, data, options = {}
     data = data.map { |k,v| {:label=>k.to_s.humanize, :data=>v} } if  data.is_a?(Hash)
+    data.map{|element| element[:label] = truncate(element[:label],:length => 16)}
     header = content_tag(:h4,(options[:show_title]) ? title : '', :class=>'ca pie-title', :'data-original-title'=>_("Expand the chart"), :rel=>'twipsy')
     link_to_function(header, "expand_chart(this)")+
         content_tag(:div, nil,

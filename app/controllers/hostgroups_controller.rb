@@ -26,7 +26,18 @@ class HostgroupsController < ApplicationController
   end
 
   def nest
-    @hostgroup = Hostgroup.new(:parent_id => params[:id])
+    @parent = Hostgroup.find(params[:id])
+    @hostgroup = @parent.dup
+    #overwrite parent_id and name
+    @hostgroup.parent_id = params[:id]
+    @hostgroup.name = ""
+
+    load_vars_for_ajax
+    @hostgroup.puppetclasses = @parent.puppetclasses
+    @hostgroup.locations = @parent.locations
+    @hostgroup.organizations = @parent.organizations
+    # Clone any parameters as well
+    @hostgroup.group_parameters.each{|param| @parent.group_parameters << param.dup}
     render :action => :new
   end
 
@@ -35,6 +46,8 @@ class HostgroupsController < ApplicationController
     new = @hostgroup.dup
     load_vars_for_ajax
     new.puppetclasses = @hostgroup.puppetclasses
+    new.locations = @hostgroup.locations
+    new.organizations = @hostgroup.organizations
     # Clone any parameters as well
     @hostgroup.group_parameters.each{|param| new.group_parameters << param.dup}
     new.name = ""
@@ -74,6 +87,8 @@ class HostgroupsController < ApplicationController
   end
 
   def update
+    # remove from hash :root_pass if blank?
+    params[:hostgroup].except!(:root_pass) if params[:hostgroup][:root_pass].blank?
     if @hostgroup.update_attributes(params[:hostgroup])
       process_success
     else
@@ -99,6 +114,22 @@ class HostgroupsController < ApplicationController
     render :partial => 'puppetclasses/class_selection', :locals => {:obj => (@hostgroup)}
   end
 
+  def process_hostgroup
+
+    @parent = Hostgroup.find(params[:hostgroup][:parent_id]) if params[:hostgroup][:parent_id].to_i > 0
+    return head(:not_found) unless @parent
+
+    @hostgroup = Hostgroup.new(params[:hostgroup])
+    @hostgroup.architecture       ||= @parent.architecture
+    @hostgroup.operatingsystem    ||= @parent.operatingsystem
+    @hostgroup.domain             ||= @parent.domain
+    @hostgroup.subnet             ||= @parent.subnet
+    @hostgroup.environment        ||= @parent.environment
+
+    load_vars_for_ajax
+    render :partial => "form"
+  end
+
   private
 
   def find_hostgroup
@@ -110,6 +141,8 @@ class HostgroupsController < ApplicationController
     @architecture    = @hostgroup.architecture
     @operatingsystem = @hostgroup.operatingsystem
     @domain          = @hostgroup.domain
+    @subnet          = @hostgroup.subnet
+    @environment     = @hostgroup.environment
   end
 
   def users_in_ancestors

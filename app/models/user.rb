@@ -44,12 +44,13 @@ class User < ActiveRecord::Base
   validates_presence_of :login, :auth_source_id
   validates_presence_of :password_hash, :if => Proc.new {|user| user.manage_password?}
   validates_confirmation_of :password,  :if => Proc.new {|user| user.manage_password?}, :unless => Proc.new {|user| user.password.empty?}
-  validates_format_of :login, :with => /^[a-z0-9_\-@\.]*$/i
+  validates_format_of :login, :with => /^[[:alnum:]_\-@\.]*$/
   validates_length_of :login, :maximum => 100
-  validates_format_of :firstname, :lastname, :with => /^[\w\s\'\-\.]*$/i, :allow_nil => true
+  validates_format_of :firstname, :lastname, :with => /^[[:alnum:]\s'_\-\.]*$/, :allow_nil => true
   validates_length_of :firstname, :lastname, :maximum => 30, :allow_nil => true
 
-  validate :name_used_in_a_usergroup, :ensure_admin_is_not_renamed, :ensure_admin_remains_admin
+  validate :name_used_in_a_usergroup, :ensure_admin_is_not_renamed, :ensure_admin_remains_admin,
+           :ensure_privileges_not_escalated
   before_validation :prepare_password, :normalize_mail
   after_destroy Proc.new {|user| user.compute_resources.clear; user.domains.clear; user.hostgroups.clear}
 
@@ -58,7 +59,7 @@ class User < ActiveRecord::Base
   scoped_search :on => :lastname, :complete_value => :true
   scoped_search :on => :mail, :complete_value => :true
   scoped_search :on => :admin, :complete_value => {:true => true, :false => false}
-  scoped_search :on => :last_login_on, :complete_value => :true
+  scoped_search :on => :last_login_on, :complete_value => :true, :only_explicit => true
   scoped_search :in => :roles, :on => :name, :rename => :role, :complete_value => true
 
   default_scope lambda {
@@ -190,6 +191,31 @@ class User < ActiveRecord::Base
     organizations.any?
   end
 
+  # user must be assigned all given roles in order to delegate them
+  def can_assign?(roles)
+    can_change_admin_flag? || roles.all? { |r| self.role_ids_was.include?(r) }
+  end
+
+  # only admin can change admin flag
+  def can_change_admin_flag?
+    self.admin?
+  end
+
+  def role_ids_with_change_detection=(roles)
+    @role_ids_changed = roles.uniq.select(&:present?).map(&:to_i).sort != role_ids.sort
+    @role_ids_was = role_ids.clone
+    self.role_ids_without_change_detection = roles
+  end
+  alias_method_chain(:role_ids=, :change_detection)
+
+  def role_ids_changed?
+    @role_ids_changed
+  end
+
+  def role_ids_was
+    @role_ids_was ||= role_ids
+  end
+
   private
 
   def prepare_password
@@ -246,7 +272,7 @@ class User < ActiveRecord::Base
   # admin account automatically
   def ensure_admin_is_not_deleted
     if login == "admin"
-      errors.add :base, "Can't delete internal admin account"
+      errors.add :base, _("Can't delete internal admin account")
       logger.warn "Unable to delete internal admin account"
       false
     end
@@ -255,13 +281,32 @@ class User < ActiveRecord::Base
   # The admin account must always retain the "Administrator" flag to function
   def ensure_admin_remains_admin
     if login == "admin" and admin_changed? and admin == false
-      errors.add :admin, "Can't remove Administrator flag from internal protected <b>admin</b> account".html_safe
+      errors.add :admin, _("Can't remove Administrator flag from internal protected <b>admin</b> account").html_safe
     end
   end
 
   def ensure_admin_is_not_renamed
     if login_changed? and login_was == "admin"
-      errors.add :login, "Can't rename internal protected <b>admin</b> account to #{login}".html_safe
+      errors.add :login, (_("Can't rename internal protected <b>admin</b> account to %s") % login).html_safe
+    end
+  end
+
+  def ensure_privileges_not_escalated
+    ensure_admin_not_escalated
+    ensure_roles_not_escalated
+  end
+
+  def ensure_roles_not_escalated
+    roles_check = self.new_record? ? self.role_ids.present? : self.role_ids_changed?
+    if roles_check && !User.current.can_assign?(self.role_ids)
+      errors.add :role_ids, _("You can't assign some of roles you selected")
+    end
+  end
+
+  def ensure_admin_not_escalated
+    admin_check = self.new_record? ? self.admin? : self.admin_changed?
+    if admin_check && !User.current.can_change_admin_flag?
+      errors.add :admin, _("You can't change Administrator flag")
     end
   end
 end

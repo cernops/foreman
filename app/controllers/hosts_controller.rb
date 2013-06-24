@@ -100,6 +100,13 @@ class HostsController < ApplicationController
   def update
     forward_url_options
     Taxonomy.no_taxonomy_scope do
+      # remove from hash :root_pass and bmc :password if blank?
+      params[:host].except!(:root_pass) if params[:host][:root_pass].blank?
+      if @host.type == "Host::Managed" && params[:host][:interfaces_attributes]
+        params[:host][:interfaces_attributes].each do |k, v|
+          params[:host][:interfaces_attributes]["#{k}"].except!(:password) if params[:host][:interfaces_attributes]["#{k}"][:password].blank?
+        end
+      end
       if @host.update_attributes(params[:host])
         process_success :success_redirect => host_path(@host), :redirect_xhr => request.xhr?
       else
@@ -209,12 +216,13 @@ class HostsController < ApplicationController
 
   def bmc
     render :partial => 'bmc', :locals => { :host => @host }
-  rescue => e
-    #TODO: hack
-    error = e.try(:original_exception).try(:response) || e.to_s
-    logger.warn "failed to fetch bmc information: #{error}"
-    logger.debug e.backtrace
-    render :text => "Failure: #{error}"
+  rescue ActionView::Template::Error => exception
+    origin = exception.try(:original_exception)
+    message = (origin || exception).message
+    logger.warn "Failed to fetch bmc information: #{message}"
+    logger.debug "Original exception backtrace:\n" + origin.backtrace.join("\n") if origin.present?
+    logger.debug "Causing backtrace:\n" + exception.backtrace.join("\n")
+    render :text => "Failure: #{message}"
   end
 
   def ipmi_boot
@@ -436,7 +444,14 @@ class HostsController < ApplicationController
     @domain          = @hostgroup.domain
     @subnet          = @hostgroup.subnet
 
-    @host = Host.new(params[:host])
+    @host = if params[:host][:id]
+      host = Host::Base.find(params[:host][:id])
+      host = host.becomes Host::Managed
+      host.attributes = params[:host]
+      host
+    else
+      Host.new(params[:host])
+    end
     @host.set_hostgroup_defaults
     render :partial => "form"
 
@@ -501,6 +516,11 @@ class HostsController < ApplicationController
       @location = Location.find_by_id(params[:host][:location_id])
     end
 
+    if @host
+      @organization ||= @host.organization
+      @location     ||= @host.location
+    end
+
     if SETTINGS[:organizations_enabled]
       @organization ||= Organization.current
       @organization ||= Organization.my_organizations.first
@@ -512,11 +532,17 @@ class HostsController < ApplicationController
   end
 
   def find_by_name
-    # find host first, if we fail, do nothing
-    params[:id].downcase! if params[:id].present?
-    super
-    return false unless @host
-    deny_access and return unless User.current.admin? or Host.my_hosts.include?(@host)
+    not_found and return false if (id = params[:id]).blank?
+    # determine if we are searching for a numerical id or plain name
+
+    if id =~ /^\d+$/
+      @host = Host::Base.my_hosts.find_by_id id.to_i
+    else
+      @host = Host::Base.my_hosts.find_by_name id.downcase
+      @host ||= Host::Base.my_hosts.find_by_mac params[:host][:mac] if params[:host] && params[:host][:mac]
+    end
+
+    not_found and return false unless @host
   end
 
   def load_vars_for_ajax

@@ -15,13 +15,22 @@ function computeResourceSelected(item){
     $("#compute_resource_tab").show();
     $('#vm_details').empty();
     var data = $('form').serialize().replace('method=put', 'method=post');
+    $('#compute_resource').html(spinner_placeholder(_('Loading virtual machine information ...')));
+    $('#compute_resource_tab a').removeClass('tab-error');
+    $(item).indicator_show();
     var url = $(item).attr('data-url');
     $.ajax({
       type:'post',
       url: url,
       data: data,
+      complete: function(){$(item).indicator_hide()},
+      error: function(jqXHR, status, error){
+        $('#compute_resource').html(Jed.sprintf(_("Error loading virtual machine information: %s"), error));
+        $('#compute_resource_tab a').addClass('tab-error');
+      },
       success: function(result){
         $('#compute_resource').html(result);
+        if ($('#compute_resource').find('.alert-error').length > 0) $('#compute_resource_tab a').addClass('tab-error');
         update_capabilities($('#capabilities').val());
       }
     })
@@ -50,7 +59,7 @@ function update_capabilities(capabilities){
 
 var stop_pooling;
 
-function submit_host(form){
+function submit_host(){
   var url = window.location.pathname.replace(/\/edit$|\/new$/,'');
   if(/\/clone$/.test(window.location.pathname)){ url = foreman_url('/hosts'); }
   $('#host_submit').attr('disabled', true);
@@ -62,7 +71,7 @@ function submit_host(form){
   $.ajax({
     type:'POST',
     url: url,
-    data: form.serialize(),
+    data: $('form').serialize(),
     success: function(response){
       if(response.redirect){
         window.location.replace(response.redirect);
@@ -96,8 +105,8 @@ function clear_errors(){
 function animate_progress(){
   if (stop_pooling == true) return;
   setTimeout(function() {
-    var task_id = $('#host_progress_report_id').val();
-    $.get('/tasks/' + task_id, function (response){
+    var url = $('#host_progress_report_id').data('url');
+    $.get(url, function (response){
        update_progress(response);
        animate_progress();
     })
@@ -184,7 +193,7 @@ function load_puppet_class_parameters(item) {
 
   if (url == undefined) return; // no parameters
   var placeholder = $('<tr id="puppetclass_'+id+'_params_loading">'+
-      '<td colspan="5"><p><img src="/assets/spinner.gif" alt="' + _('Wait') + '" /> ' + _('Loading parameters...') + '</p></td>'+'</tr>');
+      '<td colspan="5">' + spinner_placeholder(_('Loading parameters...')) + '</td></tr>');
   $('#inherited_puppetclasses_parameters').append(placeholder);
   $.ajax({
     url: url,
@@ -200,12 +209,17 @@ function load_puppet_class_parameters(item) {
 }
 
 function hostgroup_changed(element) {
-  var host_id = $("form").data('id')
-  if (!host_id){ // a new host
+  var host_id = $("form").data('id');
+  var host_changed = $("form").data('type-changed');
+  if (host_id) {
+    if (host_changed ){
+      update_form(element,{data:"&host[id]="+host_id});
+    } else { // edit host
+      update_puppetclasses(element);
+      reload_host_params();
+    }
+  } else { // a new host
     update_form(element);
-  } else { // edit host
-    update_puppetclasses(element);
-    reload_host_params();
   }
 }
 
@@ -218,9 +232,11 @@ function location_changed(element) {
 }
 
 
-function update_form(element) {
+function update_form(element, options) {
+  options = options || {};
   var url = $(element).data('url');
   var data = $('form').serialize().replace('method=put', 'method=post');
+  if (options.data) data = data+options.data;
   $(element).indicator_show();
   $.ajax({
     type: 'post',
@@ -228,7 +244,7 @@ function update_form(element) {
     data: data,
     complete: function(){  $(element).indicator_hide();},
     success: function(response) {
-      $('form').html(response);
+      $('form').replaceWith(response);
       $("[id$='subnet_id']").first().change();
       // to handle case if def process_taxonomy changed compute_resource_id to nil
       if( !$('#host_compute_resource_id').val() ) {
@@ -438,7 +454,7 @@ function reload_puppetclass_params(){
 function load_with_placeholder(target, url, data){
   if(url==undefined) return;
   var placeholder = $('<tr id="' + target + '_loading" >'+
-            '<td colspan="4"><p><img src="/assets/spinner.gif" alt="' + _('Wait') + '" /> ' + _('Loading parameters...') + '</p></td></tr>');
+            '<td colspan="4">'+ spinner_placeholder(_('Loading parameters...')) + '</td></tr>');
         $('#' + target + ' tbody').replaceWith(placeholder);
         $.ajax({
           type:'post',
@@ -461,14 +477,15 @@ function onHostEditLoad(){
    $('#host-conflicts-modal').click(function(){
      $('#host-conflicts-modal').modal('hide');
    });
-  var $form = $("[data-submit='progress_bar']");
-  $form.on('submit', function(){
-    submit_host($form);
-    return false;
-  });
   $('#image_selection').appendTo($('#image_provisioning'));
   $('#params-tab').on('shown', function(){mark_params_override()});
 }
+
+$(document).on('submit',"[data-submit='progress_bar']", function() {
+  submit_host();
+  return false;
+});
+
 
 $(document).on('change', '#host_provision_method_build', function () {
   $('#network_provisioning').show();
