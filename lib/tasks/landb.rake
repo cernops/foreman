@@ -54,7 +54,7 @@ namespace :landb do
         if landb_owner != host.owner
           changes += 1
           puts "Host - #{host.name} -- current owner: #{host.owner} - landb owner: #{landb_owner}"
-          puts (host.update_attributes(:owner => landb_owner) || host.errors.messages)
+          puts (host.update_attribute('owner', landb_owner) || host.errors.messages)
           puts '----------------------------------'
         end
       rescue
