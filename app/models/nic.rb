@@ -11,7 +11,7 @@ module Nic
                     :mac, :name,
                     :_destroy # used for nested_attributes
 
-    before_validation :normalize_mac
+    before_validation :normalize_mac, :symbolize_attrs!
 
     validates_uniqueness_of :mac
     validates_presence_of :mac
@@ -57,5 +57,10 @@ module Nic
     def normalize_mac
       self.mac = Net::Validations.normalize_mac(mac)
     end
+
+    def symbolize_attrs!
+      self.attrs = self.attrs.symbolize_keys
+    end
+
   end
 end
