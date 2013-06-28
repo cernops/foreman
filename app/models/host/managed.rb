@@ -289,8 +289,9 @@ class Host::Managed < Host::Base
     param["comment"]      = comment unless comment.blank?
     param["foreman_env"]  = environment.to_s unless environment.nil? or environment.name.nil?
     if SETTINGS[:login] and owner
-      param["owner_name"]  = owner.name
-      param["owner_email"] = owner.is_a?(User) ? owner.mail : owner.users.map(&:mail)
+      param["owner_name"]  = owner.is_a?(User) ? owner.login : owner.name
+      param["owner_email"] = owner.is_a?(User) ? owner.mail  : owner.users.map(&:mail)
+      param["owner_type"]  = "#{owner.class}"
     end
 
     if Setting[:ignore_puppet_facts_for_provisioning]
