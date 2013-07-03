@@ -39,7 +39,7 @@ module Api
       end
 
       def create
-        interface = @nested_obj.interfaces.new(params[:interface], :without_protection => true)  
+        interface = @nested_obj.interfaces.new(params[:interface], :without_protection => true)
         if interface.save
           render :json => interface, :status => 201
         else
@@ -57,14 +57,14 @@ module Api
         param :subnet_id, Fixnum, :desc => 'Foreman subnet id of interface'
         param :domain_id, Fixnum, :desc => 'Foreman domain id of interface'
         param :attrs, Hash, :required => true do
-          param :username, String 
-          param :password, String 
+          param :username, String
+          param :password, String
           param :provider, String, :required => true, :desc => 'Interface provider, i.e: IPMI'
         end
       end
 
       def update
-        process_response @interface.update_attributes(params[:interface], :without_protection => true)  
+        process_response @interface.update_attributes(params[:interface], :without_protection => true)
       end
 
       api :DELETE, "/host/:host_id/interfaces/:id", "Delete a nested parameter for host"
@@ -82,7 +82,7 @@ module Api
         begin
           render :json => { :power => @interface.proxy.power(:action => params[:power_action]) } , :status => 200
         rescue NoMethodError
-          render :json => { :error => "NoMethodError: Available methods are on, off, soft, cycle" }, :status => 422
+          render :json => { :error => "NoMethodError: Available methods are on, off, soft, cycle, status" }, :status => 422
         end
       end
 
@@ -90,7 +90,7 @@ module Api
       param :id, String, :required => true, :desc => "id of interface"
       param :device, String, :required => true, :desc => "boot device, valid devices are disk, cdrom, pxe, bios"
 
-      def boot 
+      def boot
         begin
           render :json => { :boot => @interface.proxy.boot(:function => 'bootdevice', :device => params[:device]) }, :status => 200
         rescue NoMethodError
@@ -102,7 +102,7 @@ module Api
       param :id, String, :required => true, :desc => "id of interface"
       param :lan_action, String, :required => true, :desc => "lan action, valid actions are ip, netmask, mac, gateway"
 
-      def lan 
+      def lan
         begin
           render :json => { :lan => { params[:lan_action] => @interface.proxy.lan(:action => params[:lan_action]) } }, :status => 200
         rescue NoMethodError
