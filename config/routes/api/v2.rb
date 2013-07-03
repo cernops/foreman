@@ -76,7 +76,11 @@ Foreman::Application.routes.draw do
           end
           resources :puppetclasses, :only => [:index, :show]
           resources :host_classes, :path => :puppetclass_ids, :only => [:index, :create, :destroy]
-          resources :interfaces, :except => [:new, :edit]
+          resources :interfaces, :except => [:new, :edit] do 
+            put 'power', :on => :member
+            put 'boot' , :on => :member
+            put 'lan'  , :on => :member
+          end
         end
 
         resources :domains, :only => [] do
@@ -126,11 +130,6 @@ Foreman::Application.routes.draw do
       resources :users, :only => [] do
         (resources :locations, :only => [:index, :show]) if SETTINGS[:locations_enabled]
         (resources :organizations, :only => [:index, :show]) if SETTINGS[:organizations_enabled]
-      end
-
-      resources :nics, :only => [] do
-        resources :interfaces, :except => [:index, :new, :edit]
-        resources :bmcs, :except => [:index, :new, :edit]
       end
 
       resources :media, :only => [] do
