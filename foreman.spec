@@ -13,8 +13,8 @@
 %endif
 
 Name:   foreman
-Version: 1.2.9999
-Release: 5%{?dist}
+Version: 1.2.0
+Release: 1%{?dist}
 Summary:Systems Management web application
 
 Group:  Applications/System
@@ -63,11 +63,11 @@ Requires: %{?scl_prefix}rubygem(rabl) >= 0.7.5
 Requires: %{?scl_prefix}rubygem(rake) >= 0.8.3
 Requires: %{?scl_prefix}rubygem(ruby_parser) >= 3.0.0
 Requires: %{?scl_prefix}rubygem(audited-activerecord) >= 3.0.0
-Requires: %{?scl_prefix}rubygem(apipie-rails) >= 0.0.22
+Requires: %{?scl_prefix}rubygem(apipie-rails) >= 0.0.16
 Requires: %{?scl_prefix}rubygem(bundler_ext)
 Requires: %{?scl_prefix}rubygem(thin)
 Requires: %{?scl_prefix}rubygem(fast_gettext) >= 0.4.8
-Requires: %{?scl_prefix}rubygem(gettext_i18n_rails) >= 0.10.0
+Requires: %{?scl_prefix}rubygem(gettext_i18n_rails)
 Requires: %{?scl_prefix}rubygem(gettext_i18n_rails_js) >= 0.0.8
 Requires: %{?scl_prefix}rubygem(i18n_data) >= 0.2.6
 Requires: %{?scl_prefix}rubygem(therubyracer)
@@ -75,13 +75,13 @@ Requires: %{?scl_prefix}rubygem(jquery-ui-rails)
 Requires: %{?scl_prefix}rubygem(twitter-bootstrap-rails)
 BuildRequires: %{?scl_prefix}rubygem(ancestry) < 1.4.0
 BuildRequires: %{?scl_prefix}rubygem(ancestry) >= 1.3.0
-BuildRequires: %{?scl_prefix}rubygem(apipie-rails) >= 0.0.22
+BuildRequires: %{?scl_prefix}rubygem(apipie-rails) >= 0.0.16
 BuildRequires: %{?scl_prefix}rubygem(audited-activerecord) >= 3.0.0
 BuildRequires: %{?scl_prefix}rubygem(bundler_ext)
 BuildRequires: %{?scl_prefix}rubygem(coffee-rails) => 3.2.1
 BuildRequires: %{?scl_prefix}rubygem(gettext) >= 1.9.3
 BuildRequires: %{?scl_prefix}rubygem(fast_gettext)
-BuildRequires: %{?scl_prefix}rubygem(gettext_i18n_rails) >= 0.10.0
+BuildRequires: %{?scl_prefix}rubygem(gettext_i18n_rails)
 BuildRequires: %{?scl_prefix}rubygem(gettext_i18n_rails_js) >= 0.0.8
 BuildRequires: %{?scl_prefix}rubygem(i18n_data) >= 0.2.6
 BuildRequires: %{?scl_prefix}rubygem(jquery-rails)
@@ -528,21 +528,24 @@ if [ $1 -ge 1 ] ; then
 fi
 
 %changelog
-* Mon Jun 17 2013 Dominic Cleal <dcleal@redhat.com> 1.2.9999-5
+* Mon Jul 01 2013 Dominic Cleal <dcleal@redhat.com> 1.2.0-1
+- Release 1.2.0
+* Fri Jun 21 2013 Dominic Cleal <dcleal@redhat.com> 1.2.0-0.4.RC3
+- Release 1.2.0-RC3
 - fix asset dependency versions
 - add minitest dependency for console (Lukas Zapletal)
-* Thu Jun 06 2013 Dominic Cleal <dcleal@redhat.com> 1.2.9999-4
-- fix libvirt package dependency on ruby-libvirt
-* Wed Jun 05 2013 Lukas Zapletal <lzap+rpm[@]redhat.com> - 1.2.9999-3
-- foreman-debug tool now installed into /usr/sbin
-* Tue May 28 2013 Dominic Cleal <dcleal@redhat.com> 1.2.9999-2
+* Tue May 28 2013 Dominic Cleal <dcleal@redhat.com> 1.2.0-0.3.RC2
+- Release 1.2.0-RC2
 - Don't force SCL
-- Distribute GPG key
+- Distribute GPG key, enable GPG checking
 - Replace dist in foreman.repo
 - Rename foreman-ec2 to foreman-compute
-- Update dbmigrate for SCL (Lukas Zapletal)
-* Mon May 20 2013 Dominic Cleal <dcleal@redhat.com> 1.2.9999-1
-- Updated to 1.2.9999 (1.3-pre)
+- foreman-debug tool now installed into /usr/sbin (Lukas Zapletal)
+- fix libvirt package dependency on ruby-libvirt
+* Thu May 23 2013 Dominic Cleal <dcleal@redhat.com> 1.2.0-0.2.RC1
+- Change to release candidate URL in foreman.repo
+* Thu May 23 2013 Dominic Cleal <dcleal@redhat.com> 1.2.0-0.1.RC1
+- Release 1.2.0-RC1
 * Tue Apr 30 2013 Sam Kottler <shk@redhat.com> 1.1.9999-1
 - Updated to 1.1.9999 (1.2-pre)
 * Fri Feb 15 2013 shk@redhat.com 1.1-3

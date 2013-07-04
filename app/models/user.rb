@@ -309,4 +309,23 @@ class User < ActiveRecord::Base
       errors.add :admin, _("You can't change Administrator flag")
     end
   end
+
+  def ensure_privileges_not_escalated
+    ensure_admin_not_escalated
+    ensure_roles_not_escalated
+  end
+
+  def ensure_roles_not_escalated
+    roles_check = self.new_record? ? self.role_ids.present? : self.role_ids_changed?
+    if roles_check && !User.current.can_assign?(self.role_ids)
+      errors.add :role_ids, _("You can't assign some of roles you selected")
+    end
+  end
+
+  def ensure_admin_not_escalated
+    admin_check = self.new_record? ? self.admin? : self.admin_changed?
+    if admin_check && !User.current.can_change_admin_flag?
+      errors.add :admin, _("You can't change Administrator flag")
+    end
+  end
 end

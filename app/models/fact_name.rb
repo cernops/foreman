@@ -13,6 +13,8 @@ class FactName < ActiveRecord::Base
 
   validate :name, :uniqueness => true
 
+  validate :name, :uniqueness => true
+
   def to_param
     name
   end

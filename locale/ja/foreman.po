@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: version 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-21 14:21+0100\n"
+"POT-Creation-Date: 2013-07-01 13:18+0100\n"
 "PO-Revision-Date: 2013-05-09 09:31+0100\n"
 "Last-Translator: Lukas Zapletal <lzap+git@redhat.com>\n"
 "Language-Team: Foreman Team <foreman-dev@googlegroups.com>\n"
@@ -85,13 +85,19 @@ msgstr ""
 msgid "%{value} does not belong to %{os} operating system"
 msgstr ""
 
+msgid "%{value} is not a valid controller"
+msgstr ""
+
 msgid "%{value} is not one of %{rules}"
 msgstr ""
 
 msgid "%{vm} is now %{vm_state}"
 msgstr ""
 
-msgid "'%s' could be deleted."
+msgid "&#8592; Previous"
+msgstr ""
+
+msgid "'%{host}' could be deleted or '%{resource}' is not responding."
 msgstr ""
 
 msgid "'%{host}' not found on '%{resource}'"
@@ -110,6 +116,9 @@ msgid "*Clear host group*"
 msgstr ""
 
 msgid "*Inherit from host group*"
+msgstr ""
+
+msgid "<b class='select_count'>0</b> selected"
 msgstr ""
 
 msgid "<b>Description:</b> %{desc}<br><b>Type:</b> %{type}<br> <b>Matcher:</b> %{matcher}"
@@ -923,6 +932,13 @@ msgstr ""
 msgid "Display the templates that will be used to provision this host"
 msgstr ""
 
+msgid "Displaying <b>%{count}</b> entry"
+msgid_plural "Displaying <b>all %{count}</b> entries"
+msgstr[0] ""
+
+msgid "Displaying entries <b>%{from} - %{to}</b> of <b>%{count}</b> in total"
+msgstr ""
+
 msgid "Document root where puppetdoc files should be created"
 msgstr ""
 
@@ -1114,7 +1130,13 @@ msgstr ""
 msgid "Error has occurred while communicating with %{cr}: %{e}"
 msgstr ""
 
+msgid "Error loading virtual machine information: %s"
+msgstr ""
+
 msgid "Errors only"
+msgstr ""
+
+msgid "Errors: %s"
 msgstr ""
 
 #. host's status: first character of "error"
@@ -1169,6 +1191,9 @@ msgstr ""
 
 #. initial characters of Failed Restarts
 msgid "Failed Restarts|FR"
+msgstr ""
+
+msgid "Failed connecting to %s"
 msgstr ""
 
 msgid "Failed restarts"
@@ -1873,10 +1898,13 @@ msgstr ""
 msgid "Loading Images information"
 msgstr ""
 
-msgid "Loading Virtual Machines information ..."
+msgid "Loading parameters..."
 msgstr ""
 
-msgid "Loading parameters..."
+msgid "Loading virtual machine information ..."
+msgstr ""
+
+msgid "Loading virtual machines information ..."
 msgstr ""
 
 msgid "Location"
@@ -2143,6 +2171,9 @@ msgstr ""
 msgid "Network Based"
 msgstr ""
 
+msgid "Network Type"
+msgstr ""
+
 msgid "Network interfaces"
 msgstr ""
 
@@ -2261,6 +2292,9 @@ msgstr ""
 msgid "New window"
 msgstr ""
 
+msgid "Next &#8594;"
+msgstr ""
+
 #. "Table name" or "Table name|Column name" for error messages
 msgid "Nic::Base|Attrs"
 msgstr ""
@@ -2283,6 +2317,9 @@ msgstr ""
 msgid "No TFTP proxies defined, can't continue"
 msgstr ""
 
+msgid "No bridges"
+msgstr ""
+
 msgid "No changes"
 msgstr ""
 
@@ -2290,6 +2327,9 @@ msgid "No compute resource to show"
 msgstr ""
 
 msgid "No domains"
+msgstr ""
+
+msgid "No entries found"
 msgstr ""
 
 msgid "No environment selected!"
@@ -2317,6 +2357,9 @@ msgid "No hosts were found with that id or name"
 msgstr ""
 
 msgid "No interesting reports received in the last week"
+msgstr ""
+
+msgid "No networks"
 msgstr ""
 
 msgid "No new subnets found"
@@ -2691,6 +2734,9 @@ msgid "Permissions"
 msgstr ""
 
 msgid "Permissions report"
+msgstr ""
+
+msgid "Physical (Bridge)"
 msgstr ""
 
 msgid "Please Confirm"
@@ -3106,9 +3152,6 @@ msgstr ""
 msgid "Select template"
 msgstr ""
 
-msgid "Selected"
-msgstr ""
-
 msgid "Selected hosts are now assigned to %s"
 msgstr ""
 
@@ -3475,6 +3518,9 @@ msgstr ""
 msgid "The Foreman community uses on the irc.freenode.net servers. You can get general support in #theforeman, while development chat takes place in #theforeman-dev."
 msgstr ""
 
+msgid "The IP address that should be used for the console listen address when provisioning new virtual machines via Libvirt"
+msgstr ""
+
 msgid "The NFS path to the image directory."
 msgstr ""
 
@@ -3571,6 +3617,9 @@ msgstr ""
 msgid "The path to the medium, can be a URL or a valid NFS server (exclusive of the architecture).\\n          for example <em>http://mirror.averse.net/centos/$version/os/$arch</em> where <strong>$arch</strong> will be substituted for the host's actual OS architecture and <strong>$version</strong>, <strong>$major</strong> and <strong>$minor</strong> will be substituted for the version of the operating system. Solaris and Debian media may also use <strong>$release</strong>."
 msgstr ""
 
+msgid "The remote system presented a public key with hash %s but we're expecting a different hash. If you are sure the remote system is authentic, go to the compute resource edit page, press the 'Test Connection' or 'Load Datacenters' button and submit"
+msgstr ""
+
 msgid "The selected hosts will execute a build operation on next reboot"
 msgstr ""
 
@@ -3587,7 +3636,10 @@ msgstr[0] ""
 msgid "There was an error creating the PXE Default file: %s"
 msgstr ""
 
-msgid "There was an error listing VMs: %(status) %(statusText)"
+msgid "There was an error listing VMs: %(status)s %(statusText)s"
+msgstr ""
+
+msgid "There was an error listing VMs: %s"
 msgstr ""
 
 msgid "There was an error rendering the %s template: "
@@ -3612,6 +3664,9 @@ msgid "This page will self destruct once a report comes in."
 msgstr ""
 
 msgid "This page will self destruct once data comes in."
+msgstr ""
+
+msgid "This page will self destruct once inventory data comes in."
 msgstr ""
 
 msgid "Time in Seconds"
@@ -3967,6 +4022,9 @@ msgstr ""
 msgid "View last report details"
 msgstr ""
 
+msgid "Virtual (NAT)"
+msgstr ""
+
 msgid "Virtual Machine"
 msgstr ""
 
@@ -3977,9 +4035,6 @@ msgid "Virtual Machines on %s"
 msgstr ""
 
 msgid "Volumes"
-msgstr ""
-
-msgid "Wait"
 msgstr ""
 
 msgid "Waiting for %s to come online"
@@ -4048,10 +4103,19 @@ msgstr ""
 msgid "You can find details of how to set up the proxy at"
 msgstr ""
 
+msgid "You can't assign some of roles you selected"
+msgstr ""
+
+msgid "You can't change Administrator flag"
+msgstr ""
+
 msgid "You cannot remove %s that are used by hosts."
 msgstr ""
 
 msgid "You do not have permission to %s this Operating System parameter"
+msgstr ""
+
+msgid "You do not have permission to %s this Smart Variable"
 msgstr ""
 
 msgid "You do not have permission to %s this compute resource"
@@ -4078,10 +4142,10 @@ msgstr ""
 msgid "You do not have permission to %{operation} this %{klass}"
 msgstr ""
 
-msgid "You don"
+msgid "You don't seem to have any Hosts, for more information see"
 msgstr ""
 
-msgid "You don't seem to have any Hosts, for more information see"
+msgid "You don't seem to have any facts, if you wish to configure it, please follow"
 msgstr ""
 
 msgid "You don't seem to have any reports, if you wish to configure Puppet to forward it reports to Foreman, please follow"
@@ -4344,6 +4408,15 @@ msgstr ""
 msgid "must be an array"
 msgstr ""
 
+msgid "must be at most 15 characters"
+msgstr ""
+
+msgid "must be boolean"
+msgstr ""
+
+msgid "must be integer"
+msgstr ""
+
 msgid "must be lowercase"
 msgstr ""
 
@@ -4383,6 +4456,9 @@ msgstr ""
 msgid "parameters require an associated domain, host or host group"
 msgstr ""
 
+msgid "parsing settings type '%s' from string is not defined"
+msgstr ""
+
 msgid "pending"
 msgstr ""
 
@@ -4417,6 +4493,9 @@ msgid "revoked"
 msgstr ""
 
 msgid "select an owner"
+msgstr ""
+
+msgid "setting up facts"
 msgstr ""
 
 msgid "setting up reporting"
