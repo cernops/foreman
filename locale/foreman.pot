@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: version 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-01 13:18+0100\n"
+"POT-Creation-Date: 2013-07-02 09:53+0100\n"
 "PO-Revision-Date: 2013-03-01 15:45-0500\n"
 "Last-Translator: Lukas Zapletal <lzap+git@redhat.com>\n"
 "Language-Team: Foreman Team <foreman-dev@googlegroups.com>\n"
@@ -74,6 +74,9 @@ msgstr[1] ""
 msgid "%{default_value} is not one of %{validator_rule}"
 msgstr ""
 
+msgid "%{e} does not belong to the %{environment} environment"
+msgstr ""
+
 msgid "%{host} is now %{state}"
 msgstr ""
 
@@ -81,6 +84,9 @@ msgid "%{host} now boots from %{device}"
 msgstr ""
 
 msgid "%{name} changed from %{label1} to %{label2}"
+msgstr ""
+
+msgid "%{record} is used by %{what}"
 msgstr ""
 
 msgid "%{task} task failed with the following error: %{e}"
@@ -159,9 +165,6 @@ msgid "API Key"
 msgstr ""
 
 msgid "About"
-msgstr ""
-
-msgid "Accept these environment changes found in puppet?"
 msgstr ""
 
 msgid "Access Key"
@@ -609,7 +612,16 @@ msgstr ""
 msgid "Can't delete built-in role"
 msgstr ""
 
+msgid "Can't delete internal admin account"
+msgstr ""
+
 msgid "Can't find a valid Foreman Proxy with a Puppet feature"
+msgstr ""
+
+msgid "Can't remove Administrator flag from internal protected <b>admin</b> account"
+msgstr ""
+
+msgid "Can't rename internal protected <b>admin</b> account to %s"
 msgstr ""
 
 msgid "Can't use the same value as the primary interface"
@@ -645,7 +657,7 @@ msgstr ""
 msgid "Change your avatar at gravatar.com"
 msgstr ""
 
-msgid "Changed environments and puppet classes"
+msgid "Changed environments"
 msgstr ""
 
 msgid "Chassis"
@@ -655,6 +667,21 @@ msgid "Check all"
 msgstr ""
 
 msgid "Check all/Uncheck all"
+msgstr ""
+
+msgid "Check/Uncheck all"
+msgstr ""
+
+msgid "Check/Uncheck all %s changes"
+msgstr ""
+
+msgid "Check/Uncheck new"
+msgstr ""
+
+msgid "Check/Uncheck obsolete"
+msgstr ""
+
+msgid "Check/Uncheck updated"
 msgstr ""
 
 msgid "Choose a family"
@@ -2491,6 +2518,9 @@ msgstr ""
 msgid "OS Image"
 msgstr ""
 
+msgid "Obsolete"
+msgstr ""
+
 msgid "Off"
 msgstr ""
 
@@ -3146,6 +3176,9 @@ msgstr ""
 msgid "Select template"
 msgstr ""
 
+msgid "Select the changes you want to realize in Foreman"
+msgstr ""
+
 msgid "Selected hosts are now assigned to %s"
 msgstr ""
 
@@ -3685,6 +3718,9 @@ msgstr ""
 msgid "To update the class signature, go to the Puppet Classes page and select \"Import\"."
 msgstr ""
 
+msgid "Toggle"
+msgstr ""
+
 msgid "Toggle notifications section"
 msgstr ""
 
@@ -3816,6 +3852,9 @@ msgid "Update"
 msgstr ""
 
 msgid "Update:"
+msgstr ""
+
+msgid "Updated"
 msgstr ""
 
 msgid "Updated all hosts!"

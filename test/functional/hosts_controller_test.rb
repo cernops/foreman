@@ -810,6 +810,34 @@ class HostsControllerTest < ActionController::TestCase
     assert_equal old_type, @host.type
   end
 
+  test "blank root password submitted does not erase existing password" do
+    old_root_pass = @host.root_pass
+    put :update, { :commit => "Update", :id => @host.name, :host => {:root_pass => ''} }, set_session_user
+    @host = Host.find(@host.id)
+    assert_equal old_root_pass, @host.root_pass
+  end
+
+  test "blank BMC password submitted does not erase existing password" do
+    bmc1 = @host.interfaces.build(:name => "bmc1", :mac => '52:54:00:b0:0c:fc', :type => 'Nic::BMC',
+                      :ip => '10.0.1.101', :username => 'user1111', :password => 'abc123456', :provider => 'IPMI')
+    assert bmc1.save
+    old_password = bmc1.password
+    put :update, { :commit => "Update", :id => @host.name, :host => {:interfaces_attributes => {"0" => {:id => bmc1.id, :password => ''} } } }, set_session_user
+    @host = Host.find(@host.id)
+    assert_equal old_password, @host.interfaces.bmc.first.password
+  end
+
+  # To test that work-around for Rails bug - https://github.com/rails/rails/issues/11031
+  test "BMC password updates successful even if attrs serialized field is the only dirty field" do
+    bmc1 = @host.interfaces.build(:name => "bmc1", :mac => '52:54:00:b0:0c:fc', :type => 'Nic::BMC',
+                      :ip => '10.0.1.101', :username => 'user1111', :password => 'abc123456', :provider => 'IPMI')
+    assert bmc1.save
+    new_password = "topsecret"
+    put :update, { :commit => "Update", :id => @host.name, :host => {:interfaces_attributes => {"0" => {:id => bmc1.id, :password => new_password, :mac => bmc1.mac} } } }, set_session_user
+    @host = Host.find(@host.id)
+    assert_equal new_password, @host.interfaces.bmc.first.password
+  end
+
   private
   def initialize_host
     User.current = users(:admin)

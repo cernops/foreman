@@ -18,8 +18,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: version 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-01 13:18+0100\n"
-"PO-Revision-Date: 2013-07-01 12:15+0000\n"
+"POT-Creation-Date: 2013-07-02 09:53+0100\n"
+"PO-Revision-Date: 2013-07-01 12:20+0000\n"
 "Last-Translator: domcleal <dcleal@redhat.com>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/foreman/language/de/)\n"
 "Language: de\n"
@@ -83,6 +83,10 @@ msgstr[1] "%{count} Hosts ohne %{taxonomy_single} zugewiesen"
 msgid "%{default_value} is not one of %{validator_rule}"
 msgstr "%{default_value} ist nicht eines von %{validator_rule}"
 
+#, fuzzy
+msgid "%{e} does not belong to the %{environment} environment"
+msgstr "%{value} gehört nicht zum Betriebssystem %{os}"
+
 msgid "%{host} is now %{state}"
 msgstr "%{host} ist jetzt %{state}"
 
@@ -91,6 +95,9 @@ msgstr "%{host} startet jetzt von %{device}"
 
 msgid "%{name} changed from %{label1} to %{label2}"
 msgstr "%{name} wurde von %{label1} zu %{label2} geändert"
+
+msgid "%{record} is used by %{what}"
+msgstr ""
 
 msgid "%{task} task failed with the following error: %{e}"
 msgstr "Aufgabe %{task} schlug fehl aufgrund folgendem Fehler: %{e}"
@@ -169,9 +176,6 @@ msgstr "API Schlüssel"
 
 msgid "About"
 msgstr "Über"
-
-msgid "Accept these environment changes found in puppet?"
-msgstr "Diese Änderungen aus der puppet Umgebung akzeptieren?"
 
 msgid "Access Key"
 msgstr "Zugriffsschlüssel"
@@ -618,8 +622,18 @@ msgstr "CPUs"
 msgid "Can't delete built-in role"
 msgstr "Kann die eingebaute Rolle nicht löschen"
 
+#, fuzzy
+msgid "Can't delete internal admin account"
+msgstr "Kann die eingebaute Rolle nicht löschen"
+
 msgid "Can't find a valid Foreman Proxy with a Puppet feature"
 msgstr "Kann keinen gültigen Foreman Proxy mit der Puppeteigenschaft finden"
+
+msgid "Can't remove Administrator flag from internal protected <b>admin</b> account"
+msgstr ""
+
+msgid "Can't rename internal protected <b>admin</b> account to %s"
+msgstr ""
 
 msgid "Can't use the same value as the primary interface"
 msgstr "Kann nicht den gleichen Wert wie das primäre Interface verwenden"
@@ -654,8 +668,9 @@ msgstr "Ändere Gruppe"
 msgid "Change your avatar at gravatar.com"
 msgstr "Avatar kann auf gravatar.com geändert werden"
 
-msgid "Changed environments and puppet classes"
-msgstr "geänderte puppet Umgebungen und Klassen"
+#, fuzzy
+msgid "Changed environments"
+msgstr "Wechsle die Umgebung"
 
 msgid "Chassis"
 msgstr ""
@@ -664,6 +679,26 @@ msgid "Check all"
 msgstr "Alles auswählen"
 
 msgid "Check all/Uncheck all"
+msgstr "alles auswählen/abwählen"
+
+#, fuzzy
+msgid "Check/Uncheck all"
+msgstr "alles auswählen/abwählen"
+
+#, fuzzy
+msgid "Check/Uncheck all %s changes"
+msgstr "alles auswählen/abwählen"
+
+#, fuzzy
+msgid "Check/Uncheck new"
+msgstr "alles auswählen/abwählen"
+
+#, fuzzy
+msgid "Check/Uncheck obsolete"
+msgstr "alles auswählen/abwählen"
+
+#, fuzzy
+msgid "Check/Uncheck updated"
 msgstr "alles auswählen/abwählen"
 
 msgid "Choose a family"
@@ -2500,6 +2535,9 @@ msgstr "Betriebssystemfamilie"
 msgid "OS Image"
 msgstr "Betriebssystemabbild"
 
+msgid "Obsolete"
+msgstr ""
+
 msgid "Off"
 msgstr "Ausgeschaltet"
 
@@ -3155,6 +3193,9 @@ msgstr ""
 msgid "Select template"
 msgstr "Vorlage auswählen"
 
+msgid "Select the changes you want to realize in Foreman"
+msgstr ""
+
 msgid "Selected hosts are now assigned to %s"
 msgstr "Selektierte Hosts sind nun %s zugewiesen"
 
@@ -3694,6 +3735,9 @@ msgstr "Um Trendaten zu sammeln muss ein cronjob erstellt werden welcher jeden P
 msgid "To update the class signature, go to the Puppet Classes page and select \"Import\"."
 msgstr "Gehe zu der Puppet Klassen Seite und wähle \"Import\" aus um die Klassensignatur zu aktualisieren."
 
+msgid "Toggle"
+msgstr ""
+
 msgid "Toggle notifications section"
 msgstr "Die Benarichtigungssektion umschalten"
 
@@ -3826,6 +3870,10 @@ msgstr "Aktualisierung"
 
 msgid "Update:"
 msgstr "Aktualisierung:"
+
+#, fuzzy
+msgid "Updated"
+msgstr "Aktualisierung"
 
 msgid "Updated all hosts!"
 msgstr "Alle Systeme aktualisiert!"
@@ -4573,3 +4621,9 @@ msgstr "Sie müssen vermutlich zuerst %s konfigurieren."
 
 msgid "your libvirt host does not support interface listing, please enter here the bridge name (e.g. br0)"
 msgstr "dein libvirt System unterstützt keine Schnittstellenanzeige, bitte trage hier den Bridgenamen (z.B. br0) ein"
+
+#~ msgid "Accept these environment changes found in puppet?"
+#~ msgstr "Diese Änderungen aus der puppet Umgebung akzeptieren?"
+
+#~ msgid "Changed environments and puppet classes"
+#~ msgstr "geänderte puppet Umgebungen und Klassen"

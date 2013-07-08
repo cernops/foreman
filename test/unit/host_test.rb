@@ -85,6 +85,16 @@ class HostTest < ActiveSupport::TestCase
     assert_equal value_ids, Host.find_by_name('a.server.b.domain').fact_values.map(&:id)
   end
 
+  test "host is not created when uploading facts if setting is false" do
+    Setting[:create_new_host_when_facts_are_uploaded] = false
+    assert_equal false, Setting[:create_new_host_when_facts_are_uploaded]
+    assert Host.importHostAndFacts(File.read(File.expand_path(File.dirname(__FILE__) + "/facts.yml")))
+    host = Host.find_by_name('a.server.b.domain')
+    Setting[:create_new_host_when_facts_are_uploaded] =
+        Setting.find_by_name("create_new_host_when_facts_are_uploaded").default
+    assert_nil host
+  end
+
   test "should not save if neither ptable or disk are defined when the host is managed" do
     if unattended?
       host = Host.create :name => "myfullhost", :mac => "aabbecddeeff", :ip => "2.4.4.03",
@@ -684,6 +694,15 @@ class HostTest < ActiveSupport::TestCase
                                :provider => "IPMI", :username => "root", :password => "secret", :ip => "10.35.19.35"
     as_user :one do
       assert h.update_attributes!("interfaces_attributes" => {"0" => {"mac"=>"59:52:10:1e:45:16"}})
+    end
+  end
+
+  test "can auto-complete searches by host name" do
+    as_admin do
+      completions = Host::Managed.complete_for("name =")
+      Host::Managed.all.each do |h|
+        assert completions.include?("name = #{h.name}"), "completion missing: #{h}"
+      end
     end
   end
 

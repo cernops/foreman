@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: version 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-01 13:18+0100\n"
+"POT-Creation-Date: 2013-07-02 09:53+0100\n"
 "PO-Revision-Date: 2013-06-29 22:56+0000\n"
 "Last-Translator: carmela <carmela.rubinos@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/foreman/language/es/)\n"
@@ -84,6 +84,10 @@ msgstr[1] "Existen %{count} equipos sin %{taxonomy_single} asignada"
 msgid "%{default_value} is not one of %{validator_rule}"
 msgstr "%{default_value} no es una de %{validator_rule}"
 
+#, fuzzy
+msgid "%{e} does not belong to the %{environment} environment"
+msgstr "%{value} no pertenece al sistema operativo %{os}"
+
 msgid "%{host} is now %{state}"
 msgstr "%{host} ahora está %{state}"
 
@@ -92,6 +96,9 @@ msgstr "%{host} ahora arranca desde %{device}"
 
 msgid "%{name} changed from %{label1} to %{label2}"
 msgstr "%{name} ha cambiado de %{label1} a %{label2}"
+
+msgid "%{record} is used by %{what}"
+msgstr ""
 
 msgid "%{task} task failed with the following error: %{e}"
 msgstr "%{task} tareas han fallado con el error: %{e}"
@@ -170,9 +177,6 @@ msgstr "Clave API"
 
 msgid "About"
 msgstr "Acerca de"
-
-msgid "Accept these environment changes found in puppet?"
-msgstr "¿Aceptar estos cambios en el entorno detectados en puppet?"
 
 msgid "Access Key"
 msgstr "Clave de Acceso"
@@ -619,8 +623,18 @@ msgstr "Procesadores"
 msgid "Can't delete built-in role"
 msgstr "No se puede eliminar rol incorporado"
 
+#, fuzzy
+msgid "Can't delete internal admin account"
+msgstr "No se puede eliminar rol incorporado"
+
 msgid "Can't find a valid Foreman Proxy with a Puppet feature"
 msgstr "No se encuentra un Proxy Foreman con características de Puppet habilitadas"
+
+msgid "Can't remove Administrator flag from internal protected <b>admin</b> account"
+msgstr ""
+
+msgid "Can't rename internal protected <b>admin</b> account to %s"
+msgstr ""
 
 msgid "Can't use the same value as the primary interface"
 msgstr "No puede usar el mismo valor que en la interfaz primaria"
@@ -655,8 +669,9 @@ msgstr "Cambiar Grupo"
 msgid "Change your avatar at gravatar.com"
 msgstr "Cambia tu avatar en gravatar.com"
 
-msgid "Changed environments and puppet classes"
-msgstr "Modificados entornos y clases puppet"
+#, fuzzy
+msgid "Changed environments"
+msgstr "Cambiar Entorno"
 
 msgid "Chassis"
 msgstr "Chasis"
@@ -665,6 +680,26 @@ msgid "Check all"
 msgstr "Marcar todos"
 
 msgid "Check all/Uncheck all"
+msgstr "Marcar todos/Desmarcar todos"
+
+#, fuzzy
+msgid "Check/Uncheck all"
+msgstr "Marcar todos/Desmarcar todos"
+
+#, fuzzy
+msgid "Check/Uncheck all %s changes"
+msgstr "Marcar todos/Desmarcar todos"
+
+#, fuzzy
+msgid "Check/Uncheck new"
+msgstr "Marcar todos/Desmarcar todos"
+
+#, fuzzy
+msgid "Check/Uncheck obsolete"
+msgstr "Marcar todos/Desmarcar todos"
+
+#, fuzzy
+msgid "Check/Uncheck updated"
 msgstr "Marcar todos/Desmarcar todos"
 
 msgid "Choose a family"
@@ -2501,6 +2536,9 @@ msgstr "Familia SO"
 msgid "OS Image"
 msgstr "Imagen SO"
 
+msgid "Obsolete"
+msgstr ""
+
 msgid "Off"
 msgstr "Apagado"
 
@@ -3156,6 +3194,9 @@ msgstr "Seleccionar equipos para asignar a %s"
 msgid "Select template"
 msgstr "Selecciona plantilla"
 
+msgid "Select the changes you want to realize in Foreman"
+msgstr ""
+
 msgid "Selected hosts are now assigned to %s"
 msgstr "Los equipos seleccionados han sido asignados a %s"
 
@@ -3695,6 +3736,9 @@ msgstr "Para empezar a recolectar datos de tendencias, configura una tarea cron 
 msgid "To update the class signature, go to the Puppet Classes page and select \"Import\"."
 msgstr "Para actualizar la firma de clase, selecciona \"Importar\" en la página de Clases de Puppet."
 
+msgid "Toggle"
+msgstr ""
+
 msgid "Toggle notifications section"
 msgstr "Sección de notificaciones Palanca"
 
@@ -3827,6 +3871,10 @@ msgstr "Actualizar"
 
 msgid "Update:"
 msgstr "Actualizar:"
+
+#, fuzzy
+msgid "Updated"
+msgstr "Actualizar"
 
 msgid "Updated all hosts!"
 msgstr "¡Todos los equipos actualizados!"
@@ -4574,3 +4622,9 @@ msgstr "probablemente se necesite configurar el %s primero."
 
 msgid "your libvirt host does not support interface listing, please enter here the bridge name (e.g. br0)"
 msgstr "el equipo libvirt no soporta listar interfaces, por favor, introduce aquí el nombre del bridge (ej, br0)"
+
+#~ msgid "Accept these environment changes found in puppet?"
+#~ msgstr "¿Aceptar estos cambios en el entorno detectados en puppet?"
+
+#~ msgid "Changed environments and puppet classes"
+#~ msgstr "Modificados entornos y clases puppet"
