@@ -32,8 +32,8 @@ namespace :landb do
 
   def create_owner(landb_owner)
     # If the owner was found in landb, this means it's also in LDAP
-    new_owner = (landb_owner.first_name.downcase == 'e-group') ? create_new_usergroup(landb_owner) :
-      create_new_user(landb_owner)
+    new_owner = (landb_owner.first_name.downcase == 'e-group') ? create_usergroup_from_landb(landb_owner) :
+      create_user_from_landb(landb_owner)
     User.as 'admin' do
       if new_owner.save
         puts "User '#{new_owner.name}' auto-created from #{new_owner.auth_source}"
@@ -47,7 +47,7 @@ namespace :landb do
 
   def create_usergroup_from_landb(landb_owner)
     Usergroup.new( { :name           => landb_owner.name.downcase,
-                     :auth_source_id => AuthSourceLdpa.find_by_name('CERN').id } )
+                     :auth_source_id => AuthSourceLdap.find_by_name('CERN').id } )
   end
 
   def create_user_from_landb(landb_owner)
