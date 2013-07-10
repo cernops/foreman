@@ -36,6 +36,17 @@ class ApplicationController < ActionController::Base
     request.format.json? or request.format.yaml?
   end
 
+  class ActionDispatch::Request
+    def ip
+      if env['HTTP_X_FORWARDED_FOR'].present? && (env['REMOTE_ADDR'] =~ Regexp.new(Setting[:remote_addr]))
+        env['HTTP_X_FORWARDED_FOR']
+      else
+        super
+      end
+    end
+  end
+
+
   protected
 
   # Authorize the user for the requested action

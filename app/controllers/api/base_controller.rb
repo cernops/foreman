@@ -35,6 +35,16 @@ module Api
       @resource_class ||= resource_name.camelize.constantize
     end
 
+    class ActionDispatch::Request
+      def ip
+        if env['HTTP_X_FORWARDED_FOR'].present? && (env['REMOTE_ADDR'] =~ Regexp.new(Setting[:remote_addr]))
+          env['HTTP_X_FORWARDED_FOR']
+        else
+          super
+        end
+      end
+    end
+
     protected
 
     def process_resource_error(options = { })
