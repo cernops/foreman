@@ -31,7 +31,7 @@ namespace :ldap do
     created_users = []
     user_logins.each do |login|
       new_user = employee_login_to_new_user(login)
-      next if user.nil?
+      next if new_user.nil?
       User.as 'admin' do
         if new_user.save
           puts "User '#{new_user.name}' auto-created from #{new_user.auth_source}"
