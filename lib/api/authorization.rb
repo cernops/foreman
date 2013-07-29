@@ -15,8 +15,7 @@ module Api
         User.current = User.admin
       else
         return true if User.current && Rails.env.test?
-        authorization_method = oauth? ? :oauth : :http_basic
-        User.current         = send(authorization_method) || (return false)
+        User.current = send(authorization_method) || (return false)
       end
 
       return true
@@ -25,7 +24,6 @@ module Api
     def is_admin?
       return true unless SETTINGS[:login]
       return true if User.current && User.current.admin?
-      authorization_method = oauth? ? :oauth : :http_basic
       User.current         = send(authorization_method) || (return false)
       return User.current.admin? if User.current
       return false
@@ -37,11 +35,30 @@ module Api
         :action     => controller.params[:action])
     end
 
+    def authorization_method
+      if remote_user_provided?
+        :remote_user
+      elsif oauth?
+        :oauth
+      else
+        :http_basic
+      end
+    end
+
     def http_basic
       controller.authenticate_with_http_basic do |u, p|
         @user_login = u
         User.try_to_login(u, p)
       end
+    end
+
+    def remote_user_provided?
+      return false unless Setting["authorize_login_delegation_api"]
+      (@remote_user = controller.request.env["REMOTE_USER"]).present?
+    end
+
+    def remote_user
+      User.current = User.unscoped.find_by_login(@remote_user)
     end
 
     def oauth?
