@@ -110,7 +110,7 @@ module Hostext
               when 'OsParameter'
                 conditions << "hosts.operatingsystem_id = #{param.reference_id}"
               when 'GroupParameter'
-                conditions << "hosts.hostgroup_id = #{param.reference_id}"
+                conditions << "hosts.hostgroup_id IN (#{(param.hostgroup.children.map(&:id) << param.reference_id).join(', ')})"
               when 'HostParameter'
                 conditions << "hosts.id = #{param.reference_id}"
             end
