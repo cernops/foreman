@@ -88,6 +88,7 @@ class AuthSourceLdap < AuthSource
     ldap_con = initialize_ldap_con(account, account_password)
     search   = ldap_con.search(:base => treebase, :filter => filter)
     if search.present?
+      return [] unless search[0].respond_to? :member
       members  = search[0].member
       # Extracts the CN portion (common name) of an LDAP member. Net/LDAP does not provide this functionality
       members.map do |m|
