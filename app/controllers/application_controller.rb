@@ -1,6 +1,5 @@
-require 'foreman/controller/auto_complete_search'
-
 class ApplicationController < ActionController::Base
+  include Foreman::Controller::Authentication
   include Foreman::ThreadSession::Cleaner
 
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
@@ -36,24 +35,12 @@ class ApplicationController < ActionController::Base
     request.format.json? or request.format.yaml?
   end
 
-  class ActionDispatch::Request
-    def ip
-      if env['HTTP_X_FORWARDED_FOR'].present? && (env['REMOTE_ADDR'] =~ Regexp.new(Setting[:remote_addr]))
-        env['HTTP_X_FORWARDED_FOR']
-      else
-        super
-      end
-    end
-  end
-
-
   protected
 
   # Authorize the user for the requested action
-  def authorize(ctrl = params[:controller], action = params[:action])
-    return true if action == 'provision'
-    allowed = User.current.allowed_to?({:controller => ctrl.gsub(/::/, "_").underscore, :action => action})
-    allowed ? true : deny_access
+  def authorize
+    (render :json => { :error => "Authentication error" }, :status => :unauthorized and return) unless User.current.present?
+    authorized ? true : deny_access
   end
 
   def deny_access
@@ -69,51 +56,10 @@ class ApplicationController < ActionController::Base
     redirect_to :protocol => 'https' and return if request.protocol != 'https' and not request.ssl?
   end
 
-  def available_sso
-    @available_sso ||= SSO.get_available(self)
-  end
-
   # This filter is called before FastGettext set_gettext_locale and sets user-defined locale
   # from db. It must be called after require_login.
   def set_gettext_locale_db
     params[:locale] ||= User.current.try(:locale)
-  end
-
-  # Force a user to login if authentication is enabled
-  # Sets User.current to the logged in user, or to admin if logins are not used
-  def require_login
-    unless session[:user] and (User.current = User.unscoped.find(session[:user]))
-      # User is not found or first login
-      if SETTINGS[:login]
-        # authentication is enabled
-
-        if remote_user_provided?
-          user = User.unscoped.find_by_login(@remote_user)
-          logger.warn("Failed REMOTE_USER authentication from #{request.remote_ip}") unless user
-          # Else, fall back to the standard authentication mechanism,
-          # only if it's an API request.
-        elsif api_request?
-          user = authenticate_or_request_with_http_basic { |u, p| User.try_to_login(u, p) }
-          logger.warn("Failed Basic Auth authentication request from #{request.remote_ip}") unless user
-        end
-
-        if user.is_a?(User)
-          logger.info("Authorized user #{user.login}(#{user.to_label})")
-          User.current = user
-          session[:user] = User.current.id unless api_request?
-          return !User.current.nil?
-        end
-
-        unless api_request?
-          session[:original_uri] = request.fullpath # keep the old request uri that we can redirect later on
-          redirect_to login_users_path and return
-        end
-      else
-        # We assume we always have a user logged in, if authentication is disabled, the user is the build-in admin account.
-        User.current = User.admin
-        session[:user] = User.current.id unless api_request?
-      end
-    end
   end
 
   def require_mail
@@ -150,6 +96,11 @@ class ApplicationController < ActionController::Base
     User.current = User.admin
   end
 
+  def model_of_controller
+    controller_path.singularize.camelize.gsub('/','::').constantize
+  end
+
+
   # searches for an object based on its name and assign it to an instance variable
   # required for models which implement the to_param method
   #
@@ -158,10 +109,11 @@ class ApplicationController < ActionController::Base
   def find_by_name
     not_found and return if (id = params[:id]).blank?
 
-    obj = controller_name.singularize
+    name = controller_name.singularize
+    model = model_of_controller
     # determine if we are searching for a numerical id or plain name
     cond = "find_by_" + ((id =~ /^\d+$/ && (id=id.to_i)) ? "id" : "name")
-    not_found and return unless instance_variable_set("@#{obj}", obj.camelize.constantize.send(cond, id))
+    not_found and return unless instance_variable_set("@#{name}", model.send(cond, id))
   end
 
   def notice notice
@@ -207,9 +159,25 @@ class ApplicationController < ActionController::Base
 
   def expire_session
     logger.info "Session for #{current_user} is expired."
+    sso = get_sso_method
     reset_session
-    flash[:warning] = _("Your session has expired, please login again")
-    redirect_to login_users_path
+    if sso.nil? || !sso.support_expiration?
+      flash[:warning] = _("Your session has expired, please login again")
+      redirect_to login_users_path
+    else
+      redirect_to sso.expiration_url
+    end
+  end
+
+  # returns current SSO method object according to session
+  # nil is returned if nothing was found or invalid method is stored
+  def get_sso_method
+    if (sso_method_class = session[:sso_method])
+      sso_method_class.constantize.new(self)
+    end
+  rescue NameError
+    logger.error "Unknown SSO method #{sso_method_class}"
+    nil
   end
 
   def ajax?
@@ -329,10 +297,11 @@ class ApplicationController < ActionController::Base
       Organization.current = if orgs.count == 1 && !User.current.admin?
                                orgs.first
                              elsif session[:organization_id]
-                               orgs.find(session[:organization_id])
+                               orgs.find_by_id(session[:organization_id])
                              else
                                nil
                              end
+      warning _("Organization you had selected as your context has been deleted.") if (session[:organization_id] && Organization.current == nil)
     end
 
     if SETTINGS[:locations_enabled]
@@ -340,10 +309,11 @@ class ApplicationController < ActionController::Base
       Location.current = if locations.count == 1 && !User.current.admin?
                            locations.first
                          elsif session[:location_id]
-                           locations.find(session[:location_id])
+                           locations.find_by_id(session[:location_id])
                          else
                            nil
                          end
+      warning _("Location you had selected as your context has been deleted.") if (session[:location_id] && Location.current == nil)
     end
   end
 

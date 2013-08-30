@@ -28,7 +28,6 @@ Foreman::Application.routes.draw do
       end
       resources :dashboard, :only => [:index]
       resources :environments, :except => [:new, :edit]
-      resources :fact_values, :only => [:index]
       resources :hostgroups, :except => [:new, :edit]
       resources :lookup_keys, :except => [:new, :edit]
       resources :media, :except => [:new, :edit]
@@ -58,6 +57,8 @@ Foreman::Application.routes.draw do
     scope :module => :v2, :constraints => ApiConstraints.new(:version => 2) do
 
       resources :config_templates, :except => [:new, :edit] do
+        (resources :locations, :only => [:index, :show]) if SETTINGS[:locations_enabled]
+        (resources :organizations, :only => [:index, :show]) if SETTINGS[:organizations_enabled]
         collection do
           get 'build_pxe_default'
           get 'revision'
@@ -69,6 +70,7 @@ Foreman::Application.routes.draw do
       constraints(:id => /[^\/]+/) do
         resources :hosts, :only => [] do
           get :puppetrun, :on => :member
+          post :facts, :on => :collection
           resources :parameters, :except => [:new, :edit] do
             collection do
               delete '/', :to => :reset
@@ -107,7 +109,9 @@ Foreman::Application.routes.draw do
       resources :environments, :only => [] do
         (resources :locations, :only => [:index, :show]) if SETTINGS[:locations_enabled]
         (resources :organizations, :only => [:index, :show]) if SETTINGS[:organizations_enabled]
-        resources :puppetclasses, :only => [:index, :show]
+        resources :puppetclasses, :except => [:new, :edit] do
+          match '/smart_class_parameters', :to => 'lookup_keys#puppet_smart_class_parameters'
+        end
       end
 
       resources :hostgroups, :only => [] do
@@ -118,6 +122,8 @@ Foreman::Application.routes.draw do
             delete '/', :to => :reset
           end
         end
+        match '/smart_parameters', :to => 'lookup_keys#host_or_hostgroup_smart_parameters'
+        match '/smart_class_parameters', :to => 'lookup_keys#host_or_hostgroup_smart_class_parameters'
         resources :puppetclasses, :only => [:index, :show]
         resources :hostgroup_classes, :path => :puppetclass_ids, :only => [:index, :create, :destroy]
       end
@@ -145,7 +151,14 @@ Foreman::Application.routes.draw do
         end
       end
 
-      resources :puppetclasses, :except => [:new, :edit]
+      resources :puppetclasses, :except => [:new, :edit] do
+        resources :environments, :except => [:new, :edit] do
+          match '/smart_class_parameters', :to => 'lookup_keys#puppet_smart_class_parameters'
+        end
+        match '/smart_parameters', :to => 'lookup_keys#puppet_smart_parameters'
+      end
+
+      resources :lookup_keys, :path => 'smart_variables', :except => [:new, :edit]
 
       if SETTINGS[:locations_enabled]
         resources :locations, :except => [:new, :edit] do

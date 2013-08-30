@@ -22,6 +22,7 @@ class Operatingsystem < ActiveRecord::Base
   has_many :parameters, :dependent => :destroy, :foreign_key => :reference_id, :class_name => "OsParameter"
   accepts_nested_attributes_for :os_parameters, :reject_if => lambda { |a| a[:value].blank? }, :allow_destroy => true
   has_many :trends, :as => :trendable, :class_name => "ForemanTrend"
+  attr_name :fullname
   validates_numericality_of :major
   validates_numericality_of :minor, :allow_nil => true, :allow_blank => true
   validates_format_of :name, :with => /\A(\S+)\Z/, :message => N_("can't be blank or contain white spaces.")
@@ -30,7 +31,7 @@ class Operatingsystem < ActiveRecord::Base
 
   before_save :deduce_family
   audited :allow_mass_assignment => true
-  default_scope :order => 'LOWER(operatingsystems.name)'
+  default_scope :order => 'operatingsystems.name'
 
   scoped_search :on => :name, :complete_value => :true
   scoped_search :on => :major, :complete_value => :true
@@ -51,7 +52,7 @@ class Operatingsystem < ActiveRecord::Base
                'Solaris' => %r{Solaris}i }
 
   class Jail < Safemode::Jail
-    allow :name, :media_url, :major, :minor, :family, :to_s, :epel, :==, :release_name, :kernel, :initrd, :pxe_type, :medium_uri
+    allow :name, :media_url, :major, :minor, :family, :to_s, :repos, :==, :release_name, :kernel, :initrd, :pxe_type, :medium_uri
   end
 
   # As Rails loads an object it casts it to the class in the 'type' field. If we ensure that the type and
@@ -71,6 +72,19 @@ class Operatingsystem < ActiveRecord::Base
 
   def self.families_as_collection
     families.map{|e| OpenStruct.new(:name => e, :value => e) }
+  end
+
+  # Operating system family can override this method to provide an array of
+  # hashes, each describing a repository. For example, to describe a yum repo,
+  # the following structure can be returned by the method:
+  # [{ :baseurl => "https://dl.thesource.com/get/it/here",
+  #    :name => "awesome",
+  #    :description => "awesome product repo"",
+  #    :enabled => 1,
+  #    :gpgcheck => 1
+  #  }]
+  def repos host
+    []
   end
 
   def medium_uri host, url = nil
@@ -107,6 +121,15 @@ class Operatingsystem < ActiveRecord::Base
 
   def fullname
     to_label
+  end
+
+  def self.find_by_fullname(fullname)
+    a = fullname.split(" ")
+    b = a[1].split('.') if a[1]
+    cond = {:name => a[0]}
+    cond.merge!(:major => b[0]) if b && b[0]
+    cond.merge!(:minor => b[1]) if b && b[1]
+    self.where(cond).first
   end
 
   # sets the prefix for the tfp files based on the os / arch combination

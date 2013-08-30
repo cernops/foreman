@@ -63,33 +63,57 @@ class HostTest < ActiveSupport::TestCase
     assert !host.new_record?
   end
 
-  test "should import facts from yaml stream" do
+  test "should import facts from json stream" do
     h=Host.new(:name => "sinn1636.lan")
     h.disk = "!" # workaround for now
-    assert h.importFacts("sinn1636.lan", YAML::load_file(File.expand_path(File.dirname(__FILE__) + "/facts.yml")).values)
+    assert h.importFacts(JSON.parse(File.read(File.expand_path(File.dirname(__FILE__) + "/facts.json")))['facts'])
   end
 
-  test "should import facts from yaml of a new host" do
-    assert Host.importHostAndFacts(File.read(File.expand_path(File.dirname(__FILE__) + "/facts.yml")))
+  test "should import facts from json of a new host when certname is not specified" do
+    refute Host.find_by_name('sinn1636.lan')
+    raw = parse_json_fixture('/facts.json')
+    assert Host.importHostAndFacts(raw['name'], raw['facts'])
+    assert Host.find_by_name('sinn1636.lan')
   end
 
-  test "should downcase fqdn facts from yaml of a new host" do
-    assert Host.importHostAndFacts(File.read(File.expand_path(File.dirname(__FILE__) + "/facts_with_caps.yml")))
-    assert Host.find_by_name('a.server.b.domain')
+  test "should downcase hostname parameter from json of a new host" do
+    raw = parse_json_fixture('/facts_with_caps.json')
+    assert Host.importHostAndFacts(raw['name'], raw['facts'])
+    assert Host.find_by_name('sinn1636.lan')
   end
 
   test "should import facts idempotently" do
-    assert Host.importHostAndFacts(File.read(File.expand_path(File.dirname(__FILE__) + "/facts.yml")))
-    value_ids = Host.find_by_name('a.server.b.domain').fact_values.map(&:id)
-    assert Host.importHostAndFacts(File.read(File.expand_path(File.dirname(__FILE__) + "/facts.yml")))
-    assert_equal value_ids, Host.find_by_name('a.server.b.domain').fact_values.map(&:id)
+    raw = parse_json_fixture('/facts_with_caps.json')
+    assert Host.importHostAndFacts(raw['name'], raw['facts'])
+    value_ids = Host.find_by_name('sinn1636.lan').fact_values.map(&:id)
+    assert Host.importHostAndFacts(raw['name'], raw['facts'])
+    assert_equal value_ids, Host.find_by_name('sinn1636.lan').fact_values.map(&:id)
+  end
+
+  test "should find a host by certname not fqdn when provided" do
+    Host.new(:name => 'sinn1636.fail', :certname => 'sinn1636.lan.cert').save(:validate => false)
+    assert Host.find_by_name('sinn1636.fail').ip.nil?
+    # hostname in the json is sinn1636.lan, so if the facts have been updated for
+    # this host, it's a successful identification by certname
+    raw = parse_json_fixture('/facts_with_certname.json')
+    assert Host.importHostAndFacts(raw['name'], raw['facts'], raw['certname'])
+    assert_equal '10.35.27.2', Host.find_by_name('sinn1636.fail').ip
+  end
+
+  test "should update certname when host is found by hostname and certname is provided" do
+    Host.new(:name => 'sinn1636.lan', :certname => 'sinn1636.cert.fail').save(:validate => false)
+    assert_equal 'sinn1636.cert.fail', Host.find_by_name('sinn1636.lan').certname
+    raw = parse_json_fixture('/facts_with_certname.json')
+    assert Host.importHostAndFacts(raw['name'], raw['facts'], raw['certname'])
+    assert_equal 'sinn1636.lan.cert', Host.find_by_name('sinn1636.lan').certname
   end
 
   test "host is not created when uploading facts if setting is false" do
     Setting[:create_new_host_when_facts_are_uploaded] = false
     assert_equal false, Setting[:create_new_host_when_facts_are_uploaded]
-    assert Host.importHostAndFacts(File.read(File.expand_path(File.dirname(__FILE__) + "/facts.yml")))
-    host = Host.find_by_name('a.server.b.domain')
+    raw = parse_json_fixture('/facts_with_certname.json')
+    assert Host.importHostAndFacts(raw['name'], raw['facts'], raw['certname'])
+    host = Host.find_by_name('sinn1636.lan')
     Setting[:create_new_host_when_facts_are_uploaded] =
         Setting.find_by_name("create_new_host_when_facts_are_uploaded").default
     assert_nil host
@@ -331,6 +355,18 @@ class HostTest < ActiveSupport::TestCase
     assert_equal 'my5name.mydomain.net', Host.my_hosts.first.name
   end
 
+  test "sti types altered in memory with becomes are still contained in my_hosts scope" do
+    class Host::Valid < Host::Base ; belongs_to :domain ; end
+    h = Host::Valid.new :name => "mytestvalidhost.foo.com"
+    setup_user_and_host
+    as_admin do
+      @one.domains = [domains(:yourdomain)] # ensure it matches the user filters
+      h.update_attribute :domain,  domains(:yourdomain)
+    end
+    h_new = h.becomes(Host::Managed) # change the type to break normal AR `==` method
+    assert Host::Base.my_hosts.include?(h_new)
+  end
+
   test "host can be edited when user fact filter permits" do
     setup_filtered_user
     as_admin do
@@ -396,19 +432,39 @@ class HostTest < ActiveSupport::TestCase
     assert_equal ConfigTemplate.find_by_name("MyFinish"), host.configTemplate({:kind => "finish"})
   end
 
- test "when provisioning a new host we should not call puppetca if its disabled" do
-   # TODO improve this test :-)
-   Setting[:manage_puppetca] = false
-   assert hosts(:one).handle_ca
- end
+  test "handle_ca must not perform actions when the manage_puppetca setting is false" do
+    h = hosts(:one)
+    Setting[:manage_puppetca] = false
+    h.expects(:initialize_puppetca).never()
+    h.expects(:setAutosign).never()
+    assert h.handle_ca
+  end
 
- test "custom_disk_partition_with_erb" do
-   h = hosts(:one)
-   h.disk = "<%= 1 + 1 %>"
-   assert h.save
-   assert h.disk.present?
-   assert_equal "2", h.diskLayout
- end
+  test "handle_ca must not perform actions when no Puppet CA proxy is associated" do
+    h = hosts(:one)
+    Setting[:manage_puppetca] = true
+    refute h.puppetca?
+    h.expects(:initialize_puppetca).never()
+    assert h.handle_ca
+  end
+
+  test "handle_ca must call initialize, delete cert and add autosign methods" do
+    h = hosts(:dhcp)
+    Setting[:manage_puppetca] = true
+    assert h.puppetca?
+    h.expects(:initialize_puppetca).returns(true)
+    h.expects(:delCertificate).returns(true)
+    h.expects(:setAutosign).returns(true)
+    assert h.handle_ca
+  end
+
+  test "custom_disk_partition_with_erb" do
+    h = hosts(:one)
+    h.disk = "<%= 1 + 1 %>"
+    assert h.save
+    assert h.disk.present?
+    assert_equal "2", h.diskLayout
+  end
 
   test "models are updated when host.model has no value" do
     h = hosts(:one)
@@ -417,8 +473,8 @@ class HostTest < ActiveSupport::TestCase
       FactValue.create!(:value => "superbox", :host_id => h.id, :fact_name_id => f.id)
     end
     assert_difference('Model.count') do
-    facts = YAML::load(File.read(File.expand_path(File.dirname(__FILE__) + "/facts.yml")))
-      h.populateFieldsFromFacts facts.values
+    facts = JSON.parse(File.read(File.expand_path(File.dirname(__FILE__) + "/facts.json")))
+      h.populateFieldsFromFacts facts['facts']
     end
   end
 
@@ -446,7 +502,7 @@ class HostTest < ActiveSupport::TestCase
   test "host puppet classes must belong to the host environment" do
     h = hosts(:redhat)
 
-    pc = puppetclasses(:two)
+    pc = puppetclasses(:three)
     h.puppetclasses << pc
     assert !h.environment.puppetclasses.map(&:id).include?(pc.id)
     assert !h.valid?
@@ -704,6 +760,67 @@ class HostTest < ActiveSupport::TestCase
         assert completions.include?("name = #{h.name}"), "completion missing: #{h}"
       end
     end
+  end
+
+  test "can auto-complete searches by facts" do
+    as_admin do
+      completions = Host::Managed.complete_for("facts.")
+      FactName.order(:name).each do |fact|
+        assert completions.include?(" facts.#{fact.name} "), "completion missing: #{fact}"
+      end
+    end
+  end
+
+  test "#rundeck returns hash" do
+    h = hosts(:one)
+    rundeck = h.rundeck
+    assert_kind_of Hash, rundeck
+    assert_equal ['my5name.mydomain.net'], rundeck.keys
+    assert_kind_of Hash, rundeck[h.name]
+    assert_equal 'my5name.mydomain.net', rundeck[h.name]['hostname']
+    assert_equal ['class=base'], rundeck[h.name]['tags']
+  end
+
+  test "#rundeck returns extra facts as tags" do
+    h = hosts(:one)
+    h.params['rundeckfacts'] = "kernelversion, ipaddress\n"
+    h.save!
+
+    rundeck = h.rundeck
+    assert rundeck[h.name]['tags'].include?('class=base'), 'puppet class missing'
+    assert rundeck[h.name]['tags'].include?('kernelversion=2.6.9'), 'kernelversion fact missing'
+    assert rundeck[h.name]['tags'].include?('ipaddress=10.0.19.33'), 'ipaddress fact missing'
+  end
+
+  test "should accept lookup_values_attributes" do
+    h = hosts(:redhat)
+    as_admin do
+      assert_difference "LookupValue.count" do
+        assert h.update_attributes(:lookup_values_attributes => {"0" => {:lookup_key_id => lookup_keys(:one).id, :value => "8080" }})
+      end
+    end
+  end
+
+  test "can search hosts by params" do
+    parameter = parameters(:host)
+    hosts = Host.search_for("params.host1 = host1")
+    assert_equal hosts.count, 1
+    assert_equal hosts.first.params['host1'], 'host1'
+  end
+
+  test "can search hosts by inherited params from a hostgroup" do
+    host = hosts(:one)
+    host.update_attribute(:hostgroup, hostgroups(:inherited))
+    GroupParameter.create( { :name => 'foo', :value => 'bar', :hostgroup => host.hostgroup.parent } )
+    hosts = Host.search_for("params.foo = bar")
+    assert_equal hosts.count, 1
+    assert_equal hosts.first.params['foo'], 'bar'
+  end
+
+  private
+
+  def parse_json_fixture(relative_path)
+    return JSON.parse(File.read(File.expand_path(File.dirname(__FILE__) + relative_path)))
   end
 
 end

@@ -13,8 +13,8 @@
 %endif
 
 Name:   foreman
-Version: 1.2.0
-Release: 1%{?dist}
+Version: 1.2.9999
+Release: 8%{?dist}
 Summary:Systems Management web application
 
 Group:  Applications/System
@@ -63,11 +63,11 @@ Requires: %{?scl_prefix}rubygem(rabl) >= 0.7.5
 Requires: %{?scl_prefix}rubygem(rake) >= 0.8.3
 Requires: %{?scl_prefix}rubygem(ruby_parser) >= 3.0.0
 Requires: %{?scl_prefix}rubygem(audited-activerecord) >= 3.0.0
-Requires: %{?scl_prefix}rubygem(apipie-rails) >= 0.0.16
+Requires: %{?scl_prefix}rubygem(apipie-rails) >= 0.0.22
 Requires: %{?scl_prefix}rubygem(bundler_ext)
 Requires: %{?scl_prefix}rubygem(thin)
 Requires: %{?scl_prefix}rubygem(fast_gettext) >= 0.4.8
-Requires: %{?scl_prefix}rubygem(gettext_i18n_rails)
+Requires: %{?scl_prefix}rubygem(gettext_i18n_rails) >= 0.10.0
 Requires: %{?scl_prefix}rubygem(gettext_i18n_rails_js) >= 0.0.8
 Requires: %{?scl_prefix}rubygem(i18n_data) >= 0.2.6
 Requires: %{?scl_prefix}rubygem(therubyracer)
@@ -75,13 +75,13 @@ Requires: %{?scl_prefix}rubygem(jquery-ui-rails)
 Requires: %{?scl_prefix}rubygem(twitter-bootstrap-rails)
 BuildRequires: %{?scl_prefix}rubygem(ancestry) < 1.4.0
 BuildRequires: %{?scl_prefix}rubygem(ancestry) >= 1.3.0
-BuildRequires: %{?scl_prefix}rubygem(apipie-rails) >= 0.0.16
+BuildRequires: %{?scl_prefix}rubygem(apipie-rails) >= 0.0.22
 BuildRequires: %{?scl_prefix}rubygem(audited-activerecord) >= 3.0.0
 BuildRequires: %{?scl_prefix}rubygem(bundler_ext)
 BuildRequires: %{?scl_prefix}rubygem(coffee-rails) => 3.2.1
 BuildRequires: %{?scl_prefix}rubygem(gettext) >= 1.9.3
 BuildRequires: %{?scl_prefix}rubygem(fast_gettext)
-BuildRequires: %{?scl_prefix}rubygem(gettext_i18n_rails)
+BuildRequires: %{?scl_prefix}rubygem(gettext_i18n_rails) >= 0.10.0
 BuildRequires: %{?scl_prefix}rubygem(gettext_i18n_rails_js) >= 0.0.8
 BuildRequires: %{?scl_prefix}rubygem(i18n_data) >= 0.2.6
 BuildRequires: %{?scl_prefix}rubygem(jquery-rails)
@@ -153,7 +153,7 @@ Meta Package to install requirements for virt support
 %package ovirt
 Summary: Foreman ovirt support
 Group:  Applications/System
-Requires: %{?scl_prefix}rubygem(rbovirt) >= 0.0.15
+Requires: %{?scl_prefix}rubygem(rbovirt) >= 0.0.21
 Requires: foreman-compute = %{version}-%{release}
 Requires: %{name} = %{version}-%{release}
 
@@ -166,7 +166,7 @@ Meta Package to install requirements for ovirt support
 %package compute
 Summary: Foreman Compute Resource support via fog
 Group:  Applications/System
-Requires: %{?scl_prefix}rubygem-fog >= 1.8.0
+Requires: %{?scl_prefix}rubygem-fog >= 1.15.0
 Requires: %{name} = %{version}-%{release}
 Obsoletes: foreman-fog < 1.0.0
 Provides: foreman-fog = 1.0.0
@@ -354,7 +354,7 @@ plugins required for Foreman to work.
   sed -ri '1,$sX/usr/bin/rubyX%{scl_ruby}X' %{confdir}/foreman.init
   sed -ri '1,$s|THIN=/usr/bin/thin|THIN="run_in_scl"|' %{confdir}/foreman.init
   # script content
-  sed -ri 'sX/usr/bin/rakeX%{scl_rake}X' extras/dbmigrate
+  sed -ri 'sX/usr/bin/rakeX%{scl_rake}X' extras/dbmigrate script/foreman-rake
 %endif
 
 #build locale files
@@ -383,6 +383,7 @@ install -d -m0755 %{buildroot}%{_localstatedir}/lib/%{name}/tmp/pids
 install -d -m0755 %{buildroot}%{_localstatedir}/run/%{name}
 install -d -m0750 %{buildroot}%{_localstatedir}/log/%{name}
 install -Dp -m0755 script/%{name}-debug %{buildroot}%{_sbindir}/%{name}-debug
+install -Dp -m0755 script/%{name}-rake %{buildroot}%{_sbindir}/%{name}-rake
 install -Dp -m0644 %{confdir}/%{name}.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/%{name}
 install -Dp -m0755 %{confdir}/%{name}.init %{buildroot}%{_initrddir}/%{name}
 install -Dp -m0644 %{confdir}/%{name}.logrotate %{buildroot}%{_sysconfdir}/logrotate.d/%{name}
@@ -443,6 +444,7 @@ rm -rf %{buildroot}
 %exclude %{_datadir}/%{name}/app/assets
 %{_initrddir}/%{name}
 %{_sbindir}/%{name}-debug
+%{_sbindir}/%{name}-rake
 %config(noreplace) %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
@@ -528,24 +530,27 @@ if [ $1 -ge 1 ] ; then
 fi
 
 %changelog
-* Mon Jul 01 2013 Dominic Cleal <dcleal@redhat.com> 1.2.0-1
-- Release 1.2.0
-* Fri Jun 21 2013 Dominic Cleal <dcleal@redhat.com> 1.2.0-0.4.RC3
-- Release 1.2.0-RC3
+* Fri Aug 16 2013 Sam Kottler <shk@redhat.com> 1.2.9999-8
+- Update fog dependency to 1.15.0 to fix rackspace VM listing issue
+* Wed Jul 24 2013 Jason Montleon <jmontleo@redhat.com> 1.2.9999-7
+- Update rbovirt dependency version to 0.0.21 to support sending the host ssl certificate subject as an option to the xpi plugin
+* Fri Jul 19 2013 Dominic Cleal <dcleal@redhat.com> 1.2.9999-6
+- add foreman-rake to /usr/sbin
+* Mon Jun 17 2013 Dominic Cleal <dcleal@redhat.com> 1.2.9999-5
 - fix asset dependency versions
 - add minitest dependency for console (Lukas Zapletal)
-* Tue May 28 2013 Dominic Cleal <dcleal@redhat.com> 1.2.0-0.3.RC2
-- Release 1.2.0-RC2
+* Thu Jun 06 2013 Dominic Cleal <dcleal@redhat.com> 1.2.9999-4
+- fix libvirt package dependency on ruby-libvirt
+* Wed Jun 05 2013 Lukas Zapletal <lzap+rpm[@]redhat.com> - 1.2.9999-3
+- foreman-debug tool now installed into /usr/sbin
+* Tue May 28 2013 Dominic Cleal <dcleal@redhat.com> 1.2.9999-2
 - Don't force SCL
-- Distribute GPG key, enable GPG checking
+- Distribute GPG key
 - Replace dist in foreman.repo
 - Rename foreman-ec2 to foreman-compute
-- foreman-debug tool now installed into /usr/sbin (Lukas Zapletal)
-- fix libvirt package dependency on ruby-libvirt
-* Thu May 23 2013 Dominic Cleal <dcleal@redhat.com> 1.2.0-0.2.RC1
-- Change to release candidate URL in foreman.repo
-* Thu May 23 2013 Dominic Cleal <dcleal@redhat.com> 1.2.0-0.1.RC1
-- Release 1.2.0-RC1
+- Update dbmigrate for SCL (Lukas Zapletal)
+* Mon May 20 2013 Dominic Cleal <dcleal@redhat.com> 1.2.9999-1
+- Updated to 1.2.9999 (1.3-pre)
 * Tue Apr 30 2013 Sam Kottler <shk@redhat.com> 1.1.9999-1
 - Updated to 1.1.9999 (1.2-pre)
 * Fri Feb 15 2013 shk@redhat.com 1.1-3

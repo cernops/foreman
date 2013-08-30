@@ -35,6 +35,7 @@ class LookupKey < ActiveRecord::Base
   validate :ensure_type
 
   before_save :sanitize_path
+  attr_name :key
 
   scoped_search :on => :key, :complete_value => true, :default_order => true
   scoped_search :on => :override, :complete_value => {:true => true, :false => false}
@@ -44,8 +45,12 @@ class LookupKey < ActiveRecord::Base
   default_scope :order => 'lookup_keys.key'
   scope :override, where(:override => true)
 
+  scope :smart_class_parameters_for_class, lambda {|puppetclass_ids, environment_id|
+    joins(:environment_classes).where(:environment_classes => {:puppetclass_id => puppetclass_ids, :environment_id => environment_id})
+  }
+
   scope :parameters_for_class, lambda {|puppetclass_ids, environment_id|
-    override.joins(:environment_classes).where(:environment_classes => {:puppetclass_id => puppetclass_ids, :environment_id => environment_id})
+    override.smart_class_parameters_for_class(puppetclass_ids,environment_id)
   }
 
   scope :global_parameters_for_class, lambda {|puppetclass_ids|
