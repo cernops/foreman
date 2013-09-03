@@ -111,16 +111,15 @@ class UsersController < ApplicationController
     TopbarSweeper.expire_cache(self)
     sso_logout_path = get_sso_method.try(:logout_url)
     session[:user] = @user = User.current = nil
-    (flash[:notice] || flash[:error]) ? flash.keep : session.clear
-
-    if User.find(user_id).auth_source.type != "AuthSourceInternal"
-      redirect_to(Setting['single_sign_out_url'])
+    if flash[:notice] or flash[:error]
+      flash.keep
     else
       session.clear
       notice _("Logged out - See you soon")
     end
     redirect_to sso_logout_path || login_users_path
   end
+
 
   private
   def authorize(ctrl = params[:controller], action = params[:action])

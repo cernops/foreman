@@ -39,6 +39,7 @@ module Foreman::Controller::Authentication
   end
 
   def authorized
+    return true if params[:action] == 'provision'
     User.current.allowed_to?(
       :controller => params[:controller].gsub(/::/, "_").underscore,
       :action     => params[:action])
