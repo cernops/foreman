@@ -40,3 +40,6 @@ spec/tmp/*
 rerun.txt
 pickle-email-*.html
 .project
+CHANGELOG
+*.spec
+Contributors
