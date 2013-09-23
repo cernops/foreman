@@ -56,7 +56,8 @@ class PuppetclassTest < ActiveSupport::TestCase
     setup_user "destroy"
     record =  Puppetclass.first
     as_admin do
-      record.hosts = []
+      record.hosts.destroy_all
+      record.lookup_keys.destroy_all
     end
     assert record.destroy
     assert record.frozen?
@@ -81,7 +82,7 @@ class PuppetclassTest < ActiveSupport::TestCase
     record      =  Puppetclass.first
     record.name = "renamed"
     as_admin do
-      record.hosts = []
+      record.hosts.destroy_all
     end
     assert !record.save
     assert record.valid?
@@ -109,6 +110,14 @@ class PuppetclassTest < ActiveSupport::TestCase
     as_user :one do
       nested_lookup_key_params = {:new_1372154591368 => {:key=>"test_param", :key_type=>"string", :default_value => "7777", :path =>"fqdn\r\nhostgroup\r\nos\r\ndomain"}}
       assert Puppetclass.first.update_attributes(:lookup_keys_attributes => nested_lookup_key_params)
+    end
+  end
+
+  test "create puppetclass with smart variable as nested attribute" do
+    as_admin do
+      puppetclass = Puppetclass.new(:name => "PuppetclassWithSmartVariable", :lookup_keys_attributes => {"new_1372154591368" => {:key => 'smart_variable1'}})
+      assert puppetclass.save
+      assert_equal Puppetclass.unscoped.last.id, LookupKey.unscoped.last.puppetclass_id
     end
   end
 

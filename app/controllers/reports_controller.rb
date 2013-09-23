@@ -1,17 +1,10 @@
 class ReportsController < ApplicationController
   include Foreman::Controller::AutoCompleteSearch
-  include Foreman::Controller::SmartProxyAuth
 
-  add_puppetmaster_filters :create
   before_filter :setup_search_options, :only => :index
 
   def index
-    values = Report.my_reports.search_for(params[:search], :order => params[:order])
-    pagination_opts = { :page => params[:page], :per_page => params[:per_page] }
-    respond_to do |format|
-      format.html { @reports =      values.paginate(pagination_opts).includes(:host) }
-      format.json { render :json => values.paginate(pagination_opts).includes(:host, :logs)}
-    end
+    @reports = Report.my_reports.search_for(params[:search], :order => params[:order]).paginate(:page => params[:page], :per_page => params[:per_page]).includes(:host)
   rescue => e
     error e.to_s
     @reports = Report.my_reports.search_for("").paginate :page => params[:page]
@@ -27,22 +20,7 @@ class ReportsController < ApplicationController
     return not_found if params[:id].blank?
 
     @report = Report.my_reports.find(params[:id], :include => { :logs => [:message, :source] })
-    respond_to do |format|
-      format.html { @offset = @report.reported_at - @report.created_at }
-      format.json { render :json => @report }
-    end
-  end
-
-  def create
-    Taxonomy.no_taxonomy_scope do
-      if Report.import params.delete("report") || request.body
-        render :text => _("Imported report"), :status => 200 and return
-      else
-        render :text => _("Failed to import report"), :status => 500
-      end
-    end
-  rescue => e
-    render :text => e.to_s, :status => 500
+    @offset = @report.reported_at - @report.created_at
   end
 
   def destroy

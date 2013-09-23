@@ -158,6 +158,29 @@ class HostTest < ActiveSupport::TestCase
     end
   end
 
+  test "should save if owner_type is User or Usergroup" do
+    host = Host.new :name => "myfullhost", :mac => "aabbecddeeff", :ip => "2.3.4.03",
+      :domain => domains(:mydomain), :operatingsystem => operatingsystems(:redhat), :subnet => subnets(:one), :puppet_proxy => smart_proxies(:puppetmaster),
+      :subnet => subnets(:one), :architecture => architectures(:x86_64), :environment => environments(:production), :managed => true,
+      :owner_type => "User"
+    assert host.valid?
+  end
+
+  test "should not save if owner_type is not User or Usergroup" do
+    host = Host.new :name => "myfullhost", :mac => "aabbecddeeff", :ip => "2.3.4.03",
+      :domain => domains(:mydomain), :operatingsystem => operatingsystems(:redhat), :subnet => subnets(:one), :puppet_proxy => smart_proxies(:puppetmaster),
+      :subnet => subnets(:one), :architecture => architectures(:x86_64), :environment => environments(:production), :managed => true,
+      :owner_type => "UserGr(up" # should be Usergroup
+    assert !host.valid?
+  end
+
+  test "should save if owner_type is empty and Host is unmanaged" do
+    host = Host.new :name => "myfullhost", :mac => "aabbecddeeff", :ip => "2.3.4.03",
+      :domain => domains(:mydomain), :operatingsystem => operatingsystems(:redhat), :subnet => subnets(:one), :puppet_proxy => smart_proxies(:puppetmaster),
+      :subnet => subnets(:one), :architecture => architectures(:x86_64), :environment => environments(:production), :managed => false
+    assert host.valid?
+  end
+
   test "should import from external nodes output" do
     # create a dummy node
     Parameter.destroy_all
@@ -192,9 +215,9 @@ class HostTest < ActiveSupport::TestCase
 
   def setup_user_and_host
     @one            = users(:one)
-    @one.hostgroups = []
-    @one.domains    = []
-    @one.user_facts = []
+    @one.hostgroups.destroy_all
+    @one.domains.destroy_all
+    @one.user_facts.destroy_all
     @one.save!
     @host           = hosts(:one)
     @host.owner     = users(:two)
@@ -205,8 +228,8 @@ class HostTest < ActiveSupport::TestCase
   def setup_filtered_user
     # Can't use `setup_user_and_host` as it deletes the UserFacts
     @one             = users(:one)
-    @one.hostgroups  = []
-    @one.domains     = []
+    @one.hostgroups.destroy_all
+    @one.domains.destroy_all
     @one.user_facts  = [user_facts(:one)]
     @one.facts_andor = "and"
     @one.save!

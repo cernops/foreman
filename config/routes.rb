@@ -3,10 +3,8 @@ require 'api_constraints'
 Foreman::Application.routes.draw do
   #ENC requests goes here
   match "node/:name" => 'hosts#externalNodes', :constraints => { :name => /[^\.][\w\.-]+/ }
-  post "reports/create"
-  post "fact_values/create"
 
-  resources :reports, :only => [:index, :show, :destroy, :create] do
+  resources :reports, :only => [:index, :show, :destroy] do
     collection do
       get 'auto_complete_search'
     end
@@ -254,12 +252,14 @@ Foreman::Application.routes.draw do
           post 'hardware_profile_selected'
           post 'cluster_selected'
           post 'ping'
+          put 'associate'
         end
         constraints(:id => /[^\/]+/) do
           resources :vms, :controller => "compute_resources_vms" do
             member do
               put 'power'
               put 'pause'
+              put 'associate'
               get 'console'
             end
           end

@@ -3,7 +3,7 @@ class ComputeResource < ActiveRecord::Base
   include Taxonomix
   include Encryptable
   encrypts :password
-  PROVIDERS = %w[ Libvirt Ovirt EC2 Vmware Openstack Rackspace].delete_if{|p| p == "Libvirt" && !SETTINGS[:libvirt]}
+  PROVIDERS = %w[ Libvirt Ovirt EC2 Vmware Openstack Rackspace GCE].delete_if{|p| p == "Libvirt" && !SETTINGS[:libvirt]}
   audited :except => [:password, :attrs], :allow_mass_assignment => true
   serialize :attrs, Hash
   has_many :trends, :as => :trendable, :class_name => "ForemanTrend"
@@ -88,7 +88,7 @@ class ComputeResource < ActiveRecord::Base
 
   def provider_friendly_name
     list = SETTINGS[:libvirt] ? ["Libvirt"] : []
-    list += %w[ oVirt EC2 VMWare OpenStack Rackspace ]
+    list += %w[ oVirt EC2 VMWare OpenStack Rackspace Google]
     list[PROVIDERS.index(provider)] rescue ""
   end
 
@@ -104,7 +104,7 @@ class ComputeResource < ActiveRecord::Base
   end
 
   # return a list of virtual machines
-  def vms
+  def vms(opts = {})
     client.servers
   end
 
@@ -121,7 +121,9 @@ class ComputeResource < ActiveRecord::Base
   end
 
   def create_vm args = {}
-    client.servers.create vm_instance_defaults.merge(args.to_hash.symbolize_keys)
+    options = vm_instance_defaults.merge(args.to_hash.symbolize_keys)
+    logger.debug("creating VM with the following options: #{options.inspect}")
+    client.servers.create options
   rescue Fog::Errors::Error => e
     logger.debug "Fog error: #{e.message}\n " + e.backtrace.join("\n ")
     errors.add(:base, e.message.to_s)
@@ -162,11 +164,6 @@ class ComputeResource < ActiveRecord::Base
       new_v
     end
     false
-  end
-
-  def as_json(options={})
-    options ||= {}
-    super({:except => [:password]}.merge(options))
   end
 
   def console uuid = nil

@@ -12,7 +12,7 @@ class LookupKey < ActiveRecord::Base
 
   serialize :default_value
 
-  belongs_to :puppetclass
+  belongs_to :puppetclass, :inverse_of => :lookup_keys
   has_many :environment_classes, :dependent => :destroy
   has_many :environments, :through => :environment_classes, :uniq => true
   has_many :param_classes, :through => :environment_classes, :source => :puppetclass
@@ -27,7 +27,7 @@ class LookupKey < ActiveRecord::Base
 
   validates_uniqueness_of :key, :unless => Proc.new{|p| p.is_param?}
   validates_presence_of :key
-  validates_presence_of :puppetclass_id, :unless => Proc.new {|k| k.is_param?}
+  validates_presence_of :puppetclass, :unless => Proc.new {|k| k.is_param?}
   validates_inclusion_of :validator_type, :in => VALIDATOR_TYPES, :message => "invalid", :allow_blank => true, :allow_nil => true
   validates_inclusion_of :key_type, :in => KEY_TYPES, :message => "invalid", :allow_blank => true, :allow_nil => true
   validate :validate_list, :validate_regexp
@@ -56,6 +56,30 @@ class LookupKey < ActiveRecord::Base
   scope :global_parameters_for_class, lambda {|puppetclass_ids|
     where(:puppetclass_id => puppetclass_ids)
   }
+
+  scope :smart_variables, lambda { where('lookup_keys.puppetclass_id > 0').readonly(false) }
+  scope :smart_class_parameters, lambda { where(:is_param => true).joins(:environment_classes).readonly(false) }
+
+  # new methods for API instead of revealing db names
+  alias_attribute :parameter, :key
+  alias_attribute :variable, :key
+  alias_attribute :parameter_type, :key_type
+  alias_attribute :variable_type, :key_type
+  alias_attribute :override_value_order, :path
+  alias_attribute :override_values_count, :lookup_values_count
+
+  # to prevent errors caused by find_resource from override_values controller
+  def self.find_by_name(str)
+    nil
+  end
+
+  def is_smart_variable?
+    puppetclass_id.to_i > 0
+  end
+
+  def is_smart_class_parameter?
+    is_param? && environment_classes.any?
+  end
 
   def to_param
     "#{id}-#{key}"
@@ -98,11 +122,6 @@ class LookupKey < ActiveRecord::Base
     method = "cast_value_#{key_type}".to_sym
     return value unless self.respond_to? method, true
     self.send(method, value) rescue raise TypeError
-  end
-
-  def as_json(options={})
-    options ||= {}
-    super({:only => [:key, :is_param, :required, :override, :description, :default_value, :id]}.merge(options))
   end
 
   def path_elements

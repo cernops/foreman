@@ -6,14 +6,6 @@ class HostgroupsControllerTest < ActionController::TestCase
     assert_template 'index'
   end
 
-  def test_index_json
-    get :index, {:format => "json"}, set_session_user
-    hostgroups = ActiveSupport::JSON.decode(@response.body)
-    assert !hostgroups.empty?
-    assert hostgroups.is_a?(Array)
-    assert_response :success
-  end
-
   def test_new
     get :new, {}, set_session_user
     assert_template 'new'
@@ -42,15 +34,6 @@ class HostgroupsControllerTest < ActionController::TestCase
     assert_template 'new'
   end
 
-  def test_create_valid_json
-    Hostgroup.any_instance.stubs(:valid?).returns(true)
-    pc = Puppetclass.first
-    post :create, {:format => "json", "hostgroup" => {"name"=>"test_it", "group_parameters_attributes"=>{"1272344174448"=>{"name"=>"x", "value"=>"y", "_destroy"=>""}}, "puppetclass_ids"=>["", pc.id.to_s]}}, set_session_user
-    template = ActiveSupport::JSON.decode(@response.body)
-    assert_equal "test_it", template["hostgroup"]["name"]
-    assert_response :created
-  end
-
   def test_edit
     get :edit, {:id => Hostgroup.first}, set_session_user
     assert_template 'edit'
@@ -68,25 +51,10 @@ class HostgroupsControllerTest < ActionController::TestCase
     assert_redirected_to hostgroups_url
   end
 
-  def test_update_valid_json
-    Hostgroup.any_instance.stubs(:valid?).returns(true)
-    put :update, {:format => "json", :id => Hostgroup.first, :hostgroup => {}}, set_session_user
-    ActiveSupport::JSON.decode(@response.body)
-    assert_response :ok
-  end
-
   def test_destroy
     hostgroup = hostgroups(:unusual)
     delete :destroy, {:id => hostgroup.id}, set_session_user
     assert_redirected_to hostgroups_url
-    assert !Hostgroup.exists?(hostgroup.id)
-  end
-
-  def test_destroy_json
-    hostgroup = hostgroups(:common)
-    delete :destroy, {:format => "json", :id => hostgroup.id}, set_session_user
-    ActiveSupport::JSON.decode(@response.body)
-    assert_response :ok
     assert !Hostgroup.exists?(hostgroup.id)
   end
 
@@ -144,6 +112,18 @@ class HostgroupsControllerTest < ActionController::TestCase
     end
     hostgroup = Hostgroup.find(hostgroup.id)
     assert_equal old_root_pass, hostgroup.root_pass
+  end
+
+  test 'users subscribed to all hostgroups should be always added to hostgroup' do
+    User.current = User.first
+    one = users(:one)
+    one.update_attributes(:subscribe_to_all_hostgroups => true)
+
+    post :create, { "hostgroup" => { "name"=>"first" } }, set_session_user
+    post :create, { "hostgroup" => { "name"=>"second" } }, set_session_user
+
+    assert_equal one, Hostgroup.find_by_name("first").users.first
+    assert_equal one, Hostgroup.find_by_name("second").users.first
   end
 
 end

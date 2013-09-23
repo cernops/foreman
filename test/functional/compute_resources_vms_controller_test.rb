@@ -20,31 +20,44 @@ class ComputeResourcesVmsControllerTest < ActionController::TestCase
 
   test "should get index" do
     setup_user "view"
-    get :index, {:format => "json", :compute_resource_id => @compute_resource.to_param}, set_session_user
+    get :index, {:compute_resource_id => @compute_resource.to_param}, set_session_user
     assert_response :success
-    logger.info @response.body
-    computes = ActiveSupport::JSON.decode(@response.body)
-    assert !computes.empty?
-    assert computes.is_a?(Array)
-    assert computes.length >= 1
-    assert_not_nil computes.index{|vm| vm["uuid"] == @test_vm.uuid}
+    assert_template 'index'
   end
 
-  test "should not show vm when not permitted" do
+  test "should not show vm JSON when not permitted" do
     setup_user "none"
     get :show, {:id => @test_vm.uuid, :format => "json", :compute_resource_id => @compute_resource.to_param}, set_session_user
     assert_response 403
   end
 
-  test "should not show vm when restricted" do
+  test "should not show vm JSON when restricted" do
     setup_user "view"
     get :show, {:id => @test_vm.uuid, :format => "json", :compute_resource_id => @your_compute_resource.to_param}, set_session_user
     assert_response 403
   end
 
-  test "should show vm" do
+  test "should show vm JSON" do
     setup_user "view"
     get :show, {:id => @test_vm.uuid, :format => "json", :compute_resource_id => @compute_resource.to_param}, set_session_user
+    assert_response :success
+  end
+
+  test "should not show vm when not permitted" do
+    setup_user "none"
+    get :show, {:id => @test_vm.uuid, :compute_resource_id => @compute_resource.to_param}, set_session_user
+    assert_response 403
+  end
+
+  test "should not show vm when restricted" do
+    setup_user "view"
+    get :show, {:id => @test_vm.uuid, :compute_resource_id => @your_compute_resource.to_param}, set_session_user
+    assert_response 403
+  end
+
+  test "should show vm" do
+    setup_user "view"
+    get :show, {:id => @test_vm.uuid, :compute_resource_id => @compute_resource.to_param}, set_session_user
     assert_response :success
   end
 

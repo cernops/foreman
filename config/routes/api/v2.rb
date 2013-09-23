@@ -27,6 +27,7 @@ Foreman::Application.routes.draw do
         end
       end
       resources :dashboard, :only => [:index]
+      resources :statistics, :only => [:index]
       resources :environments, :except => [:new, :edit]
       resources :hostgroups, :except => [:new, :edit]
       resources :lookup_keys, :except => [:new, :edit]
@@ -66,22 +67,32 @@ Foreman::Application.routes.draw do
         resources :template_combinations, :only => [:index, :create]
       end
       resources :template_combinations, :only => [:show, :destroy]
+      resources :reports, :only => [:create]
+
+      resources :compute_resources, :only => [] do
+        get :available_images, :on => :member
+      end
 
       constraints(:id => /[^\/]+/) do
         resources :hosts, :only => [] do
           get :puppetrun, :on => :member
           post :facts, :on => :collection
+          put 'power', :on => :member
+          put 'boot' , :on => :member
+
           resources :parameters, :except => [:new, :edit] do
             collection do
               delete '/', :to => :reset
             end
           end
-          resources :puppetclasses, :only => [:index, :show]
+          resources :puppetclasses, :except => [:new, :edit]
           resources :host_classes, :path => :puppetclass_ids, :only => [:index, :create, :destroy]
-          resources :interfaces, :except => [:new, :edit] do 
-            put 'power', :on => :member
-            put 'boot' , :on => :member
-            put 'lan'  , :on => :member
+          resources :interfaces, :except => [:new, :edit]
+          resources :smart_variables, :except => [:new, :edit, :create] do
+            resources :override_values, :except => [:new, :edit]
+          end
+          resources :smart_class_parameters, :except => [:new, :edit, :create] do
+            resources :override_values, :except => [:new, :edit]
           end
         end
 
@@ -109,8 +120,13 @@ Foreman::Application.routes.draw do
       resources :environments, :only => [] do
         (resources :locations, :only => [:index, :show]) if SETTINGS[:locations_enabled]
         (resources :organizations, :only => [:index, :show]) if SETTINGS[:organizations_enabled]
+        resources :smart_class_parameters, :except => [:new, :edit, :create] do
+          resources :override_values, :except => [:new, :edit]
+        end
         resources :puppetclasses, :except => [:new, :edit] do
-          match '/smart_class_parameters', :to => 'lookup_keys#puppet_smart_class_parameters'
+          resources :smart_class_parameters, :except => [:new, :edit, :create] do
+            resources :override_values, :except => [:new, :edit]
+          end
         end
       end
 
@@ -122,9 +138,13 @@ Foreman::Application.routes.draw do
             delete '/', :to => :reset
           end
         end
-        match '/smart_parameters', :to => 'lookup_keys#host_or_hostgroup_smart_parameters'
-        match '/smart_class_parameters', :to => 'lookup_keys#host_or_hostgroup_smart_class_parameters'
-        resources :puppetclasses, :only => [:index, :show]
+        resources :smart_variables, :except => [:new, :edit, :create] do
+          resources :override_values, :except => [:new, :edit]
+        end
+        resources :smart_class_parameters, :except => [:new, :edit, :create] do
+          resources :override_values, :except => [:new, :edit]
+        end
+        resources :puppetclasses, :except => [:new, :edit]
         resources :hostgroup_classes, :path => :puppetclass_ids, :only => [:index, :create, :destroy]
       end
 
@@ -152,13 +172,27 @@ Foreman::Application.routes.draw do
       end
 
       resources :puppetclasses, :except => [:new, :edit] do
-        resources :environments, :except => [:new, :edit] do
-          match '/smart_class_parameters', :to => 'lookup_keys#puppet_smart_class_parameters'
+        resources :smart_variables, :except => [:new, :edit] do
+          resources :override_values, :except => [:new, :edit]
         end
-        match '/smart_parameters', :to => 'lookup_keys#puppet_smart_parameters'
+        resources :smart_class_parameters, :except => [:new, :edit, :create] do
+          resources :override_values, :except => [:new, :edit]
+        end
+        resources :environments, :only => [] do
+          resources :smart_class_parameters, :except => [:new, :edit, :create] do
+            resources :override_values, :except => [:new, :edit]
+          end
+        end
+        resources :hostgroups, :only => [:index]
       end
 
-      resources :lookup_keys, :path => 'smart_variables', :except => [:new, :edit]
+      resources :smart_variables, :except => [:new, :edit] do
+        resources :override_values, :except => [:new, :edit]
+      end
+      resources :smart_class_parameters, :except => [:new, :edit, :create] do
+        resources :override_values, :except => [:new, :edit]
+      end
+      resources :override_values, :only => [:update, :destroy]
 
       if SETTINGS[:locations_enabled]
         resources :locations, :except => [:new, :edit] do

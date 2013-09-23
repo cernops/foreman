@@ -16,7 +16,7 @@ module ComputeResourcesVmsHelper
         when nil
             _("N/A")
         else
-          value.to_s
+          method == :memory ? number_to_human_size(value) : value.to_s
         end
       end
       result
@@ -74,12 +74,34 @@ module ComputeResourcesVmsHelper
       actions << vm_power_action(vm)
     end
 
-    actions << display_delete_if_authorized(hash_for_compute_resource_vm_path(:compute_resource_id => @compute_resource, :id => vm.id))
+    actions << display_delete_if_authorized(hash_for_compute_resource_vm_path(:compute_resource_id => @compute_resource, :id => vm.identity))
   end
 
   def default_available_actions(vm)
     [vm_power_action(vm),
-     display_delete_if_authorized(hash_for_compute_resource_vm_path(:compute_resource_id => @compute_resource, :id => vm.id))]
+     display_delete_if_authorized(hash_for_compute_resource_vm_path(:compute_resource_id => @compute_resource, :id => vm.identity))]
   end
 
+  def vpc_security_group_hash(security_groups)
+    vpc_sg_hash = Hash.new
+    security_groups.each{ |sg|
+      vpc_id = sg.vpc_id || 'ec2'
+      ( vpc_sg_hash[vpc_id] ||= []) << {:group_name => sg.name, :group_id => sg.group_id}
+    }
+    vpc_sg_hash
+  end
+
+  def subnet_vpc_hash(subnets)
+    subnet_vpc_hash = Hash.new
+    subnets.each{ |sub| subnet_vpc_hash[sub.subnet_id] = {:vpc_id =>sub.vpc_id, :subnet_name => sub.tag_set["Name"] || sub.subnet_id} }
+    subnet_vpc_hash
+  end
+
+  def compute_object_vpc_id(form)
+    form.object.network_interfaces.try(:first).try(:[], "vpcId")
+  end
+
+  def security_groups_for_vpc(security_groups, vpc_id)
+    security_groups.map{ |sg| [sg.name, sg.group_id] if sg.vpc_id == vpc_id}.compact!
+  end
 end

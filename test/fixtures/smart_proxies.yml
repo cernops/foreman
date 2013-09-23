@@ -23,6 +23,6 @@ four:
   url: http://else.where:4567
 
 bmc:
-  name: BMC proxy 
+  name: BMC proxy
   url: http://else.where:4567
-  features: bmc 
+  features: bmc

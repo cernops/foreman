@@ -12,13 +12,7 @@ class HostgroupsController < ApplicationController
       error e.to_s
       values = my_groups.search_for ""
     end
-
-    respond_to do |format|
-      format.html do
-        @hostgroups = values.paginate :page => params[:page]
-      end
-      format.json { render :json => values }
-    end
+    @hostgroups = values.paginate :page => params[:page]
   end
 
   def new
@@ -70,7 +64,7 @@ class HostgroupsController < ApplicationController
     if @hostgroup.save
       # Add the new hostgroup to the user's filters
       @hostgroup.users << User.current unless User.current.admin? or @hostgroup.users.include?(User.current)
-      @hostgroup.users << User.find_by_subscribe_to_all_hostgroups(true)
+      @hostgroup.users << subscribed_users
       @hostgroup.users << users_in_ancestors
 
       process_success
@@ -154,6 +148,10 @@ class HostgroupsController < ApplicationController
     @hostgroup.ancestors.map do |ancestor|
       ancestor.users.reject { |u| @hostgroup.users.include?(u) }
     end.flatten.uniq
+  end
+
+  def subscribed_users
+    User.where(:subscribe_to_all_hostgroups => true)
   end
 
 end
