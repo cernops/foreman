@@ -29,6 +29,7 @@ Foreman::Application.routes.draw do
       resources :dashboard, :only => [:index]
       resources :statistics, :only => [:index]
       resources :environments, :except => [:new, :edit]
+      resources :fact_values, :only => [:index]
       resources :hostgroups, :except => [:new, :edit]
       resources :lookup_keys, :except => [:new, :edit]
       resources :media, :except => [:new, :edit]
@@ -68,10 +69,6 @@ Foreman::Application.routes.draw do
       end
       resources :template_combinations, :only => [:show, :destroy]
       resources :reports, :only => [:create]
-
-      resources :compute_resources, :only => [] do
-        get :available_images, :on => :member
-      end
 
       constraints(:id => /[^\/]+/) do
         resources :hosts, :only => [] do

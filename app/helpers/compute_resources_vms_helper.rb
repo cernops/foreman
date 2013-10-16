@@ -10,7 +10,9 @@ module ComputeResourcesVmsHelper
         value = @vm.send(method) rescue nil
         case value
         when Array
-          value.map{|v| v.try(:name) || v.try(:to_s) || v}.to_sentence
+          #TODO in 4.0 #try will return nil if the method doesn't exist (instead of raising NoMethodError)
+          # we can drop rescues then.
+          value.map{|v| (v.try(:name) rescue nil) || (v.try(:to_s) rescue nil) || v}.to_sentence
         when Fog::Time, Time
           _("%s ago") % time_ago_in_words(value)
         when nil
@@ -102,6 +104,6 @@ module ComputeResourcesVmsHelper
   end
 
   def security_groups_for_vpc(security_groups, vpc_id)
-    security_groups.map{ |sg| [sg.name, sg.group_id] if sg.vpc_id == vpc_id}.compact!
+    security_groups.map{ |sg| [sg.name, sg.group_id] if sg.vpc_id == vpc_id}.compact
   end
 end

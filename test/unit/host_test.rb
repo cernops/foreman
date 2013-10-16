@@ -63,6 +63,18 @@ class HostTest < ActiveSupport::TestCase
     assert !host.new_record?
   end
 
+  test "non-admin user should be able to create host with new lookup value" do
+    User.current = users(:one)
+    User.current.roles << [roles(:manager)]
+    assert_difference('LookupValue.count') do
+      assert Host.create! :name => "abc.mydomain.net", :mac => "aabbecddeeff", :ip => "2.3.4.3",
+      :domain => domains(:mydomain), :operatingsystem => operatingsystems(:redhat),
+      :subnet => subnets(:one), :architecture => architectures(:x86_64), :puppet_proxy => smart_proxies(:puppetmaster),
+      :environment => environments(:production), :disk => "empty partition",
+      :lookup_values_attributes => {"new_123456" => {"lookup_key_id" => lookup_keys(:complex).id, "value"=>"some_value", "match" => "fqdn=abc.mydomain.net"}}
+    end
+  end
+
   test "should import facts from json stream" do
     h=Host.new(:name => "sinn1636.lan")
     h.disk = "!" # workaround for now
@@ -241,7 +253,7 @@ class HostTest < ActiveSupport::TestCase
     as_admin do
       @one.roles = [Role.find_by_name("Viewer")]
     end
-    assert !@host.update_attributes(:name => "blahblahblah")
+    assert !@host.update_attributes(:comment => "blahblahblah")
     assert_match /do not have permission/, @host.errors.full_messages.join("\n")
   end
 
@@ -250,7 +262,7 @@ class HostTest < ActiveSupport::TestCase
     as_admin do
       @one.roles      = [Role.find_by_name("Edit hosts")]
     end
-    assert @host.update_attributes(:name => "blahblahblah")
+    assert @host.update_attributes(:comment => "blahblahblah")
     assert_no_match /do not have permission/, @host.errors.full_messages.join("\n")
   end
 
@@ -260,7 +272,7 @@ class HostTest < ActiveSupport::TestCase
       @one.roles      = [Role.find_by_name("Edit hosts")]
       @one.domains    = [Domain.find_by_name("mydomain.net")]
     end
-    assert @host.update_attributes(:name => "blahblahblah")
+    assert @host.update_attributes(:comment => "blahblahblah")
     assert_no_match /do not have permission/, @host.errors.full_messages.join("\n")
   end
 
@@ -270,7 +282,7 @@ class HostTest < ActiveSupport::TestCase
       @one.roles      = [Role.find_by_name("Edit hosts")]
       @one.domains    = [Domain.find_by_name("yourdomain.net")]
     end
-    assert !@host.update_attributes(:name => "blahblahblah")
+    assert !@host.update_attributes(:comment => "blahblahblah")
     assert_match /do not have permission/, @host.errors.full_messages.join("\n")
   end
 
@@ -398,7 +410,7 @@ class HostTest < ActiveSupport::TestCase
       @host.owner = users(:two)
       @host.save!
     end
-    assert @host.update_attributes(:name => "blahblahblah")
+    assert @host.update_attributes(:comment => "blahblahblah")
     assert_no_match /do not have permission/, @host.errors.full_messages.join("\n")
   end
 
@@ -410,7 +422,7 @@ class HostTest < ActiveSupport::TestCase
       @host.owner = users(:two)
       @host.save!
     end
-    assert !@host.update_attributes(:name => "blahblahblah")
+    assert !@host.update_attributes(:comment => "blahblahblah")
     assert_match /do not have permission/, @host.errors.full_messages.join("\n")
   end
 
@@ -479,6 +491,25 @@ class HostTest < ActiveSupport::TestCase
     h.expects(:delCertificate).returns(true)
     h.expects(:setAutosign).returns(true)
     assert h.handle_ca
+  end
+
+  test "if the user toggles off the use_uuid_for_certificates option, revoke the UUID and autosign the hostname" do
+    h = hosts(:dhcp)
+    Setting[:manage_puppetca] = true
+    assert h.puppetca?
+
+    Setting[:use_uuid_for_certificates] = false
+    some_uuid = Foreman.uuid
+    h.certname = some_uuid
+
+    h.expects(:initialize_puppetca).returns(true)
+    mock_puppetca = Object.new
+    mock_puppetca.expects(:del_certificate).with(some_uuid).returns(true)
+    mock_puppetca.expects(:set_autosign).with(h.name).returns(true)
+    h.instance_variable_set("@puppetca", mock_puppetca)
+
+    assert h.handle_ca
+    assert_equal h.certname, h.name
   end
 
   test "custom_disk_partition_with_erb" do
