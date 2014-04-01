@@ -33,3 +33,4 @@ locale/*/LC_MESSAGES
 coverage/
 tags
 _build
+foreman*tar.gz

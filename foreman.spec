@@ -2,6 +2,8 @@
 %global confdir extras/packaging/rpm/sources
 %global foreman_rake %{_sbindir}/%{name}-rake
 
+%global scl ruby193
+
 %if "%{?scl}" == "ruby193"
     %global scl_prefix %{scl}-
     %global scl_ruby /usr/bin/ruby193-ruby
@@ -15,7 +17,7 @@
 
 Name:   foreman
 Version: 1.4.2
-Release: 1%{?dist}
+Release: 1.cern0%{?dist}
 Summary:Systems Management web application
 
 Group:  Applications/System
