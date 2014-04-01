@@ -1,0 +1,24 @@
+
+VERSION=$(shell grep ^Version foreman.spec | sed 's/^.*\ //')
+
+all: source
+	
+source: clean
+	tar cvfz foreman-$(VERSION).tar.gz --transform 's,^,foreman-$(VERSION)/,' *
+
+srpm: source
+	rpmbuild -bs --define "_sourcedir $(PWD)" foreman.spec
+
+
+rpm: source
+	rpmbuild -ba --define "_sourcedir $(PWD)" foreman.spec
+
+clean:
+	rm -f foreman-$(VERSION).tar.gz
+
+scratch:
+	koji build ai6_ruby193 --nowait --scratch  git+https://github.com/cernops/foreman#$(shell git rev-parse HEAD)
+
+build:
+	koji build ai6_ruby193 --nowait git+https://github.com/cernops/foreman#$(shell git rev-parse HEAD)
+
