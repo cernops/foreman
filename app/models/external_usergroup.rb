@@ -35,7 +35,7 @@ class ExternalUsergroup < ActiveRecord::Base
     begin
       ldap_con = source.ldap_con
       ldap_con.authenticate?(source.account, source.account_password)
-      errors.add :name, _("is not an LDAP user group") unless ldap_con.ldap.includes_cn?(name)
+      errors.add :name, _("is not an LDAP user group") unless ldap_con.ldap.valid_group?(name)
     rescue Net::LDAP::LdapError => e
       errors.add :auth_source_id, _("LDAP error - %{message}") % { :message => e.message }
     end
