@@ -17,7 +17,7 @@
 
 Name:   foreman
 Version: 1.5.1
-Release: 2.cern0%{?dist}
+Release: 3.cern0%{?dist}
 Summary:Systems Management web application
 
 Group:  Applications/System
