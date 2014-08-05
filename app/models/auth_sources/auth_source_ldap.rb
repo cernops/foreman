@@ -56,7 +56,7 @@ class AuthSourceLdap < AuthSource
 
     logger.debug "Retrieved LDAP Attributes for #{login}: #{attrs}"
 
-    update_usergroups(login)
+    #update_usergroups(login)
 
     attrs
   rescue Net::LDAP::LdapError => error
@@ -74,7 +74,7 @@ class AuthSourceLdap < AuthSource
   end
 
   def to_config
-    { :host    => host,    :port => port, :encryption => (tls ? :start_tls : nil),
+    { :host    => host,    :port => port, :encryption => (tls ? :simple_tls : nil),
       :base_dn => base_dn, :group_base => groups_base, :attr_login => attr_login,
       :server_type  => server_type.to_sym, :service_user => account, :search_filter => ldap_filter,
       :service_pass => account_password,   :anon_queries => account.blank? }
