@@ -19,6 +19,8 @@ module Host
                            :allow_blank => true,
                            :message     => (_("Owner type needs to be one of the following: %s") % OWNER_TYPES.join(', '))
 
+    before_destroy :remove_reports
+
     scope :my_hosts, lambda {
       user                 = User.current
       return { :conditions => "" } if user.admin? # Admin can see all hosts
@@ -135,6 +137,11 @@ module Host
         comparison_object.is_a?(Host::Base) &&
         id.present? &&
         comparison_object.id == id
+    end
+
+    def remove_reports
+      reports.each { |report| Log.delete_all("report_id = #{report.id}") }
+      Report.delete_all("host_id = #{id}")
     end
 
   end
